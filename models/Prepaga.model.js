@@ -12,7 +12,7 @@ const Prepaga = sequelize.define('Prepaga', {
     maxUsuarios:{
         type:DataTypes.INTEGER,
     },
-    Precio:{
+    Precio_Prepaga:{
         type:DataTypes.INTEGER,
         allowNull: false,
     },
