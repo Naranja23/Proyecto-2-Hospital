@@ -14,6 +14,7 @@
   "dependencies": {
     "express": "^5.2.1",
     "mysql2": "^3.22.6",
+    "react-router-dom": "^7.18.2",
     "sequelize": "^6.37.8",
     "sqlite3": "^6.0.1"
   }
