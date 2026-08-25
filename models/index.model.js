@@ -1,49 +1,53 @@
-const { Usuario } = require('./Usuario.model.js')
-const { Prepaga } = require('./Prepaga.model.js')
-const { Medico } = require('./Medico.model.js')
-const { Consulta } = require('./Consulta.model.js')
-const { Hospital } = require('./Hospital.model.js')
-const { Permisos } = require('./Permisos.model.js')
-const { Rol } = require('./Rol.model.js')
-const { Plan } = require('./Plan.model.js')
+const { Usuario } = require('./User.Model.js')
+const { Medico } = require('./Medico.Model.js')
+const { Cita } = require('./Cita.Model.js')
+const { Hospital } = require('./Hospital.Model.js')
+const { Permisos } = require('./Permisos.Model.js')
+const { Rol } = require('./Rol.Model.js')
+const { Plan } = require('./Plan.Model.js')
+const { Prepaga } = require('./Prepaga.Model.js')
 
-
+// Medico <-> Rol
 Medico.belongsToMany(Rol, { through: 'MedicoRol', foreignKey: 'DNIMedico', otherKey: 'IDRol' })
 Rol.belongsToMany(Medico, { through: 'MedicoRol', foreignKey: 'IDRol', otherKey: 'DNIMedico' })
 
-Usuario.belongsToMany(Rol, { through: 'UsuarioRol', foreignKey: 'IDUsuario', otherKey: 'IDRol' })
-Rol.belongsToMany(Usuario, { through: 'UsuarioRol', foreignKey: 'IDRol', otherKey: 'IDUsuario' })
+// Usuario <-> Rol
+Usuario.belongsToMany(Rol, { through: 'UsuarioRol', foreignKey: 'DNIUsuario', otherKey: 'IDRol' })
+Rol.belongsToMany(Usuario, { through: 'UsuarioRol', foreignKey: 'IDRol', otherKey: 'DNIUsuario' })
 
+// Rol <-> Permisos
 Rol.belongsToMany(Permisos, { through: 'RolPermisos', foreignKey: 'IDRol', otherKey: 'IDPermisos' })
 Permisos.belongsToMany(Rol, { through: 'RolPermisos', foreignKey: 'IDPermisos', otherKey: 'IDRol' })
 
-
+// Usuario
 Usuario.belongsTo(Plan, { foreignKey: 'IDPlanes' })
-Usuario.belongsTo(Consulta, { foreignKey: 'IDConsulta' })
+Usuario.belongsTo(Cita, { foreignKey: 'IDConsulta' })
 
-Consulta.belongsTo(Hospital, { foreignKey: 'IDHospital' })
-Consulta.belongsTo(Usuario, { foreignKey: 'DNIUsuario' })
-Consulta.belongsTo(Medico, { foreignKey: 'DNIMedico' })
+// Cita
+Cita.belongsTo(Hospital, { foreignKey: 'IDHospital' })
+Cita.belongsTo(Usuario, { foreignKey: 'DNIUsuario' })
+Cita.belongsTo(Medico, { foreignKey: 'DNIMedico' })
 
+// Medico
 Medico.belongsTo(Hospital, { foreignKey: 'IDHospital' })
-Medico.belongsTo(Consulta, { foreignKey: 'IDConsulta' })
 
+// Plan
 Plan.belongsTo(Prepaga, { foreignKey: 'IDPrepaga' })
 Plan.belongsTo(Hospital, { foreignKey: 'IDHospital' })
-Usuario.hasMany(Plan, { foreignKey: 'IDPlanes' }) 
 
+// Prepaga
 Prepaga.belongsTo(Hospital, { foreignKey: 'IDHospital' })
-Prepaga.belongsTo(Plan, { foreignKey: 'IDPlanes' })
 
-Hospital.belongsTo(Plan, { foreignKey: 'IDPlanes' })
-Hospital.belongsTo(Medico, { foreignKey: 'DNIMedico' })
-Hospital.belongsTo(Prepaga, { foreignKey: 'IDPrepaga' })
-Hospital.belongsTo(Consulta, { foreignKey: 'IDConsultas' })
+// Hospital: sin belongsTo de vuelta (evita las FK circulares del diagrama)
+Hospital.hasMany(Plan, { foreignKey: 'IDHospital' })
+Hospital.hasMany(Prepaga, { foreignKey: 'IDHospital' })
+Hospital.hasMany(Medico, { foreignKey: 'IDHospital' })
+Hospital.hasMany(Cita, { foreignKey: 'IDHospital' })
 
 module.exports = {
     Usuario,
     Medico,
-    Consulta,
+    Cita,
     Hospital,
     Permisos,
     Plan,

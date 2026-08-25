@@ -2,18 +2,20 @@ const { sequelize } = require('../config/db.js')
 const { DataTypes } = require('sequelize')
 
 const Permisos = sequelize.define('Permisos', {
-    Nombre_Permiso: {
-        type: DataTypes.STRING,
+    IDPermisos: {
+        type: DataTypes.INTEGER,
         allowNull: false,
-        unique: true 
+        unique: true,
+        primaryKey: true,
+        autoIncrement: true
     },
-    Descripcion: {
+    DescripcionP: {
         type: DataTypes.STRING,
         allowNull: false
     },
-    Activop: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
+    ActivoP: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false
     }
 },
 {
