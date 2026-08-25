@@ -15,6 +15,10 @@ const citas = sequelize.define('citas', {
     Medico: {
         type: DataTypes.INTEGER,
         allowNull: false,
+    },
+        comentario: {
+        type: DataTypes.STRING,
+        allowNull: false,
     }
 },
 {
