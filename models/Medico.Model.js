@@ -2,19 +2,19 @@ const { sequelize } = require('../config/db.js')
 const { DataTypes } = require('sequelize')
 
 const Medico = sequelize.define('Medico', {
-    DNIMedico: {
+    IDMedico: {
         type: DataTypes.INTEGER,
         allowNull: false,
         unique: true,
         primaryKey: true
     },
-    NombM: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
     NomApeM: {
         type: DataTypes.STRING,
         allowNull: false
+    },
+    NombM: {
+        type: DataTypes.STRING,
+        allowNull: true
     },
     EspecialidadM: {
         type: DataTypes.STRING,
@@ -22,7 +22,12 @@ const Medico = sequelize.define('Medico', {
     },
     EdadM: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: true
+    },
+    EstadoM: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        defaultValue: 'Activo'
     }
 },
 {
