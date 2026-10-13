@@ -1,8 +1,8 @@
 import { useState } from 'react'
-import Navbar from '../Componentes/Navbar'
-import Login from '../Componentes/Login'
-import RegisterConPanel from '../Componentes/RegisterConPanel'
-import './App.css'
+import Navbar from './Componentes/Navbar'
+import Login from './Componentes/Login'
+import RegisterConPanel from './Componentes/RegisterConPanel'
+import './css/App.css'
 
 function App() {
   const [vista, setVista] = useState('login') // 'login' | 'register'

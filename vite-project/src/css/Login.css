@@ -107,6 +107,28 @@
     cursor: not-allowed;
 }
 
+.cambio-vista {
+    margin: 16px 0 0;
+    text-align: center;
+    color: #55708a;
+    font-size: 14px;
+}
+
+.btn-link {
+    background: none;
+    border: none;
+    color: #0b6e77;
+    font-weight: bold;
+    cursor: pointer;
+    text-decoration: underline;
+    padding: 0;
+    font-size: inherit;
+}
+
+.btn-link:hover {
+    color: #08545b;
+}
+
 .mensaje-exito {
     color: #0d7f4e !important;
 }
