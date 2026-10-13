@@ -1,5 +1,8 @@
-const { User, Hobby } = require('../models/index.js')
-const { Op } = require('sequelize')
+const { Usuario } = require('../models/index.model.js') 
+const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
+
+
 
 const getUsers = async(req, res)=>{
     try {
@@ -65,12 +68,55 @@ const deleteUser = async(req, res)=>{
     }
 }
 
+const login = async (req, res) => {
+    try {
+        const { Email, Password } = req.body
 
+        if (!Email || !Password) {
+            return res.status(400).json({ message: "Email y contraseña son obligatorios" })
+        }
+
+        const usuario = await Usuario.findOne({ where: { Email } })
+        if (!usuario) {
+            
+            return res.status(401).json({ message: "Credenciales inválidas" })
+        }
+
+        const match = await bcrypt.compare(Password, usuario.Password)
+        if (!match) {
+            return res.status(401).json({ message: "Credenciales inválidas" })
+        }
+
+        if (usuario.EstadoU && usuario.EstadoU.toLowerCase() === "inactivo") {
+            return res.status(403).json({ message: "Tu cuenta está inactiva" })
+        }
+
+        const token = jwt.sign(
+            { DNIUsuario: usuario.DNIUsuario, Email: usuario.Email },
+            process.env.JWT_SECRET || "secreto_hospital",
+            { expiresIn: "1h" }
+        )
+
+        res.status(200).json({
+            message: "Login exitoso",
+            token,
+            usuario: {
+                DNIUsuario: usuario.DNIUsuario,
+                NomApeU: usuario.NomApeU,
+                Email: usuario.Email,
+                EstadoU: usuario.EstadoU
+            }
+        })
+    } catch (error) {
+        res.status(500).json({ message: "Error al iniciar sesión", error: error.message })
+    }
+}
 
 module.exports = {
     getUsers,
     getUserByID,
     createUser,
     putUser,
-    deleteUser
+    deleteUser,
+    login
 }

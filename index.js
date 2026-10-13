@@ -1,11 +1,14 @@
+require('dotenv').config()
 const express = require('express')
 const server = express()
 
-require('./models/index.js')
+
+
+require('./models/index.model.js')
 const { sequelize } = require('./config/db.js')
 
 const userRoutes = require('./routes/user.routes.js')
-const hobbyRoutes = require('./routes/hobby.routes.js')
+
 
 const PORT = 3000
 
@@ -18,7 +21,7 @@ server.get('/', (req, res)=>{
 })
 
 server.use('/users', userRoutes)
-server.use('/hobby', hobbyRoutes)
+
 
 server.listen(PORT, async()=>{
     await sequelize.authenticate()
