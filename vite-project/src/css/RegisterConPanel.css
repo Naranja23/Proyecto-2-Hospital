@@ -6,6 +6,8 @@
     font-family: Arial, sans-serif;
 }
 
+/* ---------- Panel verde de la izquierda ---------- */
+
 .panel-lateral {
     background: #0a4a52;
     color: #e6f4f5;
@@ -37,6 +39,7 @@
     line-height: 1.5;
 }
 
+/* ---------- Formulario de la derecha ---------- */
 
 .register-derecha {
     display: flex;
@@ -148,6 +151,8 @@
     font-size: 14px;
     min-height: 20px;
 }
+
+/* ---------- Celular ---------- */
 
 @media (max-width: 800px) {
     .register {
