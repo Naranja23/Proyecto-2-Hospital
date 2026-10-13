@@ -1,12 +1,20 @@
 import React from 'react';
 import './Navbar.css';
 
-export default function Navbar() {
+export default function Navbar({ onSeleccionarVista, vistaActual }) {
   return (
     <header className="navbar-header">
       <nav className="navbar" aria-label="Navegación principal">
         <div className="navbar-container">
-          <a href="#" className="navbar-logo" aria-label="Inicio">
+          <a
+            href="#"
+            className="navbar-logo"
+            aria-label="Inicio"
+            onClick={(e) => {
+              e.preventDefault();
+              if (onSeleccionarVista) onSeleccionarVista('home');
+            }}
+          >
             <img
               src="/resources/logo.svg"
               alt="Logo Hospital"
@@ -17,12 +25,20 @@ export default function Navbar() {
           </a>
 
           <div className="navbar-links">
-            <a href="#login" className="navbar-item navbar-login">
+            <button
+              type="button"
+              className={`navbar-item navbar-login ${vistaActual === 'login' ? 'activo' : ''}`}
+              onClick={() => onSeleccionarVista && onSeleccionarVista('login')}
+            >
               Login
-            </a>
-            <a href="#register" className="navbar-item navbar-register">
+            </button>
+            <button
+              type="button"
+              className={`navbar-item navbar-register ${vistaActual === 'register' ? 'activo' : ''}`}
+              onClick={() => onSeleccionarVista && onSeleccionarVista('register')}
+            >
               Register
-            </a>
+            </button>
           </div>
         </div>
       </nav>

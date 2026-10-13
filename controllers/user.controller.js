@@ -1,88 +1,179 @@
-const { Usuario } = require('../models/index.model.js') 
+const { Usuario } = require('../models/index.model.js')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 
-
-
-const getUsers = async(req, res)=>{
+// Obtener todos los usuarios
+const getUsers = async (req, res) => {
     try {
-        const users = await User.findAll()
-        if (users.length === 0){
-            return res.status(404).json("Usuarios no encontrados")
+        const users = await Usuario.findAll({
+            attributes: { exclude: ['Password'] }
+        })
+        if (users.length === 0) {
+            return res.status(404).json({ message: "Usuarios no encontrados" })
         }
         res.status(200).json(users)
     } catch (error) {
-        res.status(500).json(error)
+        res.status(500).json({ message: "Error al obtener usuarios", error: error.message })
     }
 }
 
-const getUserByID = async(req, res)=>{
+// Obtener usuario por ID (DNIUsuario)
+const getUserByID = async (req, res) => {
     try {
-        const user = await User.findByPk(Number(req.params.id))
-        if(!user){
-            return res.status(404).json({ message: `Usuario con el ID ${req.params.id} no encontrado`})
+        const id = Number(req.params.id)
+        const user = await Usuario.findByPk(id, {
+            attributes: { exclude: ['Password'] }
+        })
+        if (!user) {
+            return res.status(404).json({ message: `Usuario con el DNI/ID ${req.params.id} no encontrado` })
         }
         res.status(200).json(user)
     } catch (error) {
-        res.status(500).json(error)
+        res.status(500).json({ message: "Error al obtener usuario", error: error.message })
     }
 }
 
-const createUser = async(req, res)=>{
+// Registrar / Crear usuario
+const register = async (req, res) => {
     try {
-        const newUser = await User.create({ firstname: req.body.firstname, lastname: req.body.lastname, dni: req.body.dni })
-        res.status(201).json(newUser)
-    } catch (error) {
-        res.status(500).json(error)
-    }
-}
+        const {
+            nombre,
+            apellido,
+            dni,
+            fechaNacimiento,
+            email,
+            password,
+            NomApeU,
+            DNIUsuario,
+            Email,
+            Password,
+            EdadU
+        } = req.body
 
-const putUser = async(req, res)=>{
-    try {
-        const user = await User.findByPk(Number(req.params.id))
-        if (!user){
-            return res.status(404).json(`El usuario con el ID ${req.params.id} no fue encontrado`)
+        const nomApe = (NomApeU || `${nombre || ''} ${apellido || ''}`).trim()
+        const dniFinal = Number(DNIUsuario || dni)
+        const emailFinal = (Email || email || '').trim().toLowerCase()
+        const passwordFinal = Password || password
+
+        if (!dniFinal || isNaN(dniFinal)) {
+            return res.status(400).json({ message: "El DNI es obligatorio y debe ser numérico" })
         }
-        user.firstname = req.body.firstname
-        user.lastname = req.body.lastname
-        user.dni = req.body.dni
+        if (!nomApe) {
+            return res.status(400).json({ message: "El nombre y apellido son obligatorios" })
+        }
+        if (!emailFinal) {
+            return res.status(400).json({ message: "El correo electrónico es obligatorio" })
+        }
+        if (!passwordFinal || passwordFinal.length < 6) {
+            return res.status(400).json({ message: "La contraseña es obligatoria (mínimo 6 caracteres)" })
+        }
+
+        // Verificar si el email ya existe
+        const userPorEmail = await Usuario.findOne({ where: { Email: emailFinal } })
+        if (userPorEmail) {
+            return res.status(400).json({ message: "El correo electrónico ya está registrado" })
+        }
+
+        // Verificar si el DNI ya existe
+        const userPorDni = await Usuario.findByPk(dniFinal)
+        if (userPorDni) {
+            return res.status(400).json({ message: "El DNI ya está registrado" })
+        }
+
+        // Calcular edad si se pasó fechaNacimiento
+        let edadCalculada = EdadU || null
+        if (!edadCalculada && fechaNacimiento) {
+            const fecha = new Date(fechaNacimiento)
+            if (!isNaN(fecha.getTime())) {
+                const dif = Date.now() - fecha.getTime()
+                edadCalculada = Math.abs(new Date(dif).getUTCFullYear() - 1970)
+            }
+        }
+
+        // Hashear contraseña
+        const hashedPassword = await bcrypt.hash(passwordFinal, 10)
+
+        const nuevoUsuario = await Usuario.create({
+            DNIUsuario: dniFinal,
+            NomApeU: nomApe,
+            Email: emailFinal,
+            Password: hashedPassword,
+            EdadU: edadCalculada,
+            EstadoU: 'Activo'
+        })
+
+        res.status(201).json({
+            message: "Cuenta creada con éxito",
+            usuario: {
+                DNIUsuario: nuevoUsuario.DNIUsuario,
+                NomApeU: nuevoUsuario.NomApeU,
+                Email: nuevoUsuario.Email,
+                EstadoU: nuevoUsuario.EstadoU
+            }
+        })
+    } catch (error) {
+        res.status(500).json({ message: "Error al registrar usuario", error: error.message })
+    }
+}
+
+// Modificar usuario
+const putUser = async (req, res) => {
+    try {
+        const user = await Usuario.findByPk(Number(req.params.id))
+        if (!user) {
+            return res.status(404).json({ message: `El usuario con ID ${req.params.id} no fue encontrado` })
+        }
+
+        if (req.body.NomApeU || (req.body.nombre && req.body.apellido)) {
+            user.NomApeU = req.body.NomApeU || `${req.body.nombre} ${req.body.apellido}`.trim()
+        }
+        if (req.body.Email || req.body.email) {
+            user.Email = (req.body.Email || req.body.email).trim().toLowerCase()
+        }
+        if (req.body.EdadU || req.body.edad) {
+            user.EdadU = Number(req.body.EdadU || req.body.edad)
+        }
+        if (req.body.EstadoU) {
+            user.EstadoU = req.body.EstadoU
+        }
 
         await user.save()
-        res.status(200).json(user)
+        res.status(200).json({ message: "Usuario actualizado", user })
     } catch (error) {
-        res.status(500).json(error)
+        res.status(500).json({ message: "Error al actualizar usuario", error: error.message })
     }
 }
 
-const deleteUser = async(req, res)=>{
+// Eliminar usuario
+const deleteUser = async (req, res) => {
     try {
-        const deletedUser = await User.findByPk(Number(req.params.id))
-        if (!deletedUser){
-            return res.status(404).json(`El usuario con el ID ${req.params.id} no fue encontrado`)
+        const deletedUser = await Usuario.findByPk(Number(req.params.id))
+        if (!deletedUser) {
+            return res.status(404).json({ message: `El usuario con el ID ${req.params.id} no fue encontrado` })
         }
         await deletedUser.destroy()
-
-        res.status(200).json({ message: "Usuario eliminado con éxito "})
+        res.status(200).json({ message: "Usuario eliminado con éxito" })
     } catch (error) {
-        res.status(500).json(error)
+        res.status(500).json({ message: "Error al eliminar usuario", error: error.message })
     }
 }
 
+// Iniciar sesión
 const login = async (req, res) => {
     try {
-        const { Email, Password } = req.body
+        const email = (req.body.Email || req.body.email || '').trim().toLowerCase()
+        const password = req.body.Password || req.body.password
 
-        if (!Email || !Password) {
+        if (!email || !password) {
             return res.status(400).json({ message: "Email y contraseña son obligatorios" })
         }
 
-        const usuario = await Usuario.findOne({ where: { Email } })
+        const usuario = await Usuario.findOne({ where: { Email: email } })
         if (!usuario) {
-            
             return res.status(401).json({ message: "Credenciales inválidas" })
         }
 
-        const match = await bcrypt.compare(Password, usuario.Password)
+        const match = await bcrypt.compare(password, usuario.Password)
         if (!match) {
             return res.status(401).json({ message: "Credenciales inválidas" })
         }
@@ -94,7 +185,7 @@ const login = async (req, res) => {
         const token = jwt.sign(
             { DNIUsuario: usuario.DNIUsuario, Email: usuario.Email },
             process.env.JWT_SECRET || "secreto_hospital",
-            { expiresIn: "1h" }
+            { expiresIn: "2h" }
         )
 
         res.status(200).json({
@@ -115,7 +206,8 @@ const login = async (req, res) => {
 module.exports = {
     getUsers,
     getUserByID,
-    createUser,
+    createUser: register,
+    register,
     putUser,
     deleteUser,
     login

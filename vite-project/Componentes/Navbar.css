@@ -56,6 +56,8 @@
   text-decoration: none;
   font-size: 0.95rem;
   font-weight: 500;
+  font-family: inherit;
+  border: none;
   padding: 0.5rem 1.1rem;
   border-radius: 8px;
   transition: all 0.2s ease-in-out;
@@ -65,7 +67,6 @@
   cursor: pointer;
 }
 
-/* Estilo Login */
 .navbar-login {
   color: #374151;
   background-color: transparent;
@@ -76,7 +77,6 @@
   background-color: #f3f4f6;
 }
 
-/* Estilo Register */
 .navbar-register {
   color: #ffffff;
   background-color: #2563eb;
@@ -93,28 +93,3 @@
   transform: translateY(0);
 }
 
-/* Modo oscuro opcional según preferencias del sistema */
-@media (prefers-color-scheme: dark) {
-  .navbar-header {
-    background-color: #111827;
-    border-bottom: 1px solid #1f2937;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-  }
-
-  .navbar-login {
-    color: #e5e7eb;
-  }
-
-  .navbar-login:hover {
-    color: #ffffff;
-    background-color: #1f2937;
-  }
-
-  .navbar-register {
-    background-color: #3b82f6;
-  }
-
-  .navbar-register:hover {
-    background-color: #2563eb;
-  }
-}
