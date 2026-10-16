@@ -6,6 +6,9 @@ const { Permisos } = require('./Permisos.Model.js')
 const { Rol } = require('./Rol.Model.js')
 const { Plan } = require('./Plan.Model.js')
 const { Prepaga } = require('./Prepaga.Model.js')
+const { Sesion } = require('./Sesion.model.js')
+const { DigitoVerificador } = require('./DigitoVerificador.model.js')
+
 
 // Medico <-> Rol
 Medico.belongsToMany(Rol, { through: 'MedicoRol', foreignKey: 'DNIMedico', otherKey: 'IDRol' })
@@ -21,7 +24,7 @@ Permisos.belongsToMany(Rol, { through: 'RolPermisos', foreignKey: 'IDPermisos', 
 
 // Usuario
 Usuario.belongsTo(Plan, { foreignKey: 'IDPlanes' })
-Usuario.belongsTo(Cita, { foreignKey: 'IDConsulta' })
+Sesion.belongsTo(Usuario, { foreignKey: 'DNIUsuario' })
 
 // Cita
 Cita.belongsTo(Hospital, { foreignKey: 'IDHospital' })
@@ -52,5 +55,7 @@ module.exports = {
     Permisos,
     Plan,
     Prepaga,
-    Rol
+    Rol,
+    Sesion,
+    DigitoVerificador
 }

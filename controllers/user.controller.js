@@ -1,7 +1,7 @@
 const { Usuario } = require('../models/index.model.js') 
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
-
+const { crearSesion } = require('./sesion.controller.js')
 
 
 const getUsers = async(req, res)=>{
@@ -91,8 +91,9 @@ const login = async (req, res) => {
             return res.status(403).json({ message: "Tu cuenta está inactiva" })
         }
 
+        const sesion = await crearSesion(usuario.DNIUsuario)
         const token = jwt.sign(
-            { DNIUsuario: usuario.DNIUsuario, Email: usuario.Email },
+            { DNIUsuario: usuario.DNIUsuario, Email: usuario.Email, sid: sesion.IDSesion },
             process.env.JWT_SECRET || "secreto_hospital",
             { expiresIn: "1h" }
         )
