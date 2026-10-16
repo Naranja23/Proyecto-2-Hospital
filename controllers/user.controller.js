@@ -1,7 +1,7 @@
 const { Usuario } = require('../models/index.model.js')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
-
+const { crearSesion } = require('./Sesion.controller.js')
 
 
 const getUsers = async(req, res)=>{
