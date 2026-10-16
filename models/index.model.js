@@ -10,38 +10,29 @@ const { Sesion } = require('./Sesion.model.js')
 const { DigitoVerificador } = require('./DigitoVerificador.model.js')
 
 
-// Medico <-> Rol
-Medico.belongsToMany(Rol, { through: 'MedicoRol', foreignKey: 'DNIMedico', otherKey: 'IDRol' })
-Rol.belongsToMany(Medico, { through: 'MedicoRol', foreignKey: 'IDRol', otherKey: 'DNIMedico' })
+Medico.belongsToMany(Rol, { through: 'MedicoRol', foreignKey: 'IDMedico', otherKey: 'IDRol' })
+Rol.belongsToMany(Medico, { through: 'MedicoRol', foreignKey: 'IDRol', otherKey: 'IDMedico' })
 
-// Usuario <-> Rol
 Usuario.belongsToMany(Rol, { through: 'UsuarioRol', foreignKey: 'DNIUsuario', otherKey: 'IDRol' })
 Rol.belongsToMany(Usuario, { through: 'UsuarioRol', foreignKey: 'IDRol', otherKey: 'DNIUsuario' })
 
-// Rol <-> Permisos
 Rol.belongsToMany(Permisos, { through: 'RolPermisos', foreignKey: 'IDRol', otherKey: 'IDPermisos' })
 Permisos.belongsToMany(Rol, { through: 'RolPermisos', foreignKey: 'IDPermisos', otherKey: 'IDRol' })
 
-// Usuario
 Usuario.belongsTo(Plan, { foreignKey: 'IDPlanes' })
 Sesion.belongsTo(Usuario, { foreignKey: 'DNIUsuario' })
 
-// Cita
 Cita.belongsTo(Hospital, { foreignKey: 'IDHospital' })
 Cita.belongsTo(Usuario, { foreignKey: 'DNIUsuario' })
-Cita.belongsTo(Medico, { foreignKey: 'DNIMedico' })
+Cita.belongsTo(Medico, { foreignKey: 'IDMedico' })
 
-// Medico
 Medico.belongsTo(Hospital, { foreignKey: 'IDHospital' })
 
-// Plan
 Plan.belongsTo(Prepaga, { foreignKey: 'IDPrepaga' })
 Plan.belongsTo(Hospital, { foreignKey: 'IDHospital' })
 
-// Prepaga
 Prepaga.belongsTo(Hospital, { foreignKey: 'IDHospital' })
 
-// Hospital: sin belongsTo de vuelta (evita las FK circulares del diagrama)
 Hospital.hasMany(Plan, { foreignKey: 'IDHospital' })
 Hospital.hasMany(Prepaga, { foreignKey: 'IDHospital' })
 Hospital.hasMany(Medico, { foreignKey: 'IDHospital' })

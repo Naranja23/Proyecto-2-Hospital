@@ -1,0 +1,160 @@
+.register {
+    min-height: calc(100vh - 65px);
+    display: grid;
+    grid-template-columns: 5fr 7fr;
+    background: #eef4f7;
+    font-family: Arial, sans-serif;
+}
+
+.panel-lateral {
+    background: #0a4a52;
+    color: #e6f4f5;
+    padding: 56px 48px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 28px;
+}
+
+.panel-lateral .marca {
+    margin: 0;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.panel-lateral h1 {
+    margin: 0;
+    font-size: 40px;
+    line-height: 1.1;
+    color: white;
+}
+
+.panel-lateral .beneficio {
+    margin: 0;
+    max-width: 340px;
+    padding-left: 16px;
+    border-left: 3px solid #4fb3bb;
+    line-height: 1.5;
+}
+
+
+.register-derecha {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 24px;
+}
+
+.register-form {
+    width: 100%;
+    max-width: 560px;
+    padding: 36px;
+    box-sizing: border-box;
+    background: white;
+    border: 1px solid #c5d5df;
+    border-radius: 16px;
+}
+
+.register-form h2 {
+    margin: 0 0 4px;
+    font-size: 28px;
+    color: #12304a;
+}
+
+.subtitulo {
+    margin: 0 0 24px;
+    color: #55708a;
+}
+
+.campos {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.campos label {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #12304a;
+}
+
+.campos input,
+.campos select {
+    padding: 12px;
+    border: 1px solid #c5d5df;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+.completo {
+    grid-column: 1 / -1;
+}
+
+.terminos {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 20px 0;
+    font-size: 14px;
+    color: #12304a;
+}
+
+.register-form button[type="submit"] {
+    width: 100%;
+    padding: 14px;
+    background: #0b6e77;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.register-form button[type="submit"]:hover {
+    background: #08545b;
+}
+
+.cambio-vista {
+    margin: 16px 0 0;
+    text-align: center;
+    color: #55708a;
+    font-size: 14px;
+}
+
+.btn-link {
+    background: none;
+    border: none;
+    color: #0b6e77;
+    font-weight: bold;
+    cursor: pointer;
+    text-decoration: underline;
+    padding: 0;
+    font-size: inherit;
+}
+
+.btn-link:hover {
+    color: #08545b;
+}
+
+.mensaje {
+    margin: 16px 0 0;
+    text-align: center;
+    color: #55708a;
+    font-size: 14px;
+    min-height: 20px;
+}
+
+@media (max-width: 800px) {
+    .register {
+        grid-template-columns: 1fr;
+    }
+
+    .campos {
+        grid-template-columns: 1fr;
+    }
+}

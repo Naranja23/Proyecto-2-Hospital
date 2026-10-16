@@ -9,17 +9,22 @@ const Hospital = sequelize.define('Hospital', {
         primaryKey: true,
         autoIncrement: true
     },
-    DireccionH: {
+    NombreH: {
         type: DataTypes.STRING,
         allowNull: false
     },
-    NombreH: {
+    DireccionH: {
         type: DataTypes.STRING,
         allowNull: false
     },
     SitioWeb: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: true
+    },
+    EstadoH: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        defaultValue: 'Activo'
     }
 },
 {

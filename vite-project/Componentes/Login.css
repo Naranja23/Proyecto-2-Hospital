@@ -1,0 +1,123 @@
+.login {
+    min-height: calc(100vh - 65px);
+    display: grid;
+    grid-template-columns: 5fr 7fr;
+    background: #eef4f7;
+    font-family: Arial, sans-serif;
+}
+
+/* ---------- Panel izquierdo ---------- */
+.login-panel-lateral {
+    background: #0a4a52;
+    color: #e6f4f5;
+    padding: 56px 48px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 28px;
+}
+
+.login-panel-lateral .marca {
+    margin: 0;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.login-panel-lateral h1 {
+    margin: 0;
+    font-size: 40px;
+    line-height: 1.1;
+    color: white;
+}
+
+.login-panel-lateral .beneficio {
+    margin: 0;
+    max-width: 340px;
+    padding-left: 16px;
+    border-left: 3px solid #4fb3bb;
+    line-height: 1.5;
+}
+
+/* ---------- Formulario derecho ---------- */
+.login-derecha {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 24px;
+}
+
+.login-form {
+    width: 100%;
+    max-width: 440px;
+    padding: 36px;
+    box-sizing: border-box;
+    background: white;
+    border: 1px solid #c5d5df;
+    border-radius: 16px;
+}
+
+.login-form h2 {
+    margin: 0 0 4px;
+    font-size: 28px;
+    color: #12304a;
+}
+
+.campos-login {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.campos-login label {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #12304a;
+}
+
+.campos-login input {
+    padding: 12px;
+    border: 1px solid #c5d5df;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+.login-form button[type="submit"] {
+    width: 100%;
+    padding: 14px;
+    background: #0b6e77;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.login-form button[type="submit"]:hover {
+    background: #08545b;
+}
+
+.login-form button[type="submit"]:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.mensaje-exito {
+    color: #0d7f4e !important;
+}
+
+.mensaje-error {
+    color: #b91c1c !important;
+}
+
+/* ---------- Celular ---------- */
+@media (max-width: 800px) {
+    .login {
+        grid-template-columns: 1fr;
+    }
+}
