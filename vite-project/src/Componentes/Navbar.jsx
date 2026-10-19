@@ -38,6 +38,13 @@ export default function Navbar({ onSeleccionarVista, vistaActual, usuarioLoguead
                 >
                   Inicio
                 </button>
+                <button
+                  type="button"
+                  className={`navbar-item navbar-login ${vistaActual === 'planes' ? 'activo' : ''}`}
+                  onClick={() => onSeleccionarVista && onSeleccionarVista('planes')}
+                >
+                  Gestionar planes
+                </button>
                 <span className="navbar-usuario">
                    {usuarioLogueado.NomApeU || usuarioLogueado.Email}
                 </span>

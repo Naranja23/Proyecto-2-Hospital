@@ -15,7 +15,7 @@ function calcularDVH(fila) {
 // DVV: hash de los DVH de toda la tabla (suma total de todos los DVH)
 const calcularDVV = (dvhs) => hash(dvhs.join(''))
 
-// Trae todas las filas de una tabla ordenadas por clave primaria
+// Trae todas las filas de una tabla ordenadas por clave primaria(lo usa par acalculos)
 function leerTabla(tabla) {
   const M = sequelize.models[tabla]
   return M.findAll({ order: [[M.primaryKeyAttribute, 'ASC']] })
