@@ -25,6 +25,10 @@ const Hospital = sequelize.define('Hospital', {
         type: DataTypes.STRING,
         allowNull: false,
         defaultValue: 'Activo'
+    },
+    DVV: {
+        type: DataTypes.STRING,
+        allowNull: true
     }
 },
 {

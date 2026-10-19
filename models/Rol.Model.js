@@ -16,6 +16,10 @@ const Rol = sequelize.define('Rol', {
     ActivoR: {
         type: DataTypes.BOOLEAN,
         allowNull: false
+    },
+    DVV: {
+        type: DataTypes.STRING,
+        allowNull: true
     }
 },
 {

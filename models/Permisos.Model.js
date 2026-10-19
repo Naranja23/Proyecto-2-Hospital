@@ -16,6 +16,10 @@ const Permisos = sequelize.define('Permisos', {
     ActivoP: {
         type: DataTypes.BOOLEAN,
         allowNull: false
+    },
+    DVV: {
+        type: DataTypes.STRING,
+        allowNull: true
     }
 },
 {

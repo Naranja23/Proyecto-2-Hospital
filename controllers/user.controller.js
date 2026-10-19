@@ -32,7 +32,6 @@ const getUserByID = async (req, res) => {
         res.status(500).json({ message: "Error al obtener usuario", error: error.message })
     }
 }
-
 // Registrar / Crear usuario
 const register = async (req, res) => {
     try {
@@ -42,29 +41,24 @@ const register = async (req, res) => {
             dni,
             fechaNacimiento,
             email,
-            password,
-            NomApeU,
-            DNIUsuario,
-            Email,
-            Password,
-            EdadU
+            password
         } = req.body
 
-        const nomApe = (NomApeU || `${nombre || ''} ${apellido || ''}`).trim()
-        const dniFinal = Number(DNIUsuario || dni)
-        const emailFinal = (Email || email || '').trim().toLowerCase()
-        const passwordFinal = Password || password
+        if (!nombre?.trim() || !apellido?.trim()) {
+            return res.status(400).json({ message: "El nombre y el apellido son obligatorios" })
+        }
+
+        const nomApe = `${nombre.trim()} ${apellido.trim()}`
+        const dniFinal = Number(dni)
+        const emailFinal = (email || '').trim().toLowerCase()
 
         if (!dniFinal || isNaN(dniFinal)) {
             return res.status(400).json({ message: "El DNI es obligatorio y debe ser numérico" })
         }
-        if (!nomApe) {
-            return res.status(400).json({ message: "El nombre y apellido son obligatorios" })
-        }
         if (!emailFinal) {
             return res.status(400).json({ message: "El correo electrónico es obligatorio" })
         }
-        if (!passwordFinal || passwordFinal.length < 6) {
+        if (!password || password.length < 6) {
             return res.status(400).json({ message: "La contraseña es obligatoria (mínimo 6 caracteres)" })
         }
 
@@ -80,9 +74,9 @@ const register = async (req, res) => {
             return res.status(400).json({ message: "El DNI ya está registrado" })
         }
 
-        // Calcular edad si se pasó fechaNacimiento
-        let edadCalculada = EdadU || null
-        if (!edadCalculada && fechaNacimiento) {
+        // Calcular edad desde fechaNacimiento
+        let edadCalculada = null
+        if (fechaNacimiento) {
             const fecha = new Date(fechaNacimiento)
             if (!isNaN(fecha.getTime())) {
                 const dif = Date.now() - fecha.getTime()
@@ -91,7 +85,7 @@ const register = async (req, res) => {
         }
 
         // Hashear contraseña
-        const hashedPassword = await bcrypt.hash(passwordFinal, 10)
+        const hashedPassword = await bcrypt.hash(password, 10)
 
         const nuevoUsuario = await Usuario.create({
             DNIUsuario: dniFinal,

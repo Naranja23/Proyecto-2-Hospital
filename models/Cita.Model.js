@@ -20,6 +20,10 @@ const Cita = sequelize.define('Cita', {
     FechaVisita: {
         type: DataTypes.DATE,
         allowNull: false
+    },
+    DVV: {
+        type: DataTypes.STRING,
+        allowNull: true
     }
 },
 {

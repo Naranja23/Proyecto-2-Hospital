@@ -6,7 +6,6 @@
     font-family: Arial, sans-serif;
 }
 
-/* ---------- Panel izquierdo ---------- */
 .login-panel-lateral {
     background: #0a4a52;
     color: #e6f4f5;
@@ -38,7 +37,6 @@
     line-height: 1.5;
 }
 
-/* ---------- Formulario derecho ---------- */
 .login-derecha {
     display: flex;
     justify-content: center;
@@ -137,7 +135,6 @@
     color: #b91c1c !important;
 }
 
-/* ---------- Celular ---------- */
 @media (max-width: 800px) {
     .login {
         grid-template-columns: 1fr;

@@ -92,3 +92,24 @@
 .navbar-register:active {
   transform: translateY(0);
 }
+
+.navbar-usuario {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #1f2937;
+  padding: 0.4rem 0.8rem;
+  background-color: #f3f4f6;
+  border-radius: 8px;
+}
+
+.navbar-logout {
+  color: #dc2626;
+  background-color: #fef2f2;
+  border: 1px solid #fee2e2;
+}
+
+.navbar-logout:hover {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+

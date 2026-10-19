@@ -28,6 +28,10 @@ const Prepaga = sequelize.define('Prepaga', {
     IDPlanes: {
         type: DataTypes.INTEGER,
         allowNull: false
+    },
+    DVV: {
+        type: DataTypes.STRING,
+        allowNull: true
     }
 },
 {
