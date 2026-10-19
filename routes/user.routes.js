@@ -21,7 +21,6 @@ routes.post('/register', register)
 routes.post('/login', login)
 routes.put('/:id', putUser)
 routes.delete('/:id', deleteUser)
-routes.post('/login', login)
 routes.post('/logout', auth, cerrarSesion)
 
 module.exports = routes

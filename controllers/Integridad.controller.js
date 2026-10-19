@@ -17,8 +17,9 @@ async function verificar(DNIUsuario = null) {
         errores.push({ tabla, tipo: 'DVH', fila: f.get(f.constructor.primaryKeyAttribute) })
       dvhs.push(f.DVH ?? '')
     }
-    const { DigitoVerificador } = sequelize.models
-    const guardado = (await DigitoVerificador.findByPk(tabla))?.DVV
+    const { DVV } = sequelize.models
+    const reg = await DVV.findOne({ where: { Tabla: tabla } })
+    const guardado = reg?.CalculoDVV
     if ((guardado ?? seguridad.calcularDVV([])) !== seguridad.calcularDVV(dvhs)) errores.push({ tabla, tipo: 'DVV' })
   }
   const resultado = { ok: errores.length === 0, errores }

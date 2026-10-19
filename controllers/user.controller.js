@@ -1,6 +1,7 @@
 const { Usuario } = require('../models/index.model.js')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
+const seguridad = require('./Seguridad.controller.js')
 const { crearSesion } = require('./Sesion.controller.js')
 
 
@@ -96,6 +97,7 @@ const register = async (req, res) => {
             EdadU: edadCalculada,
             EstadoU: 'Activo'
         })
+        await seguridad.calcularDV('Usuario')
 
         res.status(201).json({
             message: "Cuenta creada con éxito",
@@ -133,6 +135,7 @@ const putUser = async (req, res) => {
         }
 
         await user.save()
+        await seguridad.calcularDV('Usuario')
         res.status(200).json({ message: "Usuario actualizado", user })
     } catch (error) {
         res.status(500).json({ message: "Error al actualizar usuario", error: error.message })
@@ -147,6 +150,7 @@ const deleteUser = async (req, res) => {
             return res.status(404).json({ message: `El usuario con el ID ${req.params.id} no fue encontrado` })
         }
         await deletedUser.destroy()
+        await seguridad.calcularDV('Usuario')
         res.status(200).json({ message: "Usuario eliminado con éxito" })
     } catch (error) {
         res.status(500).json({ message: "Error al eliminar usuario", error: error.message })
