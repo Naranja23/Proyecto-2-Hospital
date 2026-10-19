@@ -1,11 +1,6 @@
-<<<<<<< HEAD
 const { Plan, Usuario } = require('../models/index.model.js')
 const seguridad = require('./Seguridad.controller.js')
 const bitacora = require('./Bitacora.controller.js')
-=======
-const { Plan } = require('../models/index.model.js')
-const { Op } = require('sequelize')
->>>>>>> 1a22381 (feat: add authentication state, navigation handling, and DVV fields to models)
 
 // Simula el "Sistema de pago" externo: rechaza si falta la tarjeta o si termina en 0
 async function procesarPago(datosPago) {
