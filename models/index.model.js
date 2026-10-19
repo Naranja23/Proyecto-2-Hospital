@@ -24,7 +24,7 @@ Sesion.belongsTo(Usuario, { foreignKey: 'DNIUsuario' })
 
 Cita.belongsTo(Hospital, { foreignKey: 'IDHospital' })
 Cita.belongsTo(Usuario, { foreignKey: 'DNIUsuario' })
-Cita.belongsTo(Medico, { foreignKey: 'IDMedico' })
+Cita.belongsTo(Medico, { foreignKey: 'DNIMedico' })
 
 Medico.belongsTo(Hospital, { foreignKey: 'IDHospital' })
 

@@ -4,6 +4,12 @@ import Login from './Componentes/Login'
 import RegisterConPanel from './Componentes/RegisterConPanel'
 import Home from './Componentes/Home'
 import './css/App.css'
+import axios from 'axios'
+import Planes from './Componentes/Planes'
+
+const API = 'http://localhost:3000'
+
+
 
 function App() {
   const [usuarioLogueado, setUsuarioLogueado] = useState(() => {
@@ -19,17 +25,43 @@ function App() {
     return localStorage.getItem('usuario') ? 'home' : 'login'
   })
 
+  const [cerrandoSesion, setCerrandoSesion] = useState(false)
+
+  const [errorSesion, setErrorSesion] = useState('')
+
   const manejarLoginExitoso = (usr) => {
     setUsuarioLogueado(usr)
     setVista('home')
   }
 
-  const cerrarSesion = () => {
-    localStorage.removeItem('token')
-    localStorage.removeItem('usuario')
-    setUsuarioLogueado(null)
-    setVista('login')
+  const limpiarSesionLocal = () => {
+  localStorage.removeItem('token')
+  localStorage.removeItem('usuario')
+  setUsuarioLogueado(null)
+  setErrorSesion('')
+  setVista('login')
+}
+
+const cerrarSesion = async () => {
+  setErrorSesion('')
+  setCerrandoSesion(true)
+  try {
+    await axios.post(
+      `${API}/users/logout`,
+      {},
+      { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
+    )
+    limpiarSesionLocal()
+  } catch (error) {
+    if (error.response?.status === 401) {
+      limpiarSesionLocal()
+    } else {
+      setErrorSesion(error.response?.data?.message || 'No fue posible cerrar sesión. Probá de nuevo.')
+    }
+  } finally {
+    setCerrandoSesion(false)
   }
+}
 
   return (
     <div className="app">
@@ -37,8 +69,15 @@ function App() {
         onSeleccionarVista={setVista}
         vistaActual={vista}
         usuarioLogueado={usuarioLogueado}
-        onCerrarSesion={cerrarSesion}
+        onCerrarSesion={cerrarSesion} 
+        cerrandoSesion={cerrandoSesion}
       />
+      {errorSesion && (
+        <div className="aviso-sesion" role="alert">
+          <span>{errorSesion}</span>
+          <button type="button" onClick={cerrarSesion} disabled={cerrandoSesion}>Reintentar</button>
+        </div>
+      )}
       <main className="content">
         {vista === 'home' && (
           <Home
@@ -56,6 +95,9 @@ function App() {
           <RegisterConPanel
             onIrALogin={() => setVista('login')}
           />
+        )}
+        {vista === 'planes' && usuarioLogueado && (
+          <Planes onSesionExpirada={limpiarSesionLocal} />
         )}
       </main>
     </div>
