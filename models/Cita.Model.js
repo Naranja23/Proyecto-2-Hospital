@@ -16,8 +16,18 @@ const Cita = sequelize.define('Cita', {
         allowNull: false, 
         defaultValue: 'Reservado' 
     },
+<<<<<<< HEAD
     DVH: { 
         type: DataTypes.STRING 
+=======
+    FechaVisita: {
+        type: DataTypes.DATE,
+        allowNull: false
+    },
+    DVV: {
+        type: DataTypes.STRING,
+        allowNull: true
+>>>>>>> 1a22381 (feat: add authentication state, navigation handling, and DVV fields to models)
     }
 }, { tableName: 'Cita', timestamps: false })
 

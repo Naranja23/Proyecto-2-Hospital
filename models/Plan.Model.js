@@ -28,6 +28,10 @@ const Plan = sequelize.define('Plan', {
     IDHospital: {
         type: DataTypes.INTEGER,
         allowNull: false
+    },
+    DVV: {
+        type: DataTypes.STRING,
+        allowNull: true
     }
 },
 {

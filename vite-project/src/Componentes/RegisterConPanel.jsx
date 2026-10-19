@@ -1,7 +1,7 @@
 import { useState } from "react"
 import axios from "axios"
 import "../css/RegisterConPanel.css"
-
+    
 function RegisterConPanel({ onIrALogin }) {
 
     const [nombre, setNombre] = useState("")

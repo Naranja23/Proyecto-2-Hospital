@@ -1,4 +1,4 @@
-const { User, Hobby } = require('../models/index.js')
+const { Medico } = require('../models/index.model.js')
 const { Op } = require('sequelize')
 
 

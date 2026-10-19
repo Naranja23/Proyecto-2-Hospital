@@ -1,7 +1,7 @@
 import React from 'react';
 import '../css/Navbar.css';
 
-export default function Navbar({ onSeleccionarVista, vistaActual }) {
+export default function Navbar({ onSeleccionarVista, vistaActual, usuarioLogueado, onCerrarSesion }) {
   return (
     <header className="navbar-header">
       <nav className="navbar" aria-label="Navegación principal">
@@ -12,7 +12,11 @@ export default function Navbar({ onSeleccionarVista, vistaActual }) {
             aria-label="Inicio"
             onClick={(e) => {
               e.preventDefault();
-              if (onSeleccionarVista) onSeleccionarVista('home');
+              if (usuarioLogueado) {
+                if (onSeleccionarVista) onSeleccionarVista('home');
+              } else {
+                if (onSeleccionarVista) onSeleccionarVista('login');
+              }
             }}
           >
             <img
@@ -25,20 +29,44 @@ export default function Navbar({ onSeleccionarVista, vistaActual }) {
           </a>
 
           <div className="navbar-links">
-            <button
-              type="button"
-              className={`navbar-item navbar-login ${vistaActual === 'login' ? 'activo' : ''}`}
-              onClick={() => onSeleccionarVista && onSeleccionarVista('login')}
-            >
-              Login
-            </button>
-            <button
-              type="button"
-              className={`navbar-item navbar-register ${vistaActual === 'register' ? 'activo' : ''}`}
-              onClick={() => onSeleccionarVista && onSeleccionarVista('register')}
-            >
-              Register
-            </button>
+            {usuarioLogueado ? (
+              <>
+                <button
+                  type="button"
+                  className={`navbar-item navbar-login ${vistaActual === 'home' ? 'activo' : ''}`}
+                  onClick={() => onSeleccionarVista && onSeleccionarVista('home')}
+                >
+                  Inicio
+                </button>
+                <span className="navbar-usuario">
+                   {usuarioLogueado.NomApeU || usuarioLogueado.Email}
+                </span>
+                <button
+                  type="button"
+                  className="navbar-item navbar-logout"
+                  onClick={onCerrarSesion}
+                >
+                  Cerrar sesión
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  type="button"
+                  className={`navbar-item navbar-login ${vistaActual === 'login' ? 'activo' : ''}`}
+                  onClick={() => onSeleccionarVista && onSeleccionarVista('login')}
+                >
+                  Login
+                </button>
+                <button
+                  type="button"
+                  className={`navbar-item navbar-register ${vistaActual === 'register' ? 'activo' : ''}`}
+                  onClick={() => onSeleccionarVista && onSeleccionarVista('register')}
+                >
+                  Register
+                </button>
+              </>
+            )}
           </div>
         </div>
       </nav>

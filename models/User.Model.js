@@ -28,10 +28,19 @@ const Usuario = sequelize.define('Usuario', {
     },
     Password: {
         type: DataTypes.STRING,
+<<<<<<< HEAD
         allowNull: false
     },
     DVH: {
         type: DataTypes.STRING
+=======
+        allowNull: false,
+        defaultValue: '123456'
+    },
+    DVV: {
+        type: DataTypes.STRING,
+        allowNull: true
+>>>>>>> 1a22381 (feat: add authentication state, navigation handling, and DVV fields to models)
     }
 },
 {

@@ -26,9 +26,11 @@ function Login({ onIrARegister, onLoginExitoso }) {
             }
 
             setMensaje(`¡Bienvenido/a, ${usuario?.NomApeU || "Usuario"}!`)
-            if (onLoginExitoso) {
-                onLoginExitoso(usuario)
-            }
+            setTimeout(() => {
+                if (onLoginExitoso) {
+                    onLoginExitoso(usuario)
+                }
+            }, 600)
         } catch (error) {
             const errorMsg = error.response?.data?.message || "Error al iniciar sesión. Verificá tus credenciales."
             setMensaje(errorMsg)
@@ -87,9 +89,11 @@ function Login({ onIrARegister, onLoginExitoso }) {
                         </p>
                     )}
 
-                    <p className={`mensaje ${mensaje.includes("Bienvenido") ? "mensaje-exito" : "mensaje-error"}`}>
-                        {mensaje}
-                    </p>
+                    {mensaje && (
+                        <p className={`mensaje ${mensaje.includes("Bienvenido") ? "mensaje-exito" : "mensaje-error"}`}>
+                            {mensaje}
+                        </p>
+                    )}
                 </form>
             </div>
         </div>
