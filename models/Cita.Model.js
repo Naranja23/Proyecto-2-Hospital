@@ -21,7 +21,7 @@ const Cita = sequelize.define('Cita', {
         type: DataTypes.DATE,
         allowNull: false
     },
-    DVV: {
+    DVH: {
         type: DataTypes.STRING,
         allowNull: true
     }

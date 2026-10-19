@@ -31,7 +31,7 @@ const Usuario = sequelize.define('Usuario', {
         allowNull: false,
         defaultValue: '123456'
     },
-    DVV: {
+    DVH: {
         type: DataTypes.STRING,
         allowNull: true
     }

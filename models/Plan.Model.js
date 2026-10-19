@@ -29,7 +29,7 @@ const Plan = sequelize.define('Plan', {
         type: DataTypes.INTEGER,
         allowNull: false
     },
-    DVV: {
+    DVH: {
         type: DataTypes.STRING,
         allowNull: true
     }
