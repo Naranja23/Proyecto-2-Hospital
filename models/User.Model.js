@@ -37,7 +37,7 @@ const Usuario = sequelize.define('Usuario', {
         allowNull: false,
         defaultValue: '123456'
     },
-    DVV: {
+    DVH: {
         type: DataTypes.STRING,
         allowNull: true
 >>>>>>> 1a22381 (feat: add authentication state, navigation handling, and DVV fields to models)

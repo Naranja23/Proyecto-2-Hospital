@@ -29,7 +29,7 @@ const Medico = sequelize.define('Medico', {
         allowNull: false,
         defaultValue: 'Activo'
     },
-    DVV: {
+    DVH: {
         type: DataTypes.STRING,
         allowNull: true
     }

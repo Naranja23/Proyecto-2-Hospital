@@ -24,7 +24,7 @@ const Cita = sequelize.define('Cita', {
         type: DataTypes.DATE,
         allowNull: false
     },
-    DVV: {
+    DVH: {
         type: DataTypes.STRING,
         allowNull: true
 >>>>>>> 1a22381 (feat: add authentication state, navigation handling, and DVV fields to models)

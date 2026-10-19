@@ -17,7 +17,7 @@ const Permisos = sequelize.define('Permisos', {
         type: DataTypes.BOOLEAN,
         allowNull: false
     },
-    DVV: {
+    DVH: {
         type: DataTypes.STRING,
         allowNull: true
     }
