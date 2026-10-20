@@ -3,10 +3,10 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import Navbar from './Componentes/Navbar'
 import Login from './Componentes/Login'
 import RegisterConPanel from './Componentes/RegisterConPanel'
-import Home from './Componentes/Home'
 import Valoraciones from './Componentes/Valoraciones'
 import Planes from './Componentes/Planes'
 import Historial from './Componentes/Historial'
+import Home from './Componentes/Home'
 import './css/App.css'
 import axios from 'axios'
 
@@ -87,7 +87,7 @@ function App() {
             />
             <Route
               path="/home"
-              element={usuarioLogueado ? <Home usuario={usuarioLogueado} onCerrarSesion={cerrarSesion} /> : <Navigate to="/login" replace />}
+              element={usuarioLogueado ? <Home usuario={usuarioLogueado} /> : <Navigate to="/login" replace />}
             />
             <Route
               path="/turnos"

@@ -1,0 +1,14 @@
+.home-container {
+  max-width: 900px;
+  margin: 60px auto;
+  padding: 40px 24px;
+  text-align: center;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+
+.home-title {
+  font-size: 2.5rem;
+  color: #0f172a;
+  margin-bottom: 12px;
+  font-weight: 700;
+}
