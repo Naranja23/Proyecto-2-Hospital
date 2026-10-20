@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { Link } from "react-router-dom"
 import axios from "axios"
 import "../css/RegisterConPanel.css"
     
@@ -109,14 +110,12 @@ function RegisterConPanel({ onIrALogin }) {
 
                     <button type="submit">Crear cuenta</button>
 
-                    {onIrALogin && (
-                        <p className="cambio-vista">
-                            ¿Ya tenés una cuenta?{" "}
-                            <button type="button" className="btn-link" onClick={onIrALogin}>
-                                Iniciar sesión
-                            </button>
-                        </p>
-                    )}
+                    <p className="cambio-vista">
+                        ¿Ya tenés una cuenta?{" "}
+                        <Link to="/login" className="btn-link">
+                            Iniciar sesión
+                        </Link>
+                    </p>
 
                     <p className="mensaje">{mensaje}</p>
                 </form>

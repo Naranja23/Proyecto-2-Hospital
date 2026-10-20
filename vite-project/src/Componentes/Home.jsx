@@ -1,19 +1,15 @@
 import React from 'react';
+import '../css/Home.css';
 
-function Home({ onSeleccionarVista }) {
+function Home({ usuario }) {
   return (
     <div className="home-container">
-      <h1>Bienvenido a TurnoSalud</h1>
-      <p>Gestioná tus turnos médicos fácilmente.</p>
-
-      <button
-        type="button"
-        onClick={() => onSeleccionarVista?.('valoraciones')}
-      >
-        Consultar valoraciones de hospitales
-      </button>
+      <h1 className="home-title">
+        ¡Hola{usuario?.NomApeU ? `, ${usuario.NomApeU}` : ''}! Bienvenido a TurnoSalud
+      </h1>
     </div>
-  )
+  );
 }
 
 export default Home;
+

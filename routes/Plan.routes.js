@@ -1,5 +1,5 @@
 const { Router } = require('express')
-const { auth } = require('../controllers/Seguridad.controller.js')
+const { auth } = require('../middlewares/auth.middleware.js')
 const { verPlanes, administrarPlan, cambiarPlan, eliminarPlan } = require('../controllers/Plan.controller.js')
 const routes = Router()
 routes.get('/', auth, verPlanes)

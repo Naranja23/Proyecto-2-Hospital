@@ -11,7 +11,7 @@ function verificarSesion(req, res, next) {
   }
 
   const token = cabecera.split(' ')[1]; 
-// JavaScript busca el espacio y divide el texto en dos partes:
+  // JavaScript busca el espacio y divide el texto en dos partes:
 //[0] -> "Bearer"
 
 //[1] -> "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." (el token real)
@@ -21,7 +21,7 @@ function verificarSesion(req, res, next) {
   }
 
   try {
-    const usuario = jwt.verify(token, 'CLAVE_SECRETA'); // Acá ponés tu clave secreta
+    const usuario = jwt.verify(token, 'CLAVE_SECRETA'); // Asegurate de usar variables de entorno en producción (process.env.CLAVE_SECRETA)
     req.user = usuario;
     return next();
   } catch (error) {
@@ -33,10 +33,13 @@ function verificarSesion(req, res, next) {
 function soloAdmin(req, res, next) {
   let rolUsuario = '';
 
-  if (typeof req.user.rol === 'string') {
-    rolUsuario = req.user.rol;
-  } else {
-    rolUsuario = req.user.rol.nombre;
+  // Validamos de forma segura para que no rompa si req.user.rol no existe
+  if (req.user && req.user.rol) {
+    if (typeof req.user.rol === 'string') {
+      rolUsuario = req.user.rol;
+    } else if (typeof req.user.rol.nombre === 'string') {
+      rolUsuario = req.user.rol.nombre;
+    }
   }
 
   if (rolUsuario !== ROL_ADMIN) {
@@ -47,3 +50,4 @@ function soloAdmin(req, res, next) {
 }
 
 module.exports = { verificarSesion, soloAdmin };
+

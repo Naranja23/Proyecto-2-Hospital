@@ -141,7 +141,7 @@ const actualizar = async (req, res) => {
 
         // Quitamos de la cartilla los hospitales que se desmarcaron.
         for (let i = 0; i < quitar.length; i++) {
-            await Cartilla.destroy({
+            Cartilla.destroy({
                 where: {
                     prepagaId: prepagaId,
                     hospitalId: quitar[i]
