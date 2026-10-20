@@ -42,4 +42,4 @@ async function calcularDV(tabla) {
 }
 
 
-module.exports = { calcularDVH, calcularDVV, leerTabla, calcularDV, auth }
+module.exports = { calcularDVH, calcularDVV, leerTabla, calcularDV }

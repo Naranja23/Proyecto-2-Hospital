@@ -5,6 +5,17 @@ const bitacora = require('./Bitacora.controller.js')
 
 const DIAS_PARA_EDITAR = 7
 
+const verHospitales = async (req, res) => {
+  try {
+    const hospitales = await Hospital.findAll({
+      attributes: ['IDHospital', 'NombreH', 'DireccionH', 'SitioWeb', 'EstadoH']
+    })
+    return res.status(200).json(hospitales)
+  } catch (error) {
+    return res.status(500).json({ message: 'No se pudieron obtener los hospitales' })
+  }
+}
+
 // CU019: consultar el promedio de valoraciones de un hospital.
 const verPromedioHospital = async (req, res) => {
   const dni = req.usuario.DNIUsuario
@@ -110,4 +121,4 @@ const editarValoracion = async (req, res) => {
   }
 }
 
-module.exports = { verPromedioHospital, verMisValoraciones, editarValoracion }
+module.exports = { verHospitales, verPromedioHospital, verMisValoraciones, editarValoracion }

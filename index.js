@@ -6,12 +6,6 @@ const { DataTypes } = require('sequelize')
 require('./models/index.model.js')
 const { sequelize } = require('./config/db.js')
 
-
-const { corsMiddleware } = require('./middlewares/cors.middleware.js')
-
-server.use(require('cors')())
-server.use(corsMiddleware)
-
 server.use(express.json())
 server.get('/', (req, res) => res.status(200).json({ message: 'El server está ON' }))
 server.use('/users', require('./routes/user.routes.js'))
@@ -19,6 +13,8 @@ server.use('/users', require('./routes/user.routes.js'))
 server.use('/seguridad', require('./routes/Seguridad.routes.js'))
 server.use('/turnos', require('./routes/Cita.routes.js'))
 server.use('/planes', require('./routes/Plan.routes.js'))
+server.use('/valoraciones', require('./routes/Valoracion.routes.js'))
+
 const PORT = 3000
 const iniciar = async () => {
   await sequelize.authenticate()
