@@ -7,6 +7,7 @@ import Valoraciones from './Componentes/Valoraciones'
 import Planes from './Componentes/Planes'
 import Historial from './Componentes/Historial'
 import Home from './Componentes/Home'
+import Perfil from './Componentes/Perfil'
 import './css/App.css'
 import axios from 'axios'
 
@@ -104,6 +105,16 @@ function App() {
             <Route
               path="/planes"
               element={usuarioLogueado ? <Planes onSesionExpirada={limpiarSesionLocal} /> : <Navigate to="/login" replace />}
+            />
+            <Route
+              path="/perfil"
+              element={usuarioLogueado ? (
+                <Perfil
+                  usuario={usuarioLogueado}
+                  onUsuarioActualizado={setUsuarioLogueado}
+                  onSesionExpirada={limpiarSesionLocal}
+                />
+              ) : <Navigate to="/login" replace />}
             />
             <Route
               path="*"
