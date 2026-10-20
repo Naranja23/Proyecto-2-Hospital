@@ -45,13 +45,20 @@ function Perfil({ usuario, onUsuarioActualizado, onSesionExpirada }) {
 
     setGuardando(true)
     try {
-      const res = await axios.put(`${API}/users/${dni}`, {
-        NomApeU: nombre.trim(),
-        Email: email.trim(),
-        EdadU: edad ? Number(edad) : null
-      })
+      const token = localStorage.getItem('token')
+      const res = await axios.put(
+        `${API}/users/perfil`,
+        {
+          NomApeU: nombre.trim(),
+          Email: email.trim(),
+          EdadU: edad ? Number(edad) : null
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` }
+        }
+      )
 
-      const usuarioActualizado = {
+      const usuarioActualizado = res.data?.usuario || {
         ...usuario,
         NomApeU: nombre.trim(),
         Email: email.trim(),

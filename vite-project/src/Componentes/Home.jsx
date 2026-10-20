@@ -32,10 +32,12 @@ function Home({ usuario }) {
       })
   }, [])
 
-  // Coordenadas para el mapa (por defecto CABA)
-  const latActual = hospitalSeleccionado?.lat || -34.6037
-  const lonActual = hospitalSeleccionado?.lon || -58.3816
-  const mapUrl = `https://www.openstreetmap.org/export/embed.html?bbox=${lonActual - 0.02}%2C${latActual - 0.015}%2C${lonActual + 0.02}%2C${latActual + 0.015}&layer=mapnik&marker=${latActual}%2C${lonActual}`
+  // Ubicación para el mapa usando directamente la dirección del hospital (Google Maps)
+  const direccionHospital = hospitalSeleccionado
+    ? `${hospitalSeleccionado.NombreH}, ${hospitalSeleccionado.DireccionH}`
+    : 'Hospitales Buenos Aires Argentina'
+  const query = encodeURIComponent(direccionHospital)
+  const mapUrl = `https://maps.google.com/maps?q=${query}&output=embed`
 
   return (
     <div className="home-wrapper">
