@@ -2,10 +2,10 @@
 
 const router = require('express').Router();
 const ctrl = require('../controllers/Hospital.controller');
-const { verificarSesion, soloAdmin } = require('../middlewares/auth.middleware');
+const { auth, soloAdmin } = require('../middlewares/auth.middleware');
 
 // Actor principal: Administrador con sesión iniciada
-router.use(verificarSesion, soloAdmin);
+router.use(auth, soloAdmin);
 
 router.post('/', ctrl.crear); // CU005
 

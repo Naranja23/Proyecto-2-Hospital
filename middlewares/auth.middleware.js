@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const ROL_ADMIN = 'Administrador';
 
 // 1. Verifica que el token JWT sea válido
-function verificarSesion(req, res, next) {
+function auth(req, res, next) {
   const cabecera = req.headers.authorization;
   
   if (!cabecera) {
@@ -21,7 +21,7 @@ function verificarSesion(req, res, next) {
   }
 
   try {
-    const usuario = jwt.verify(token, 'CLAVE_SECRETA'); // Asegurate de usar variables de entorno en producción (process.env.CLAVE_SECRETA)
+    const usuario = jwt.verify(token, 'misecreto'); // Asegurate de usar variables de entorno en producción (process.env.CLAVE_SECRETA)
     req.user = usuario;
     return next();
   } catch (error) {
@@ -49,5 +49,5 @@ function soloAdmin(req, res, next) {
   return next();
 }
 
-module.exports = { verificarSesion, soloAdmin };
+module.exports = { auth, soloAdmin };
 
