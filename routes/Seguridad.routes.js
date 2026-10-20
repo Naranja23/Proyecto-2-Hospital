@@ -1,5 +1,5 @@
 const { Router } = require('express')
-const { auth } = require('../controllers/Seguridad.controller.js')
+const { auth } = require('../middlewares/auth.middleware.js')
 const { verificarIntegridad, rectificarIntegridad } = require('../controllers/Integridad.controller.js')
 const routes = Router()
 routes.get('/integridad', auth, verificarIntegridad)

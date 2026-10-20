@@ -10,7 +10,7 @@ const {
 } = require('../controllers/user.controller.js')
 
 const routes = Router()
-const { auth } = require('../controllers/Seguridad.controller.js')
+const { auth } = require('../middlewares/auth.middleware.js')
 const { cerrarSesion } = require('../controllers/Sesion.controller.js')
 
 

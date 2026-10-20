@@ -7,16 +7,10 @@ require('./models/index.model.js')
 const { sequelize } = require('./config/db.js')
 
 
-server.use(require('cors')())
+const { corsMiddleware } = require('./middlewares/cors.middleware.js')
 
-// Habilitar CORS para permitir peticiones desde el frontend de Vite
-server.use((req, res, next) => {
-    res.header("Access-Control-Allow-Origin", "*")
-    res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization")
-    if (req.method === "OPTIONS") return res.sendStatus(200)
-    next()
-})
+server.use(require('cors')())
+server.use(corsMiddleware)
 
 server.use(express.json())
 server.get('/', (req, res) => res.status(200).json({ message: 'El server está ON' }))

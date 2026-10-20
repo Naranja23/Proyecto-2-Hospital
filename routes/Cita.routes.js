@@ -1,5 +1,5 @@
 const { Router } = require('express')
-const { auth } = require('../controllers/Seguridad.controller.js')
+const { auth } = require('../middlewares/auth.middleware.js')
 const { sacarTurno, reservarTurno, verHistorial, calificarTurno   } = require('../controllers/Citas.controller.js')
 const routes = Router()
 
