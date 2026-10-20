@@ -1,0 +1,50 @@
+/* Solo lo específico de la cartilla; el resto está en Hospitales.css */
+.cart-selector {
+  max-width: 24rem;
+}
+
+.cart-lista {
+  list-style: none;
+  margin: 0 0 1rem;
+  padding: 0;
+  border: 1px solid var(--hosp-line);
+  border-radius: 8px;
+  background: var(--hosp-surface);
+}
+.cart-lista li + li {
+  border-top: 1px solid var(--hosp-line);
+}
+.cart-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+}
+.cart-item input {
+  width: 1.1rem;
+  height: 1.1rem;
+  accent-color: var(--hosp-accent);
+}
+.cart-item__texto {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+.cart-item__ciudad {
+  font-size: 0.85rem;
+  color: var(--hosp-muted);
+}
+
+.cart-pie {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+.cart-pie__resumen {
+  margin: 0 auto 0 0;
+  color: var(--hosp-muted);
+  font-size: 0.9rem;
+}

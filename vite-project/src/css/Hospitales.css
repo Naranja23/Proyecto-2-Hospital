@@ -1,0 +1,151 @@
+/* Estilos base compartidos por AgregarHospital, Cartilla y SoloAdmin.
+   Los colores están como variables: cambialos para que combinen con el resto de tu app. */
+.hosp-page {
+  --hosp-ink: #1f2d2b;
+  --hosp-muted: #5b6b68;
+  --hosp-line: #d5dedb;
+  --hosp-surface: #ffffff;
+  --hosp-accent: #0f6b63;
+  --hosp-accent-ink: #ffffff;
+  --hosp-danger: #a8261d;
+  --hosp-danger-bg: #fbe9e7;
+  --hosp-ok-ink: #0b5a43;
+  --hosp-ok-bg: #e0f2ea;
+
+  box-sizing: border-box;
+  max-width: 62rem;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 3rem;
+  color: var(--hosp-ink);
+  line-height: 1.5;
+}
+.hosp-page *,
+.hosp-page *::before,
+.hosp-page *::after {
+  box-sizing: inherit;
+}
+
+.hosp-encabezado {
+  margin-bottom: 1.25rem;
+}
+.hosp-encabezado h1 {
+  margin: 0;
+  font-size: 1.75rem;
+  line-height: 1.2;
+}
+.hosp-subtitulo {
+  margin: 0.25rem 0 0;
+  color: var(--hosp-muted);
+}
+
+.hosp-btn {
+  font: inherit;
+  font-size: 0.9rem;
+  padding: 0.5rem 0.9rem;
+  border: 1px solid var(--hosp-line);
+  border-radius: 6px;
+  background: var(--hosp-surface);
+  color: var(--hosp-ink);
+  cursor: pointer;
+}
+.hosp-btn:hover:not(:disabled) {
+  border-color: var(--hosp-ink);
+}
+.hosp-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.hosp-btn--primario {
+  background: var(--hosp-accent);
+  border-color: var(--hosp-accent);
+  color: var(--hosp-accent-ink);
+}
+.hosp-btn--primario:hover:not(:disabled) {
+  border-color: var(--hosp-accent);
+  filter: brightness(1.1);
+}
+/* También lo usan los <Link> de react-router (son <a>) */
+.hosp-btn--link {
+  border: none;
+  background: none;
+  padding: 0.25rem 0.1rem;
+  text-decoration: underline;
+  color: inherit;
+}
+.hosp-page :focus-visible {
+  outline: 3px solid var(--hosp-accent);
+  outline-offset: 2px;
+}
+
+.hosp-aviso {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  border-radius: 6px;
+}
+.hosp-aviso--ok {
+  background: var(--hosp-ok-bg);
+  color: var(--hosp-ok-ink);
+}
+.hosp-aviso--error {
+  background: var(--hosp-danger-bg);
+  color: var(--hosp-danger);
+}
+.hosp-aviso__acciones {
+  display: flex;
+  gap: 1rem;
+}
+
+.hosp-vacio {
+  padding: 2rem 1rem;
+  text-align: center;
+  color: var(--hosp-muted);
+}
+
+.hosp-form {
+  max-width: 30rem;
+}
+.hosp-form__pie {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1.25rem;
+}
+
+.hosp-campo {
+  margin-bottom: 1rem;
+}
+.hosp-campo label {
+  display: block;
+  margin-bottom: 0.25rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+.hosp-campo input,
+.hosp-campo select {
+  display: block;
+  width: 100%;
+  font: inherit;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid var(--hosp-line);
+  border-radius: 6px;
+  background: var(--hosp-surface);
+  color: var(--hosp-ink);
+}
+.hosp-campo input[aria-invalid='true'] {
+  border-color: var(--hosp-danger);
+}
+.hosp-campo__error {
+  margin: 0.25rem 0 0;
+  font-size: 0.85rem;
+  color: var(--hosp-danger);
+}
+
+@media (max-width: 40rem) {
+  .hosp-encabezado h1 {
+    font-size: 1.4rem;
+  }
+}

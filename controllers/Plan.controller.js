@@ -56,4 +56,5 @@ const cambiarPlan = async (req, res) => {
 const eliminarPlan = (req, res) =>
   res.status(409).json({ message: 'No es posible quedarse sin un plan activo: elegí un plan nuevo' })
 
+
 module.exports = { verPlanes, administrarPlan, cambiarPlan, eliminarPlan }
