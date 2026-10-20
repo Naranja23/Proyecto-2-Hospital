@@ -6,7 +6,7 @@ import Home from './Componentes/Home'
 import './css/App.css'
 import axios from 'axios'
 import Planes from './Componentes/Planes'
-
+import Historial from './Componentes/Historial'
 const API = 'http://localhost:3000'
 
 
@@ -35,33 +35,33 @@ function App() {
   }
 
   const limpiarSesionLocal = () => {
-  localStorage.removeItem('token')
-  localStorage.removeItem('usuario')
-  setUsuarioLogueado(null)
-  setErrorSesion('')
-  setVista('login')
-}
-
-const cerrarSesion = async () => {
-  setErrorSesion('')
-  setCerrandoSesion(true)
-  try {
-    await axios.post(
-      `${API}/users/logout`,
-      {},
-      { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
-    )
-    limpiarSesionLocal()
-  } catch (error) {
-    if (error.response?.status === 401) {
-      limpiarSesionLocal()
-    } else {
-      setErrorSesion(error.response?.data?.message || 'No fue posible cerrar sesión. Probá de nuevo.')
-    }
-  } finally {
-    setCerrandoSesion(false)
+    localStorage.removeItem('token')
+    localStorage.removeItem('usuario')
+    setUsuarioLogueado(null)
+    setErrorSesion('')
+    setVista('login')
   }
-}
+
+  const cerrarSesion = async () => {
+    setErrorSesion('')
+    setCerrandoSesion(true)
+    try {
+      await axios.post(
+        `${API}/users/logout`,
+        {},
+        { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
+      )
+      limpiarSesionLocal()
+    } catch (error) {
+      if (error.response?.status === 401) {
+        limpiarSesionLocal()
+      } else {
+        setErrorSesion(error.response?.data?.message || 'No fue posible cerrar sesión. Probá de nuevo.')
+      }
+    } finally {
+      setCerrandoSesion(false)
+    }
+  }
 
   return (
     <div className="app">
@@ -69,7 +69,7 @@ const cerrarSesion = async () => {
         onSeleccionarVista={setVista}
         vistaActual={vista}
         usuarioLogueado={usuarioLogueado}
-        onCerrarSesion={cerrarSesion} 
+        onCerrarSesion={cerrarSesion}
         cerrandoSesion={cerrandoSesion}
       />
       {errorSesion && (
@@ -98,6 +98,9 @@ const cerrarSesion = async () => {
         )}
         {vista === 'planes' && usuarioLogueado && (
           <Planes onSesionExpirada={limpiarSesionLocal} />
+        )}
+        {vista === 'turnos' && usuarioLogueado && (
+          <Historial onSesionExpirada={limpiarSesionLocal} />
         )}
       </main>
     </div>

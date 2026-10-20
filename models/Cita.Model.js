@@ -16,10 +16,24 @@ const Cita = sequelize.define('Cita', {
         allowNull: false, 
         defaultValue: 'Reservado' 
     },
+    Calificada: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false
+    },
+       Calificacion: {
+        type: DataTypes.INTEGER,
+        allowNull: true
+    },
+    Comentario: {
+        type: DataTypes.STRING,
+        allowNull: true
+    },
     DVH: { 
         type: DataTypes.STRING,
         allowNull: true
-    }
+    },
+
 }, { 
     tableName: 'Cita', 
     timestamps: false 

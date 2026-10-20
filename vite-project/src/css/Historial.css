@@ -1,0 +1,78 @@
+.historial-exito {
+    padding: 12px 16px;
+    margin: 0 0 20px;
+    border-radius: 10px;
+    background: #e3f6ea;
+    color: #17623a;
+}
+.estrellas-fijas { color: #e0a800; letter-spacing: 2px; }
+.btn-calificar {
+    padding: 6px 14px;
+    border: none;
+    border-radius: 8px;
+    background: #0b6e77;
+    color: white;
+    cursor: pointer;
+}
+.btn-calificar:hover { background: #08545b; }
+
+.calificar-fondo {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+.calificar-form {
+    width: 100%;
+    max-width: 420px;
+    padding: 28px;
+    box-sizing: border-box;
+    background: white;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+.calificar-form h2 { margin: 0; font-size: 22px; }
+.calificar-detalle { margin: 0; color: #54718a; }
+.estrellas { display: flex; gap: 4px; }
+.estrella {
+    background: none;
+    border: none;
+    font-size: 36px;
+    line-height: 1;
+    color: #c5d5df;
+    cursor: pointer;
+    padding: 0;
+}
+.estrella.llena { color: #e0a800; }
+.calificar-comentario {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 14px;
+    font-weight: bold;
+}
+.calificar-comentario textarea {
+    padding: 10px;
+    border: 1px solid #c5d5df;
+    border-radius: 8px;
+    font-size: 15px;
+    font-family: inherit;
+    resize: vertical;
+}
+.calificar-error { margin: 0; color: #9b1c1c; font-size: 14px; }
+.calificar-acciones { display: flex; justify-content: flex-end; gap: 10px; }
+.calificar-acciones button {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 10px;
+    background: #0a4a52;
+    color: white;
+    cursor: pointer;
+}
+.calificar-acciones .btn-cancelar { background: #e5edf2; color: #12304a; }
+.calificar-acciones button:disabled { opacity: 0.6; cursor: not-allowed; }

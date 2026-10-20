@@ -1,4 +1,4 @@
-const { Op } = require('sequelize')
+const { Op , ConnectionError  } = require('sequelize')
 const { sequelize } = require('../config/db.js')
 const { Hospital, Medico, Cita } = require('../models/index.model.js')
 const seguridad = require('./Seguridad.controller.js')
@@ -93,4 +93,72 @@ const reservarTurno = async (req, res) => {
   }
 }
 
-module.exports = { sacarTurno, reservarTurno }
+
+// CU012 - Ver historial de consultas
+const verHistorial = async (req, res) => {
+  const dni = req.usuario.DNIUsuario
+  try {
+    // Paso b: consulta a la BD
+    const citas = await Cita.findAll({
+      where: { DNIUsuario: dni },
+      include: [Medico, Hospital],
+      order: [['FechaVisita', 'DESC']]
+    })
+    const historial = citas.map(c => ({
+      IDCita: c.IDCita,
+      FechaVisita: c.FechaVisita,
+      Medico: c.Medico?.NomApeM ?? null,
+      Hospital: c.Hospital?.NombreH ?? null,
+      Estado: c.Estado,
+      Calificada: c.Calificada,
+      Calificacion: c.Calificacion,
+      Comentario: c.Comentario
+    }))
+    // Paso d (también en F1, historial vacío): bitácora
+    await bitacora.registrar('Consulta de historial (CU012)', dni)
+    await seguridad.calcularDV('Bitacora')
+    res.status(200).json({ historial })
+  } catch (e) {
+    console.log(e)
+    // F2: caída de BD, no se devuelven datos parciales
+    if (e instanceof ConnectionError)
+      return res.status(503).json({ message: 'No se puede completar la operación en este momento. Intentá de nuevo más tarde.' })
+    res.status(500).json({ message: 'Error al obtener el historial' })
+  }
+}
+
+
+// CU010 - Calificar atención recibida
+const calificarTurno = async (req, res) => {
+  const { IDCita, calificacion, comentario } = req.body
+  const dni = req.usuario.DNIUsuario
+  const errores = []
+  if (!Number.isInteger(calificacion) || calificacion < 1 || calificacion > 5)
+    errores.push('Elegí una calificación de 1 a 5 estrellas')
+  if (comentario && comentario.length > 255)
+    errores.push('El comentario no puede superar los 255 caracteres')
+  if (errores.length) return res.status(400).json({ errores })
+
+  try {
+    const cita = await Cita.findOne({ where: { IDCita, DNIUsuario: dni } })
+    if (!cita) return res.status(404).json({ message: 'No se encontró la consulta' })
+    if (cita.Estado !== 'Finalizada')
+      return res.status(409).json({ message: 'Solo se pueden calificar consultas finalizadas' })
+    if (cita.Calificada)
+      return res.status(409).json({ message: 'Esta consulta ya fue calificada' })
+
+    await cita.update({
+      Calificacion: calificacion,
+      Comentario: comentario?.trim() || null,
+      Calificada: true
+    })
+    await seguridad.calcularDV('Cita')
+    res.status(200).json({ message: 'Gracias por calificar tu atención' })
+  } catch (e) {
+    if (e instanceof ConnectionError)
+      return res.status(503).json({ message: 'No se puede completar la operación en este momento. Intentá de nuevo más tarde.' })
+    res.status(500).json({ message: 'No se pudo guardar la calificación' })
+  }
+}
+
+module.exports = { sacarTurno, reservarTurno, verHistorial , calificarTurno }
