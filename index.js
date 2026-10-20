@@ -28,10 +28,10 @@ server.use('/planes', require('./routes/Plan.routes.js'))
 const PORT = 3000
 const iniciar = async () => {
   await sequelize.authenticate()
-  await sequelize.sync()     
+  await sequelize.sync({ alter: true })     
                  // sin force: no borra la base
   // ---- CU013 agrega acá la verificación al arrancar ----
-  const r = await integridad.verificar()                               // en "CU013 agrega acá"
+  const r = await integridad.verificar()
   console.log('Integridad BD:', r.ok ? 'OK' : r.errores)
   server.listen(PORT, () => console.log('El server está ON'))
 }
