@@ -97,9 +97,24 @@
   font-size: 0.95rem;
   font-weight: 600;
   color: #1f2937;
-  padding: 0.4rem 0.8rem;
+  padding: 0.45rem 0.85rem;
   background-color: #f3f4f6;
   border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.navbar-usuario:hover {
+  background-color: #e5e7eb;
+  color: #111827;
+  transform: translateY(-1px);
+}
+
+.navbar-usuario.activo {
+  background-color: #e0e7ff;
+  color: #1d4ed8;
+  border-color: #bfdbfe;
 }
 
 .navbar-logout {

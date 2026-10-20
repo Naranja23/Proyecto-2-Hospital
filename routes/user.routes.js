@@ -5,6 +5,7 @@ const {
     createUser,
     register,
     putUser,
+    cambiarDatos,
     deleteUser,
     login
 } = require('../controllers/user.controller.js')
@@ -19,7 +20,9 @@ routes.get('/:id', getUserByID)
 routes.post('/', createUser)
 routes.post('/register', register)
 routes.post('/login', login)
-routes.put('/:id', putUser)
+routes.put('/perfil', auth, cambiarDatos)
+routes.put('/cambiar-datos', auth, cambiarDatos)
+routes.put('/:id', cambiarDatos)
 routes.delete('/:id', deleteUser)
 routes.post('/logout', auth, cerrarSesion)
 

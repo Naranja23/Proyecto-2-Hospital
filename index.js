@@ -1,11 +1,13 @@
 require('dotenv').config()
 const express = require('express')
+const cors = require('cors')
 const server = express()
 const integridad = require('./controllers/Integridad.controller.js')
 const { DataTypes } = require('sequelize')
 require('./models/index.model.js')
 const { sequelize } = require('./config/db.js')
 
+server.use(cors())
 server.use(express.json())
 server.get('/', (req, res) => res.status(200).json({ message: 'El server está ON' }))
 server.use('/users', require('./routes/user.routes.js'))

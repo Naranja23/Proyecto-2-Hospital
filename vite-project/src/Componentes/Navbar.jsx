@@ -48,21 +48,26 @@ export default function Navbar({ usuarioLogueado, onCerrarSesion, cerrandoSesion
                 </button>
                 <button
                   type="button"
-                  className={`navbar-item navbar-login ${(path === '/turnos' || path === '/reservaciones') ? 'activo' : ''}`}
+                  className={`navbar-item navbar-login ${(path === '/turnos') ? 'activo' : ''}`}
                   onClick={() => navigate('/turnos')}
                 >
                   Mis turnos / Reservas
                 </button>
                 <button
                   type="button"
-                  className={`navbar-item navbar-login ${path === '/valoraciones' ? 'activo' : ''}`}
+                  className={`navbar-item navbar-login ${path === '/gt' ? 'activo' : ''}`}
                   onClick={() => navigate('/valoraciones')}
                 >
                   Valoraciones
                 </button>
-                <span className="navbar-usuario">
-                  {usuarioLogueado.NomApeU || usuarioLogueado.Email}
-                </span>
+                <button
+                  type="button"
+                  className={`navbar-item navbar-usuario ${path === '/perfil' ? 'activo' : ''}`}
+                  onClick={() => navigate('/perfil')}
+                  title="Ver y editar perfil"
+                >
+                  👤 {usuarioLogueado.NomApeU || usuarioLogueado.Email}
+                </button>
                 <button
                   type="button"
                   className="navbar-item navbar-logout"

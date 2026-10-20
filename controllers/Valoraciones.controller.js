@@ -109,13 +109,17 @@ const editarValoracion = async (req, res) => {
       attributes: [[fn('AVG', col('Calificacion')), 'promedio']],
       where: { IDHospital: valoracion.IDHospital }
     })
+    const valoracionActualizada = await Valoracion.findByPk(valoracion.IDValoracion, {
+      include: [{ model: Hospital, attributes: ['IDHospital', 'NombreH'] }]
+    })
     await bitacora.registrar(`CU020: valoración ${valoracion.IDValoracion} editada`, dni)
     return res.status(200).json({
       message: 'La valoración se actualizó correctamente',
-      valoracion,
+      valoracion: valoracionActualizada || valoracion,
       promedioHospital: Number(Number(promedio.get('promedio')).toFixed(2))
     })
-  } catch {
+  } catch (error) {
+    console.error('Error al editar valoracion:', error)
     await bitacora.registrar(`CU020: error al actualizar valoración ${req.params.idValoracion}`, dni)
     return res.status(500).json({ message: 'No fue posible actualizar la valoración. Podés reintentar la operación' })
   }
