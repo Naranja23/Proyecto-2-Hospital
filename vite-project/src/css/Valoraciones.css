@@ -1,0 +1,79 @@
+.valoraciones {
+    --val-verde: #147d73;
+    --val-verde-oscuro: #0e625b;
+    --val-tinta: #183331;
+    --val-suave: #eef7f5;
+    width: min(1120px, calc(100% - 40px));
+    margin: 0 auto;
+    padding: 54px 0 72px;
+    color: var(--val-tinta);
+}
+
+.valoraciones-encabezado { margin-bottom: 30px; }
+.valoraciones-eyebrow, .promedio-etiqueta, .valoracion-hospital-label { color: var(--val-verde); font-size: .73rem; letter-spacing: .12em; font-weight: 800; }
+.valoraciones-encabezado h1 { margin: 7px 0 6px; font-size: clamp(2rem, 4vw, 2.75rem); line-height: 1.1; letter-spacing: -.04em; }
+.valoraciones-encabezado p { margin: 0; color: #657876; }
+.valoraciones-tabs { display: flex; gap: 8px; border-bottom: 1px solid #dce8e5; margin-bottom: 26px; }
+.valoraciones-tabs button { border: 0; border-bottom: 3px solid transparent; padding: 12px 15px; background: transparent; color: #657876; font: inherit; font-weight: 700; cursor: pointer; }
+.valoraciones-tabs button.activo { border-bottom-color: var(--val-verde); color: var(--val-verde-oscuro); }
+.valoraciones-tabs button span { display: inline-grid; place-items: center; min-width: 22px; height: 22px; margin-left: 5px; border-radius: 99px; background: #eaf2f0; font-size: .78rem; }
+.valoraciones-mensaje { margin: 0 0 20px; padding: 12px 15px; border-radius: 10px; font-weight: 600; }
+.valoraciones-mensaje.error { color: #9e2c32; background: #fff1f0; border: 1px solid #f6d1ce; }
+.valoraciones-mensaje.exito { color: #17624f; background: #eaf7f0; border: 1px solid #cbe9d8; }
+.valoraciones-label { display: block; margin-bottom: 8px; font-size: .92rem; font-weight: 750; }
+.valoraciones-input { width: 100%; box-sizing: border-box; border: 1px solid #cddbd8; border-radius: 11px; padding: 13px 15px; background: #fff; color: var(--val-tinta); font: inherit; outline: none; }
+.valoraciones-input:focus, .valoracion-form input:focus, .valoracion-form select:focus, .valoracion-form textarea:focus { border-color: var(--val-verde); box-shadow: 0 0 0 3px #147d731c; }
+.valoraciones-layout { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(300px, .85fr); gap: 22px; align-items: start; margin-top: 22px; }
+.hospitales-lista { display: grid; gap: 9px; }
+.hospital-opcion { display: flex; align-items: center; gap: 13px; width: 100%; padding: 14px; border: 1px solid #e0eae8; border-radius: 12px; background: #fff; color: var(--val-tinta); text-align: left; cursor: pointer; transition: border-color .18s, background .18s, transform .18s; }
+.hospital-opcion:hover, .hospital-opcion.seleccionado { border-color: #76b8af; background: #f3faf8; transform: translateY(-1px); }
+.hospital-icono { display: grid; flex: 0 0 42px; width: 42px; height: 42px; place-items: center; border-radius: 12px; background: var(--val-suave); color: var(--val-verde); font-size: 1.2rem; }
+.hospital-datos { display: grid; gap: 3px; min-width: 0; }
+.hospital-datos strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.hospital-datos small { color: #71827f; }
+.hospital-flecha { margin-left: auto; color: var(--val-verde); font-size: 1.6rem; }
+.promedio-panel { position: sticky; top: 100px; min-height: 300px; display: flex; flex-direction: column; justify-content: center; align-items: center; box-sizing: border-box; padding: 30px 24px; border: 1px solid #dcebe7; border-radius: 18px; background: linear-gradient(145deg, #f5fbf9, #fff); text-align: center; }
+.promedio-panel h2 { margin: 8px 0 12px; font-size: 1.35rem; }
+.promedio-numero { color: var(--val-verde-oscuro); font-size: 3.6rem; line-height: 1.1; font-weight: 800; letter-spacing: -.06em; }
+.promedio-numero span { margin-left: 5px; color: #91a29e; font-size: 1rem; font-weight: 600; letter-spacing: 0; }
+.promedio-estrellas, .valoracion-estrellas { color: #e5a82e; letter-spacing: .1em; font-size: 1.35rem; }
+.promedio-cantidad { margin: 8px 0 0; color: #71827f; }
+.promedio-sin-datos { max-width: 270px; margin: 14px 0 0; color: #71827f; font-size: .92rem; }
+.promedio-placeholder { max-width: 260px; color: #738581; }
+.promedio-placeholder > span:first-child { color: #8abbb3; font-size: 2.3rem; }
+.promedio-placeholder h2 { color: var(--val-tinta); }
+.promedio-placeholder p { margin: 0; line-height: 1.55; }
+.promedio-spinner { display: inline-block; width: 27px; height: 27px; border: 3px solid #d8e9e5; border-top-color: var(--val-verde); border-radius: 50%; animation: val-spin .8s linear infinite; }
+@keyframes val-spin { to { transform: rotate(360deg); } }
+.mis-valoraciones { display: grid; gap: 14px; }
+.valoracion-card { padding: 22px; border: 1px solid #e0eae8; border-radius: 14px; background: #fff; box-shadow: 0 5px 18px #173b3510; }
+.valoracion-card-cabecera { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.valoracion-card h2 { margin: 4px 0 12px; font-size: 1.2rem; }
+.valoracion-estado { flex: 0 0 auto; padding: 6px 10px; border-radius: 99px; background: #f1f3f3; color: #6e7c7a; font-size: .78rem; font-weight: 750; }
+.valoracion-estado.editable { background: #e8f5f0; color: #19755f; }
+.valoracion-comentario { margin: 10px 0; line-height: 1.55; }
+.valoracion-fecha { color: #84918f; font-size: .84rem; }
+.valoracion-editar { margin-top: 4px; padding: 0; border: 0; background: none; color: var(--val-verde-oscuro); font: inherit; font-weight: 750; cursor: pointer; }
+.valoracion-editar span { margin-left: 4px; }
+.valoracion-solo-lectura { margin: 14px 0 0; color: #8a9694; font-size: .88rem; }
+.valoracion-form { display: grid; gap: 14px; margin-top: 18px; padding-top: 18px; border-top: 1px solid #e8efed; }
+.valoracion-form label { display: grid; gap: 7px; color: #415451; font-size: .9rem; font-weight: 700; }
+.valoracion-form input, .valoracion-form select, .valoracion-form textarea { box-sizing: border-box; width: 100%; border: 1px solid #cddbd8; border-radius: 9px; padding: 10px 12px; color: var(--val-tinta); background: #fff; font: inherit; outline: none; }
+.valoracion-form textarea { resize: vertical; }
+.valoracion-form-acciones { display: flex; justify-content: flex-end; gap: 9px; }
+.valoracion-form-acciones button { border-radius: 9px; padding: 10px 14px; font: inherit; font-weight: 700; cursor: pointer; }
+.btn-secundario { border: 1px solid #d7e2df; background: #fff; color: #536460; }
+.btn-principal { border: 1px solid var(--val-verde); background: var(--val-verde); color: #fff; }
+.btn-principal:hover { background: var(--val-verde-oscuro); }
+.valoraciones-vacio { padding: 20px; border: 1px dashed #cbdad6; border-radius: 12px; color: #71827f; text-align: center; }
+.valoraciones-vacio-card { max-width: 480px; margin: 25px auto; padding: 38px; border-radius: 16px; background: #f4faf8; text-align: center; }
+.valoraciones-vacio-card > span { color: var(--val-verde); font-size: 2rem; }
+.valoraciones-vacio-card h2 { margin: 8px 0; }
+.valoraciones-vacio-card p { margin: 0; color: #71827f; }
+
+@media (max-width: 760px) {
+    .valoraciones { width: min(100% - 28px, 560px); padding-top: 34px; }
+    .valoraciones-layout { grid-template-columns: 1fr; }
+    .promedio-panel { position: static; min-height: 250px; }
+    .valoracion-card { padding: 17px; }
+}
