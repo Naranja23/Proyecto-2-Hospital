@@ -127,8 +127,9 @@ const putUser = async (req, res) => {
         if (req.body.Email || req.body.email) {
             user.Email = (req.body.Email || req.body.email).trim().toLowerCase()
         }
-        if (req.body.EdadU || req.body.edad) {
-            user.EdadU = Number(req.body.EdadU || req.body.edad)
+        if (req.body.EdadU !== undefined || req.body.edad !== undefined) {
+            const e = req.body.EdadU !== undefined ? req.body.EdadU : req.body.edad
+            user.EdadU = e ? Number(e) : null
         }
         if (req.body.EstadoU) {
             user.EstadoU = req.body.EstadoU
@@ -203,12 +204,100 @@ const login = async (req, res) => {
     }
 }
 
+// Controlador específico para Cambiar Datos del Perfil
+// Permite editar datos personales generales y protege los datos críticos
+const cambiarDatos = async (req, res) => {
+    try {
+        const dni = req.usuario?.DNIUsuario || Number(req.params.id)
+        if (!dni || isNaN(dni)) {
+            return res.status(400).json({ message: "Identificador de usuario no válido" })
+        }
+
+        const user = await Usuario.findByPk(dni)
+        if (!user) {
+            return res.status(404).json({ message: "Usuario no encontrado" })
+        }
+
+        // DATOS CRÍTICOS PROTEGIDOS (NO PERMITIDOS PARA EDICIÓN DE PERFIL):
+        // 1. DNIUsuario -> Clave primaria inmutable
+        // 2. Password -> Solo se modifica en flujo dedicado de cambio de clave
+        // 3. EstadoU -> Estado de la cuenta (solo administradores)
+        // 4. IDPlanes -> Cobertura médica (se gestiona desde el módulo de Planes)
+        // 5. DVH -> Dígito verificador del sistema de integridad
+
+        // DATOS PERMITIDOS PARA EDITAR:
+        const { NomApeU, Email, EdadU } = req.body
+
+        // Validación de Nombre y Apellido
+        if (NomApeU !== undefined) {
+            const nombreLimpio = String(NomApeU).trim()
+            if (!nombreLimpio) {
+                return res.status(400).json({ message: "El nombre y apellido no pueden estar vacíos" })
+            }
+            user.NomApeU = nombreLimpio
+        }
+
+        // Validación de Correo Electrónico
+        if (Email !== undefined) {
+            const emailLimpio = String(Email).trim().toLowerCase()
+            if (!emailLimpio) {
+                return res.status(400).json({ message: "El correo electrónico es obligatorio" })
+            }
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailLimpio)) {
+                return res.status(400).json({ message: "El formato del correo electrónico no es válido" })
+            }
+
+            // Comprobar que otro usuario no esté usando ya este email
+            if (emailLimpio !== user.Email.toLowerCase()) {
+                const yaExiste = await Usuario.findOne({ where: { Email: emailLimpio } })
+                if (yaExiste && yaExiste.DNIUsuario !== dni) {
+                    return res.status(409).json({ message: "El correo electrónico ya está registrado por otro usuario" })
+                }
+            }
+            user.Email = emailLimpio
+        }
+
+        // Validación de Edad
+        if (EdadU !== undefined) {
+            if (EdadU === null || EdadU === '') {
+                user.EdadU = null
+            } else {
+                const edadNum = Number(EdadU)
+                if (isNaN(edadNum) || edadNum < 1 || edadNum > 125) {
+                    return res.status(400).json({ message: "La edad debe ser un número entero entre 1 y 125" })
+                }
+                user.EdadU = edadNum
+            }
+        }
+
+        // Guardar cambios y actualizar integridad (DVH y DVV)
+        await user.save()
+        await seguridad.calcularDV('Usuario')
+
+        res.status(200).json({
+            message: "Datos del perfil actualizados correctamente",
+            usuario: {
+                DNIUsuario: user.DNIUsuario,
+                NomApeU: user.NomApeU,
+                Email: user.Email,
+                EdadU: user.EdadU,
+                EstadoU: user.EstadoU,
+                IDPlanes: user.IDPlanes
+            }
+        })
+    } catch (error) {
+        console.error("Error en cambiarDatos:", error)
+        res.status(500).json({ message: "Error al actualizar los datos del perfil", error: error.message })
+    }
+}
+
 module.exports = {
     getUsers,
     getUserByID,
     createUser: register,
     register,
     putUser,
+    cambiarDatos,
     deleteUser,
     login
 }
