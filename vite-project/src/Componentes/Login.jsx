@@ -1,8 +1,10 @@
 import { useState } from "react"
+import { useNavigate, Link } from "react-router-dom"
 import axios from "axios"
 import "../css/Login.css"
 
-function Login({ onIrARegister, onLoginExitoso }) {
+function Login({ onLoginExitoso }) {
+    const navigate = useNavigate()
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [mensaje, setMensaje] = useState("")
@@ -30,7 +32,8 @@ function Login({ onIrARegister, onLoginExitoso }) {
                 if (onLoginExitoso) {
                     onLoginExitoso(usuario)
                 }
-            }, 600)
+                navigate('/home')
+            }, 500)
         } catch (error) {
             const errorMsg = error.response?.data?.message || "Error al iniciar sesión. Verificá tus credenciales."
             setMensaje(errorMsg)
@@ -80,14 +83,12 @@ function Login({ onIrARegister, onLoginExitoso }) {
                         {cargando ? "Iniciando..." : "Ingresar"}
                     </button>
 
-                    {onIrARegister && (
-                        <p className="cambio-vista">
-                            ¿No tenés una cuenta?{" "}
-                            <button type="button" className="btn-link" onClick={onIrARegister}>
-                                Crear cuenta
-                            </button>
-                        </p>
-                    )}
+                    <p className="cambio-vista">
+                        ¿No tenés una cuenta?{" "}
+                        <Link to="/register" className="btn-link">
+                            Crear cuenta
+                        </Link>
+                    </p>
 
                     {mensaje && (
                         <p className={`mensaje ${mensaje.includes("Bienvenido") ? "mensaje-exito" : "mensaje-error"}`}>

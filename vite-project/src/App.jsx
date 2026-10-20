@@ -1,17 +1,16 @@
 import { useState } from 'react'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import Navbar from './Componentes/Navbar'
 import Login from './Componentes/Login'
 import RegisterConPanel from './Componentes/RegisterConPanel'
 import Home from './Componentes/Home'
-import './css/App.css'
 import Valoraciones from './Componentes/Valoraciones'
-import axios from 'axios'
 import Planes from './Componentes/Planes'
 import Historial from './Componentes/Historial'
+import './css/App.css'
+import axios from 'axios'
 
 const API = 'http://localhost:3000'
-
-
 
 function App() {
   const [usuarioLogueado, setUsuarioLogueado] = useState(() => {
@@ -23,17 +22,11 @@ function App() {
     }
   })
 
-  const [vista, setVista] = useState(() => {
-    return localStorage.getItem('usuario') ? 'home' : 'login'
-  })
-
   const [cerrandoSesion, setCerrandoSesion] = useState(false)
-
   const [errorSesion, setErrorSesion] = useState('')
 
   const manejarLoginExitoso = (usr) => {
     setUsuarioLogueado(usr)
-    setVista('home')
   }
 
   const limpiarSesionLocal = () => {
@@ -41,7 +34,6 @@ function App() {
     localStorage.removeItem('usuario')
     setUsuarioLogueado(null)
     setErrorSesion('')
-    setVista('login')
   }
 
   const cerrarSesion = async () => {
@@ -66,52 +58,61 @@ function App() {
   }
 
   return (
-    <div className="app">
-      <Navbar
-        onSeleccionarVista={setVista}
-        vistaActual={vista}
-        usuarioLogueado={usuarioLogueado}
-        onCerrarSesion={cerrarSesion}
-        cerrandoSesion={cerrandoSesion}
-      />
-      {errorSesion && (
-        <div className="aviso-sesion" role="alert">
-          <span>{errorSesion}</span>
-          <button type="button" onClick={cerrarSesion} disabled={cerrandoSesion}>Reintentar</button>
-        </div>
-      )}
-      <main className="content">
-        {vista === 'home' && (
-          <Home
-            usuario={usuarioLogueado}
-            onCerrarSesion={cerrarSesion}
-            onSeleccionarVista={setVista}
-          />
+    <BrowserRouter>
+      <div className="app">
+        <Navbar
+          usuarioLogueado={usuarioLogueado}
+          onCerrarSesion={cerrarSesion}
+          cerrandoSesion={cerrandoSesion}
+        />
+        {errorSesion && (
+          <div className="aviso-sesion" role="alert">
+            <span>{errorSesion}</span>
+            <button type="button" onClick={cerrarSesion} disabled={cerrandoSesion}>Reintentar</button>
+          </div>
         )}
-        {vista === 'valoraciones' && usuarioLogueado && (
-          <Valoraciones
-            onSesionExpirada={limpiarSesionLocal}
-          />
-        )}
-        {vista === 'login' && (
-          <Login
-            onIrARegister={() => setVista('register')}
-            onLoginExitoso={manejarLoginExitoso}
-          />
-        )}
-        {vista === 'register' && (
-          <RegisterConPanel
-            onIrALogin={() => setVista('login')}
-          />
-        )}
-        {vista === 'planes' && usuarioLogueado && (
-          <Planes onSesionExpirada={limpiarSesionLocal} />
-        )}
-        {vista === 'turnos' && usuarioLogueado && (
-          <Historial onSesionExpirada={limpiarSesionLocal} />
-        )}
-      </main>
-    </div>
+        <main className="content">
+          <Routes>
+            <Route
+              path="/"
+              element={<Navigate to={usuarioLogueado ? "/home" : "/login"} replace />}
+            />
+            <Route
+              path="/login"
+              element={usuarioLogueado ? <Navigate to="/home" replace /> : <Login onLoginExitoso={manejarLoginExitoso} />}
+            />
+            <Route
+              path="/register"
+              element={usuarioLogueado ? <Navigate to="/home" replace /> : <RegisterConPanel />}
+            />
+            <Route
+              path="/home"
+              element={usuarioLogueado ? <Home usuario={usuarioLogueado} onCerrarSesion={cerrarSesion} /> : <Navigate to="/login" replace />}
+            />
+            <Route
+              path="/turnos"
+              element={usuarioLogueado ? <Historial onSesionExpirada={limpiarSesionLocal} /> : <Navigate to="/login" replace />}
+            />
+            <Route
+              path="/reservaciones"
+              element={usuarioLogueado ? <Historial onSesionExpirada={limpiarSesionLocal} /> : <Navigate to="/login" replace />}
+            />
+            <Route
+              path="/valoraciones"
+              element={usuarioLogueado ? <Valoraciones onSesionExpirada={limpiarSesionLocal} /> : <Navigate to="/login" replace />}
+            />
+            <Route
+              path="/planes"
+              element={usuarioLogueado ? <Planes onSesionExpirada={limpiarSesionLocal} /> : <Navigate to="/login" replace />}
+            />
+            <Route
+              path="*"
+              element={<Navigate to={usuarioLogueado ? "/home" : "/login"} replace />}
+            />
+          </Routes>
+        </main>
+      </div>
+    </BrowserRouter>
   )
 }
 

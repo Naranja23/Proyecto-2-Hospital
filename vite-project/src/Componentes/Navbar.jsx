@@ -1,7 +1,12 @@
 import React from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import '../css/Navbar.css';
 
-export default function Navbar({ onSeleccionarVista, vistaActual, usuarioLogueado, onCerrarSesion }) {
+export default function Navbar({ usuarioLogueado, onCerrarSesion, cerrandoSesion }) {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const path = location.pathname;
+
   return (
     <header className="navbar-header">
       <nav className="navbar" aria-label="Navegación principal">
@@ -12,11 +17,7 @@ export default function Navbar({ onSeleccionarVista, vistaActual, usuarioLoguead
             aria-label="Inicio"
             onClick={(e) => {
               e.preventDefault();
-              if (usuarioLogueado) {
-                if (onSeleccionarVista) onSeleccionarVista('home');
-              } else {
-                if (onSeleccionarVista) onSeleccionarVista('login');
-              }
+              navigate(usuarioLogueado ? '/home' : '/login');
             }}
           >
             <img
@@ -33,29 +34,29 @@ export default function Navbar({ onSeleccionarVista, vistaActual, usuarioLoguead
               <>
                 <button
                   type="button"
-                  className={`navbar-item navbar-login ${vistaActual === 'home' ? 'activo' : ''}`}
-                  onClick={() => onSeleccionarVista && onSeleccionarVista('home')}
+                  className={`navbar-item navbar-login ${path === '/home' ? 'activo' : ''}`}
+                  onClick={() => navigate('/home')}
                 >
                   Inicio
                 </button>
                 <button
                   type="button"
-                  className={`navbar-item navbar-login ${vistaActual === 'planes' ? 'activo' : ''}`}
-                  onClick={() => onSeleccionarVista && onSeleccionarVista('planes')}
+                  className={`navbar-item navbar-login ${path === '/planes' ? 'activo' : ''}`}
+                  onClick={() => navigate('/planes')}
                 >
                   Gestionar planes
                 </button>
                 <button
                   type="button"
-                  className={`navbar-item navbar-login ${vistaActual === 'turnos' ? 'activo' : ''}`}
-                  onClick={() => onSeleccionarVista && onSeleccionarVista('turnos')}
+                  className={`navbar-item navbar-login ${(path === '/turnos' || path === '/reservaciones') ? 'activo' : ''}`}
+                  onClick={() => navigate('/turnos')}
                 >
-                  Mis turnos
+                  Mis turnos / Reservas
                 </button>
                 <button
                   type="button"
-                  className={`navbar-item navbar-login ${vistaActual === 'valoraciones' ? 'activo' : ''}`}
-                  onClick={() => onSeleccionarVista && onSeleccionarVista('valoraciones')}
+                  className={`navbar-item navbar-login ${path === '/valoraciones' ? 'activo' : ''}`}
+                  onClick={() => navigate('/valoraciones')}
                 >
                   Valoraciones
                 </button>
@@ -65,24 +66,25 @@ export default function Navbar({ onSeleccionarVista, vistaActual, usuarioLoguead
                 <button
                   type="button"
                   className="navbar-item navbar-logout"
+                  disabled={cerrandoSesion}
                   onClick={onCerrarSesion}
                 >
-                  Cerrar sesión
+                  {cerrandoSesion ? 'Cerrando...' : 'Cerrar sesión'}
                 </button>
               </>
             ) : (
               <>
                 <button
                   type="button"
-                  className={`navbar-item navbar-login ${vistaActual === 'login' ? 'activo' : ''}`}
-                  onClick={() => onSeleccionarVista && onSeleccionarVista('login')}
+                  className={`navbar-item navbar-login ${path === '/login' || path === '/' ? 'activo' : ''}`}
+                  onClick={() => navigate('/login')}
                 >
                   Login
                 </button>
                 <button
                   type="button"
-                  className={`navbar-item navbar-register ${vistaActual === 'register' ? 'activo' : ''}`}
-                  onClick={() => onSeleccionarVista && onSeleccionarVista('register')}
+                  className={`navbar-item navbar-register ${path === '/register' ? 'activo' : ''}`}
+                  onClick={() => navigate('/register')}
                 >
                   Register
                 </button>
