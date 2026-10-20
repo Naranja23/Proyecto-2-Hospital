@@ -4,9 +4,11 @@ import Login from './Componentes/Login'
 import RegisterConPanel from './Componentes/RegisterConPanel'
 import Home from './Componentes/Home'
 import './css/App.css'
+import Valoraciones from './Componentes/Valoraciones'
 import axios from 'axios'
 import Planes from './Componentes/Planes'
 import Historial from './Componentes/Historial'
+
 const API = 'http://localhost:3000'
 
 
@@ -83,6 +85,12 @@ function App() {
           <Home
             usuario={usuarioLogueado}
             onCerrarSesion={cerrarSesion}
+            onSeleccionarVista={setVista}
+          />
+        )}
+        {vista === 'valoraciones' && usuarioLogueado && (
+          <Valoraciones
+            onSesionExpirada={limpiarSesionLocal}
           />
         )}
         {vista === 'login' && (

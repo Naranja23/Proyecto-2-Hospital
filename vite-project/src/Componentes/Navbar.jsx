@@ -45,6 +45,20 @@ export default function Navbar({ onSeleccionarVista, vistaActual, usuarioLoguead
                 >
                   Gestionar planes
                 </button>
+                <button
+                  type="button"
+                  className={`navbar-item navbar-login ${vistaActual === 'turnos' ? 'activo' : ''}`}
+                  onClick={() => onSeleccionarVista && onSeleccionarVista('turnos')}
+                >
+                  Mis turnos
+                </button>
+                <button
+                  type="button"
+                  className={`navbar-item navbar-login ${vistaActual === 'valoraciones' ? 'activo' : ''}`}
+                  onClick={() => onSeleccionarVista && onSeleccionarVista('valoraciones')}
+                >
+                  Valoraciones
+                </button>
                 <span className="navbar-usuario">
                   {usuarioLogueado.NomApeU || usuarioLogueado.Email}
                 </span>
@@ -54,13 +68,6 @@ export default function Navbar({ onSeleccionarVista, vistaActual, usuarioLoguead
                   onClick={onCerrarSesion}
                 >
                   Cerrar sesión
-                </button>
-                <button
-                  type="button"
-                  className={`navbar-item navbar-login ${vistaActual === 'turnos' ? 'activo' : ''}`}
-                  onClick={() => onSeleccionarVista && onSeleccionarVista('turnos')}
-                >
-                  Mis turnos
                 </button>
               </>
             ) : (
@@ -79,7 +86,6 @@ export default function Navbar({ onSeleccionarVista, vistaActual, usuarioLoguead
                 >
                   Register
                 </button>
-
               </>
             )}
           </div>
