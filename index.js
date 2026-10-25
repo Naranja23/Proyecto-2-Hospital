@@ -6,6 +6,10 @@ const integridad = require('./controllers/Integridad.controller.js')
 const { DataTypes } = require('sequelize')
 require('./models/index.model.js')
 const { sequelize } = require('./config/db.js')
+// Para el gestionar Medicas
+const especialidades = require('./controllers/Especialidad.controller.js')
+server.use('/especialidades', require('./routes/Especialidad.routes.js'))
+await especialidades.migrarEspecialidadesLegadas()
 
 server.use(cors())
 server.use(express.json())

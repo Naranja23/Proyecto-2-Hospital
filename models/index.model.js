@@ -10,6 +10,7 @@ const { Sesion } = require('./Sesion.model.js')
 const { Bitacora } = require('./Bitacora.Model.js')
 const { DVV } = require('./DVV.Model.js')
 const { Valoracion } = require('./Valoracion.Model.js')
+const { Especialidad } = require('./Especialidad.Model.js')
 
 
 Medico.belongsToMany(Rol, { through: 'MedicoRol', foreignKey: 'IDMedico', otherKey: 'IDRol' })
@@ -32,6 +33,20 @@ Valoracion.belongsTo(Hospital, { foreignKey: 'IDHospital' })
 Valoracion.belongsTo(Usuario, { foreignKey: 'DNIUsuario' })
 
 Medico.belongsTo(Hospital, { foreignKey: 'IDHospital' })
+
+Medico.belongsToMany(Especialidad, {
+  as: 'especialidades',
+  through: 'MedicoEspecialidad',
+  foreignKey: 'IDMedico',
+  otherKey: 'IDEspecialidad'
+})
+
+Especialidad.belongsToMany(Medico, {
+  as: 'medicos',
+  through: 'MedicoEspecialidad',
+  foreignKey: 'IDEspecialidad',
+  otherKey: 'IDMedico'
+})
 
 Plan.belongsTo(Prepaga, { foreignKey: 'IDPrepaga' })
 Plan.belongsTo(Hospital, { foreignKey: 'IDHospital' })
@@ -57,5 +72,6 @@ module.exports = {
     Sesion,
     Bitacora,
     DVV,
-    Valoracion
+    Valoracion,
+    Especialidad
 }

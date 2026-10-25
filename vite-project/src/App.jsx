@@ -10,6 +10,9 @@ import Home from './Componentes/Home'
 import Perfil from './Componentes/Perfil'
 import './css/App.css'
 import axios from 'axios'
+//Import para el frontend de Gestiones Medicas
+import Especialidades from './Componentes/Especialidades'
+import SoloAdmin from './Componentes/SoloAdmin'
 
 const API = 'http://localhost:3000'
 
@@ -114,6 +117,15 @@ function App() {
                   onUsuarioActualizado={setUsuarioLogueado}
                   onSesionExpirada={limpiarSesionLocal}
                 />
+              ) : <Navigate to="/login" replace />}
+            />
+            //Gestiones Medicas
+            <Route
+              path="/admin/especialidades"
+              element={usuarioLogueado ? (
+                <SoloAdmin>
+                  <Especialidades onSesionExpirada={limpiarSesionLocal} />
+                </SoloAdmin>
               ) : <Navigate to="/login" replace />}
             />
             <Route

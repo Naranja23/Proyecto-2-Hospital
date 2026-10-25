@@ -1,5 +1,6 @@
 //cree carpeta helpers ya q registrarBitacora es algo q se usa muy seguido. 
 const Bitacora = require('../models/Bitacora.Model');
+const { Bitacora } = require('../models/Bitacora.Model')
 
 module.exports = async function registrarBitacora(req, { proceso, explicacion }, transaction) { //función reutilizable para cualquier controlador
   //se puede pedir prceso y explicacion tanto por req como escribirlo uno mismo

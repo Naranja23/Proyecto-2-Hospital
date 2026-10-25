@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import '../css/Navbar.css';
+import { esAdmin } from '../auth'
 
 export default function Navbar({ usuarioLogueado, onCerrarSesion, cerrandoSesion }) {
   const navigate = useNavigate();
@@ -32,6 +33,18 @@ export default function Navbar({ usuarioLogueado, onCerrarSesion, cerrandoSesion
           <div className="navbar-links">
             {usuarioLogueado ? (
               <>
+              //Gestiones Medicas
+                {esAdmin() && (
+                  <button
+                    type="button"
+                    className={`navbar-item navbar-login ${
+                      path === '/admin/especialidades' ? 'activo' : ''
+                    }`}
+                    onClick={() => navigate('/admin/especialidades')}
+                  >
+                    Especialidades
+                  </button>
+                )}
                 <button
                   type="button"
                   className={`navbar-item navbar-login ${path === '/home' ? 'activo' : ''}`}
