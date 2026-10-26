@@ -127,4 +127,18 @@
   background-color: #fee2e2;
   color: #b91c1c;
 }
+/* ---------- Menú con muchas opciones: no se desborda, pasa a otra línea ---------- */
+.navbar-container {
+  gap: 1rem;
+}
 
+.navbar-links {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.4rem;
+}
+
+.navbar-item {
+  white-space: nowrap;
+  padding: 0.5rem 0.8rem;
+}

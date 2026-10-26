@@ -75,6 +75,13 @@ export default function Navbar({ usuarioLogueado, onCerrarSesion, cerrandoSesion
                 </button>
                 <button
                   type="button"
+                  className={`navbar-item navbar-login ${path === '/integridad' ? 'activo' : ''}`}
+                  onClick={() => navigate('/integridad')}
+                >
+                  Integridad BD
+                </button>
+                <button
+                  type="button"
                   className={`navbar-item navbar-usuario ${path === '/perfil' ? 'activo' : ''}`}
                   onClick={() => navigate('/perfil')}
                   title="Ver y editar perfil"

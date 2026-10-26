@@ -8,6 +8,7 @@ import Planes from './Componentes/Planes'
 import Historial from './Componentes/Historial'
 import Home from './Componentes/Home'
 import Perfil from './Componentes/Perfil'
+import Integridad from './Componentes/Integridad'
 import './css/App.css'
 import axios from 'axios'
 //Import para el frontend de Gestiones Medicas
@@ -100,6 +101,10 @@ function App() {
             <Route
               path="/reservaciones"
               element={usuarioLogueado ? <Historial onSesionExpirada={limpiarSesionLocal} /> : <Navigate to="/login" replace />}
+            />
+            <Route
+              path="/integridad"
+              element={usuarioLogueado ? <Integridad onSesionExpirada={limpiarSesionLocal} /> : <Navigate to="/login" replace />}
             />
             <Route
               path="/valoraciones"
