@@ -32,7 +32,7 @@ const verPromedioHospital = async (req, res) => {
     }
 
     const resultado = await Valoracion.findOne({
-      attributes: [[fn('AVG', col('Calificacion')), 'promedio'], [fn('COUNT', col('IDValoracion')), 'cantidad']], 
+      attributes: [[fn('AVG', col('Calificacion')), 'promedio'], [fn('COUNT', col('IDValoracion')), 'cantidad']],
       where: { IDHospital }
     })
     const cantidad = Number(resultado.get('cantidad'))

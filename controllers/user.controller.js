@@ -156,7 +156,7 @@ const deleteUser = async (req, res) => {
     } catch (error) {
         res.status(500).json({ message: "Error al eliminar usuario", error: error.message })
     }
-}
+}//revisar
 
 // Iniciar sesión
 const login = async (req, res) => {

@@ -167,11 +167,14 @@ const valorarAtencion = async (req, res) => {
     const { id } = req.params; 
     const { puntuacion, comentario } = req.body; 
 
+<<<<<<< HEAD
     
     if (comentario && comentario.length > 255) {
       return res.status(400).json({ error: "El comentario de la reseña es demasiado largo (máximo 255 caracteres)." });
     }
 
+=======
+>>>>>>> 9cc7c8c (eso)
     const cita = await Cita.findByPk(id);
 
     if (!cita) {
@@ -179,6 +182,10 @@ const valorarAtencion = async (req, res) => {
     }
 
     // Flujo Alternativo F1: El usuario no asistió
+<<<<<<< HEAD
+=======
+    
+>>>>>>> 9cc7c8c (eso)
     if (cita.Estado !== 'Finalizado') {
       return res.status(400).json({ error: "Solo pueden valorarse hospitales en los que se haya asistido a una consulta." });
     }
@@ -200,6 +207,14 @@ const valorarAtencion = async (req, res) => {
     await bitacora.registrar(`Error al valorar turno: ${error.message}`, req.usuario.DNIUsuario);
     return res.status(500).json({ error: "No fue posible guardar la información. Ocurrió un error en el servidor." });
   }
+<<<<<<< HEAD
 };
 
 module.exports = { sacarTurno, reservarTurno, verHistorial , calificarTurno, valorarAtencion }
+=======
+
+};
+
+
+module.exports = { sacarTurno, reservarTurno, verHistorial , calificarTurno , valorarAtencion }
+>>>>>>> 9cc7c8c (eso)
