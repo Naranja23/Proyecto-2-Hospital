@@ -41,5 +41,27 @@ async function calcularDV(tabla) {
   }
 }
 
+const desbloquearHospital = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const hospital = await Hospital.findByPk(id);
 
-module.exports = { calcularDVH, calcularDVV, leerTabla, calcularDV }
+        if (!hospital) {
+            return res.status(404).json({ error: "El hospital seleccionado no existe o fue eliminado." });
+        }
+
+        if (hospital.estado === 'habilitado') {
+            return res.status(400).json({ mensaje: "No es necesario realizar el desbloqueo. El hospital ya se encuentra habilitado." });
+        }
+
+        await hospital.update({ estado: 'habilitado' });
+        await calcularDV('hospitales'); 
+
+        return res.status(200).json({ mensaje: "El hospital fue habilitado correctamente." });
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: "La operación no pudo completarse. Ocurrió un error al intentar modificar el estado del hospital." });
+    }
+};
+module.exports = { calcularDVH, calcularDVV, leerTabla, calcularDV, auth, soloAdmin, desbloquearHospital }

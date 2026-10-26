@@ -161,4 +161,45 @@ const calificarTurno = async (req, res) => {
   }
 }
 
-module.exports = { sacarTurno, reservarTurno, verHistorial , calificarTurno }
+// CU021 - Valorar paciente 
+const valorarAtencion = async (req, res) => {
+  try {
+    const { id } = req.params; 
+    const { puntuacion, comentario } = req.body; 
+
+    
+    if (comentario && comentario.length > 255) {
+      return res.status(400).json({ error: "El comentario de la reseña es demasiado largo (máximo 255 caracteres)." });
+    }
+
+    const cita = await Cita.findByPk(id);
+
+    if (!cita) {
+      return res.status(404).json({ error: "El turno seleccionado no existe." });
+    }
+
+    // Flujo Alternativo F1: El usuario no asistió
+    if (cita.Estado !== 'Finalizado') {
+      return res.status(400).json({ error: "Solo pueden valorarse hospitales en los que se haya asistido a una consulta." });
+    }
+
+    // Flujo Alternativo F2: Valoración ya registrada
+    if (cita.Puntuacion !== null && cita.Puntuacion !== undefined) {
+      return res.status(400).json({ error: "No es posible registrar más de una valoración por turno." });
+    }
+
+    await cita.update({ Puntuacion: puntuacion, Comentario: comentario });
+
+    await seguridad.calcularDV('Cita');
+    await bitacora.registrar(`Turno ${id} valorado con ${puntuacion} estrellas`, req.usuario.DNIUsuario);
+
+    return res.status(200).json({ mensaje: "La valoración fue registrada correctamente." });
+
+  } catch (error) {
+    console.error(error);
+    await bitacora.registrar(`Error al valorar turno: ${error.message}`, req.usuario.DNIUsuario);
+    return res.status(500).json({ error: "No fue posible guardar la información. Ocurrió un error en el servidor." });
+  }
+};
+
+module.exports = { sacarTurno, reservarTurno, verHistorial , calificarTurno, valorarAtencion }

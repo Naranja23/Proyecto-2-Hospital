@@ -1,7 +1,8 @@
 const { Router } = require('express')
-const { auth } = require('../middlewares/auth.middleware.js')
+const { auth, soloAdmin } = require('../middlewares/auth.middleware.js')
 const { verificarIntegridad, rectificarIntegridad } = require('../controllers/Integridad.controller.js')
 const routes = Router()
 routes.get('/integridad', auth, verificarIntegridad)
 routes.post('/integridad/rectificar', auth, rectificarIntegridad)
+routes.patch('/hospitales/:id/desbloquear', soloAdmin, desbloquearHospital)
 module.exports = routes
