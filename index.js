@@ -8,8 +8,6 @@ require('./models/index.model.js')
 const { sequelize } = require('./config/db.js')
 // Para el gestionar Medicas
 const especialidades = require('./controllers/Especialidad.controller.js')
-server.use('/especialidades', require('./routes/Especialidad.routes.js'))
-await especialidades.migrarEspecialidadesLegadas()
 
 server.use(cors())
 server.use(express.json())
@@ -20,12 +18,14 @@ server.use('/seguridad', require('./routes/Seguridad.routes.js'))
 server.use('/turnos', require('./routes/Cita.routes.js'))
 server.use('/planes', require('./routes/Plan.routes.js'))
 server.use('/valoraciones', require('./routes/Valoracion.routes.js'))
+server.use('/especialidades', require('./routes/Especialidad.routes.js'))
 
 const PORT = 3000
 const iniciar = async () => {
   await sequelize.authenticate()
   await sequelize.sync({ alter: true })     
                  // sin force: no borra la base
+  await especialidades.migrarEspecialidadesLegadas()
   // ---- CU013 agrega acá la verificación al arrancar ----
   const r = await integridad.verificar()
   console.log('Integridad BD:', r.ok ? 'OK' : r.errores)

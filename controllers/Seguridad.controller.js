@@ -1,7 +1,7 @@
 const crypto = require('crypto')
 const jwt = require('jsonwebtoken')
 const { sequelize } = require('../config/db.js')
-const { DVV } = require('../models/index.model.js')
+const { DVV, Hospital } = require('../models/index.model.js')
 
 const hash = (txt) => crypto.createHash('sha256').update(txt).digest('hex')
 
@@ -41,63 +41,30 @@ async function calcularDV(tabla) {
   }
 }
 
-const desbloquearHospital = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const hospital = await Hospital.findByPk(id);
-
-<<<<<<< HEAD
-=======
 // CU023 - Desbloquear hospital
 const desbloquearHospital = async (req, res) => {
-    try {
-        const { id } = req.params;
+  try {
+    const { id } = req.params
+    const hospital = await Hospital.findByPk(id)
 
-        
-        const hospital = await Hospital.findByPk(id);
-
-        // Flujo Alternativo F2: Hospital Inexistente
->>>>>>> 9cc7c8c (eso)
-        if (!hospital) {
-            return res.status(404).json({ error: "El hospital seleccionado no existe o fue eliminado." });
-        }
-
-<<<<<<< HEAD
-=======
-        // Flujo Alternativo F1: Hospital ya habilitado
->>>>>>> 9cc7c8c (eso)
-        if (hospital.estado === 'habilitado') {
-            return res.status(400).json({ mensaje: "No es necesario realizar el desbloqueo. El hospital ya se encuentra habilitado." });
-        }
-
-<<<<<<< HEAD
-        await hospital.update({ estado: 'habilitado' });
-        await calcularDV('hospitales'); 
-
-        return res.status(200).json({ mensaje: "El hospital fue habilitado correctamente." });
-
-    } catch (error) {
-=======
-      
-        await hospital.update({ estado: 'habilitado' });
-
-        
-        await calcularDV('hospitales'); 
-
-       
-        return res.status(200).json({ mensaje: "El hospital fue habilitado correctamente." });
-
-    } catch (error) {
-        // Flujo Alternativo F3: Error al actualizar el estado
->>>>>>> 9cc7c8c (eso)
-        console.error(error);
-        return res.status(500).json({ error: "La operación no pudo completarse. Ocurrió un error al intentar modificar el estado del hospital." });
+    // Flujo Alternativo F2: Hospital Inexistente
+    if (!hospital) {
+      return res.status(404).json({ error: 'El hospital seleccionado no existe o fue eliminado.' })
     }
-};
-<<<<<<< HEAD
-module.exports = { calcularDVH, calcularDVV, leerTabla, calcularDV, auth, soloAdmin, desbloquearHospital }
-=======
 
+    // Flujo Alternativo F1: Hospital ya habilitado
+    if (hospital.EstadoH === 'Activo' || hospital.EstadoH === 'habilitado') {
+      return res.status(400).json({ mensaje: 'No es necesario realizar el desbloqueo. El hospital ya se encuentra habilitado.' })
+    }
 
-module.exports = { calcularDVH, calcularDVV, leerTabla, calcularDV,desbloquearHospital}
->>>>>>> 9cc7c8c (eso)
+    await hospital.update({ EstadoH: 'Activo' })
+    await calcularDV('Hospital')
+
+    return res.status(200).json({ mensaje: 'El hospital fue habilitado correctamente.' })
+  } catch (error) {
+    console.error(error)
+    return res.status(500).json({ error: 'La operación no pudo completarse. Ocurrió un error al intentar modificar el estado del hospital.' })
+  }
+}
+
+module.exports = { calcularDVH, calcularDVV, leerTabla, calcularDV, desbloquearHospital }
