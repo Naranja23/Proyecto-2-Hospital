@@ -19,7 +19,7 @@ server.use('/turnos', require('./routes/Cita.routes.js'))
 server.use('/planes', require('./routes/Plan.routes.js'))
 server.use('/valoraciones', require('./routes/Valoracion.routes.js'))
 server.use('/especialidades', require('./routes/Especialidad.routes.js'))
-
+server.use('/buscador', require('./routes/Buscador.routes'))
 const PORT = 3000
 const iniciar = async () => {
   await sequelize.authenticate()
