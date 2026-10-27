@@ -6,6 +6,6 @@ const routes = Router()
 
 routes.get('/integridad', auth, verificarIntegridad)
 routes.post('/integridad/rectificar', auth, rectificarIntegridad)
-routes.patch('/hospitales/:id/desbloquear', soloAdmin, desbloquearHospital)
+routes.patch('/hospitales/:id/desbloquear', auth, soloAdmin, desbloquearHospital)
 routes.post('/recuperar-password', recuperarPassword)
 module.exports = routes

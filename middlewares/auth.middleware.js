@@ -50,5 +50,5 @@ function soloAdmin(req, res, next) {
   return next();
 }
 
-module.exports = { auth, soloAdmin };
+module.exports = { auth, soloAdmin, verificarSesion: auth };
 

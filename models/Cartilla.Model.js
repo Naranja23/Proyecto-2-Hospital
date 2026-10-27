@@ -1,7 +1,7 @@
 // MODELO: relación entre hospitales y obras sociales (tabla intermedia).
 
 const { DataTypes } = require('sequelize');
-const sequelize = require('../config/db');
+const { sequelize } = require('../config/db.js');
 
 // Tabla intermedia: qué hospitales integran la cartilla de cada obra social (Prepaga)
 const Cartilla = sequelize.define(
