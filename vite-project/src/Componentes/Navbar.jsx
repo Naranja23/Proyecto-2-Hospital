@@ -37,9 +37,8 @@ export default function Navbar({ usuarioLogueado, onCerrarSesion, cerrandoSesion
                 {esAdmin() && (
                   <button
                     type="button"
-                    className={`navbar-item navbar-login ${
-                      path === '/admin/especialidades' ? 'activo' : ''
-                    }`}
+                    className={`navbar-item navbar-login ${path === '/admin/especialidades' ? 'activo' : ''
+                      }`}
                     onClick={() => navigate('/admin/especialidades')}
                   >
                     Especialidades
@@ -51,6 +50,13 @@ export default function Navbar({ usuarioLogueado, onCerrarSesion, cerrandoSesion
                   onClick={() => navigate('/home')}
                 >
                   Inicio
+                </button>
+                <button
+                  type="button"
+                  className={`navbar-item navbar-login ${path === '/buscador' ? 'activo' : ''}`}
+                  onClick={() => navigate('/buscador')}
+                >
+                  Buscar hospital
                 </button>
                 <button
                   type="button"

@@ -1,0 +1,235 @@
+.buscador-wrapper {
+  --b-primary: #2563eb;
+  --b-primary-dark: #1d4ed8;
+  --b-primary-soft: #eaf1ff;
+  --b-card: #ffffff;
+  --b-text: #1e293b;
+  --b-muted: #64748b;
+  --b-border: #e2e8f0;
+
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 28px 16px 40px;
+  color: var(--b-text);
+}
+
+/* Encabezado */
+.buscador-header {
+  margin-bottom: 20px;
+}
+
+.buscador-header h2 {
+  margin: 0 0 6px;
+  font-size: 1.9rem;
+  color: var(--b-text);
+}
+
+.buscador-header p {
+  margin: 0;
+  color: var(--b-muted);
+}
+
+/* Tarjeta de filtros */
+.buscador-filtros {
+  background: var(--b-card);
+  border: 1px solid var(--b-border);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.06);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 16px;
+  align-items: end;
+}
+
+.buscador-campo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.buscador-campo label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--b-muted);
+}
+
+.buscador-campo input,
+.buscador-campo select {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 11px 12px;
+  font-size: 0.95rem;
+  color: var(--b-text);
+  background: #f8fafc;
+  border: 1px solid var(--b-border);
+  border-radius: 10px;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+}
+
+.buscador-campo input:focus,
+.buscador-campo select:focus {
+  background: #fff;
+  border-color: var(--b-primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.18);
+}
+
+.buscador-limpiar {
+  padding: 11px 16px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--b-primary);
+  background: var(--b-primary-soft);
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.buscador-limpiar:hover {
+  background: var(--b-primary);
+  color: #fff;
+}
+
+/* Contador */
+.buscador-contador {
+  display: inline-block;
+  margin: 22px 0 14px;
+  padding: 6px 14px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--b-primary-dark);
+  background: var(--b-primary-soft);
+  border-radius: 999px;
+}
+
+/* Lista + mapa */
+.buscador-contenido {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  align-items: start;
+}
+
+.buscador-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 520px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.buscador-item {
+  background: var(--b-card);
+  border: 1px solid var(--b-border);
+  border-left: 4px solid transparent;
+  border-radius: 12px;
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+}
+
+.buscador-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.1);
+}
+
+.buscador-item.seleccionado {
+  border-left-color: var(--b-primary);
+  background: var(--b-primary-soft);
+}
+
+.buscador-item-nombre {
+  margin: 0 0 4px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--b-text);
+}
+
+.buscador-item-direccion {
+  margin: 0 0 8px;
+  font-size: 0.9rem;
+  color: var(--b-muted);
+}
+
+.buscador-item-web {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--b-primary);
+  text-decoration: none;
+}
+
+.buscador-item-web:hover {
+  text-decoration: underline;
+}
+
+/* Sin resultados */
+.buscador-vacio {
+  padding: 32px 16px;
+  text-align: center;
+  color: var(--b-muted);
+  background: var(--b-card);
+  border: 2px dashed var(--b-border);
+  border-radius: 12px;
+}
+
+/* Mapa */
+.buscador-mapa-card {
+  position: sticky;
+  top: 16px;
+  background: var(--b-card);
+  border: 1px solid var(--b-border);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.06);
+}
+
+.buscador-mapa {
+  display: block;
+  width: 100%;
+  height: 440px;
+  border: 0;
+}
+
+.buscador-mapa-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 12px 16px;
+  border-top: 1px solid var(--b-border);
+  font-size: 0.9rem;
+  color: var(--b-muted);
+}
+
+.buscador-mapa-info strong {
+  color: var(--b-text);
+}
+
+.buscador-mapa-vacio {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 300px;
+  padding: 16px;
+  text-align: center;
+  color: var(--b-muted);
+}
+
+/* Celular */
+@media (max-width: 800px) {
+  .buscador-contenido {
+    grid-template-columns: 1fr;
+  }
+
+  .buscador-mapa-card {
+    position: static;
+  }
+
+  .buscador-lista {
+    max-height: none;
+  }
+}

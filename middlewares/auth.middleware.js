@@ -21,8 +21,9 @@ function auth(req, res, next) {
   }
 
   try {
-    const usuario = jwt.verify(token, 'misecreto'); // Asegurate de usar variables de entorno en producción (process.env.CLAVE_SECRETA)
+    const usuario = jwt.verify(token, process.env.JWT_SECRET || 'misecreto');
     req.user = usuario;
+    req.usuario = usuario;
     return next();
   } catch (error) {
     return res.status(401).json({ ok: false, mensaje: 'Sesión inválida o expirada.' });

@@ -301,8 +301,23 @@ async function asignarMedicos(req, res) {
   }
 }
 
+async function listarMedicos(req, res) {
+  try {
+    const medicos = await Medico.findAll({
+      attributes: ['IDMedico', 'NomApeM', 'EspecialidadM'],
+      order: [['NomApeM', 'ASC']]
+    })
+    return res.status(200).json(medicos)
+  } catch (error) {
+    return res.status(500).json({
+      message: 'No se pudieron obtener los médicos'
+    })
+  }
+}
+
 module.exports = {
   listar,
+  listarMedicos,
   crear,
   actualizar,
   eliminar,

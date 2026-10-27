@@ -35,14 +35,14 @@ Valoracion.belongsTo(Usuario, { foreignKey: 'DNIUsuario' })
 Medico.belongsTo(Hospital, { foreignKey: 'IDHospital' })
 
 Medico.belongsToMany(Especialidad, {
-  as: 'especialidades',
+  as: { singular: 'especialidad', plural: 'especialidades' },
   through: 'MedicoEspecialidad',
   foreignKey: 'IDMedico',
   otherKey: 'IDEspecialidad'
 })
 
 Especialidad.belongsToMany(Medico, {
-  as: 'medicos',
+  as: { singular: 'medico', plural: 'medicos' },
   through: 'MedicoEspecialidad',
   foreignKey: 'IDEspecialidad',
   otherKey: 'IDMedico'
