@@ -1,7 +1,7 @@
 // PANTALLA CU006: permite seleccionar una obra social y marcar sus hospitales.
 
 import { useEffect, useMemo, useState } from 'react';
-import { api } from '../api';
+import axios from "axios" 
 import '../css/Hospitales.css';
 import '../css/Cartilla.css';
 
@@ -17,7 +17,7 @@ export default function Cartilla() {
 
   const cargarObrasSociales = async () => {
     try {
-      const { data } = await api.get('/cartilla/obras-sociales');
+      const { data } = await axios.get('/cartilla/obras-sociales');
       setObrasSociales(data.obrasSociales);
     } catch (e) {
       setAviso({ tipo: 'error', texto: e.message });
@@ -37,7 +37,7 @@ export default function Cartilla() {
 
     setCargando(true);
     try {
-      const { data } = await api.get(`/cartilla/${id}`);
+      const { data } = await axios.get(`/cartilla/${id}`);
       const enCartilla = new Set(data.hospitales.filter((h) => h.enCartilla).map((h) => h.id));
       setHospitales(data.hospitales);
       setOriginal(enCartilla);
@@ -72,7 +72,7 @@ export default function Cartilla() {
     setGuardando(true);
     setAviso(null);
     try {
-      const { data } = await api.put(`/cartilla/${obraId}`, { hospitalIds: [...seleccion] });
+      const { data } = await axios.put(`/cartilla/${obraId}`, { hospitalIds: [...seleccion] });
       setOriginal(new Set(seleccion));
       setAviso({ tipo: 'ok', texto: data.mensaje });
     } catch (e) {

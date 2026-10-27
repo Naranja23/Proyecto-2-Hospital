@@ -6,8 +6,10 @@ const Hospital = require('../models/Hospital.Model');
 const Prepaga = require('../models/Prepaga.Model');
 const registrarBitacora = require('../helpers/registrarBitacora');
 
+
 // PASO 1: devolver las obras sociales para llenar el selector del frontend.
 const listarObrasSociales = async (req, res) => {
+
     try {
         // findAll devuelve todos los registros. Solo necesitamos id y nombre.
         const obrasSociales = await Prepaga.findAll({
@@ -16,19 +18,22 @@ const listarObrasSociales = async (req, res) => {
         });
 
         return res.status(200).json(obrasSociales);
+
     } catch (error) {
         console.error(error);
         return res.status(500).json({ mensaje: 'No se pudieron cargar las obras sociales.' });
     }
+
 };
+
 
 // PASO 2: mostrar todos los hospitales e indicar cuáles están en la cartilla.
 const obtener = async (req, res) => {
+
     // El id de la obra social viene en la URL, por ejemplo /cartilla/3.
     const prepagaId = req.params.prepagaId;
 
     try {
-        // findByPk busca un registro por su clave primaria (normalmente id).
         const obraSocial = await Prepaga.findByPk(prepagaId);
 
         if (!obraSocial) {
@@ -66,14 +71,18 @@ const obtener = async (req, res) => {
             obraSocial: obraSocial,
             hospitales: resultado
         });
+
     } catch (error) {
         console.error(error);
         return res.status(500).json({ mensaje: 'No se pudo cargar la cartilla.' });
     }
+
 };
+
 
 // PASOS 3 A 6: guardar la lista final de hospitales seleccionados.
 const actualizar = async (req, res) => {
+
     const prepagaId = req.params.prepagaId;
     // El frontend envía algo parecido a { hospitalIds: [1, 2, 5] }.
     const hospitalIds = req.body.hospitalIds;
@@ -91,7 +100,6 @@ const actualizar = async (req, res) => {
         }
 
         // Revisamos que cada hospital seleccionado exista realmente.
-        // No conviene guardar una relación con un hospital que no existe.
         for (let i = 0; i < hospitalIds.length; i++) {
             const hospital = await Hospital.findByPk(hospitalIds[i]);
             if (!hospital) {
@@ -114,7 +122,6 @@ const actualizar = async (req, res) => {
         const quitar = [];
 
         for (let i = 0; i < hospitalIds.length; i++) {
-            // includes() pregunta si un valor ya existe dentro de una lista.
             if (!idsActuales.includes(hospitalIds[i])) {
                 agregar.push(hospitalIds[i]);
             }
@@ -141,7 +148,7 @@ const actualizar = async (req, res) => {
 
         // Quitamos de la cartilla los hospitales que se desmarcaron.
         for (let i = 0; i < quitar.length; i++) {
-            Cartilla.destroy({
+            await Cartilla.destroy({
                 where: {
                     prepagaId: prepagaId,
                     hospitalId: quitar[i]
@@ -149,7 +156,6 @@ const actualizar = async (req, res) => {
             });
         }
 
-        // Dejamos un registro de la actualización en la bitácora.
         await registrarBitacora(req, {
             modulo: 'Cartilla',
             accion: 'Actualización de cartilla',
@@ -166,11 +172,8 @@ const actualizar = async (req, res) => {
         console.error(error);
         return res.status(500).json({ mensaje: 'No se pudo actualizar la cartilla.' });
     }
+
 };
 
-// Exportamos las tres funciones para conectarlas con las rutas.
-module.exports = {
-    listarObrasSociales,
-    obtener,
-    actualizar
-};
+
+module.exports = { listarObrasSociales, obtener, actualizar };

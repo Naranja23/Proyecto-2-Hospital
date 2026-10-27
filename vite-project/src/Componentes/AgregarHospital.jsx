@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { api } from '../api';
+import axios from "axios"
 import '../css/Hospitales.css';
 
 const FORM_VACIO = { nombre: '', direccion: '', ciudad: '', telefono: '' };
@@ -60,7 +60,7 @@ export default function AgregarHospital() {
 
     setEnviando(true);
     try {
-      const { data } = await api.post('/hospitales', form);
+      const { data } = await axios.post('/hospitales', form);
       setForm(FORM_VACIO);
       setErrores({});
       setAviso({ tipo: 'ok', texto: data.mensaje, extension: data.extension });
