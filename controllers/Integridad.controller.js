@@ -1,5 +1,5 @@
 const { sequelize } = require('../config/db.js')
-const seguridad = require('./Seguridad.controller.js')
+const { leerTabla, calcularDVH, calcularDVV, calcularDV } = require('./Dvv y Dvh.js')
 const bitacora = require('./Bitacora.controller.js')
 
 // solo se verifican las tablas que tienen columna DVH
@@ -10,17 +10,17 @@ async function verificar(DNIUsuario = null) {
   await sequelize.authenticate()                                   // ConectarBaseDatos()
   const errores = []
   for (const tabla of tablasConDV()) {                             // loop tablas
-    const filas = await seguridad.leerTabla(tabla)
+    const filas = await leerTabla(tabla)
     const dvhs = []
     for (const f of filas) {                                       // loop tuplas
-      if (f.DVH !== seguridad.calcularDVH(f.get({ plain: true })))
+      if (f.DVH !== calcularDVH(f.get({ plain: true }), tabla))
         errores.push({ tabla, tipo: 'DVH', fila: f.get(f.constructor.primaryKeyAttribute) })
       dvhs.push(f.DVH ?? '')
     }
     const { DVV } = sequelize.models
     const reg = await DVV.findOne({ where: { Tabla: tabla } })
     const guardado = reg?.CalculoDVV
-    if ((guardado ?? seguridad.calcularDVV([])) !== seguridad.calcularDVV(dvhs)) errores.push({ tabla, tipo: 'DVV' })
+    if ((guardado ?? calcularDVV([])) !== calcularDVV(dvhs)) errores.push({ tabla, tipo: 'DVV' })
   }
   const resultado = { ok: errores.length === 0, errores }
   await bitacora.registrar(`Verificar integridad BD: ${resultado.ok ? 'OK' : errores.length + ' error(es)'}`, DNIUsuario)
@@ -30,7 +30,7 @@ async function verificar(DNIUsuario = null) {
 // Extensión del CU (Rectificar integridad). OJO: "acepta" los datos actuales como correctos;
 // lo ideal es restaurar desde un backup.
 async function rectificar(errores, DNIUsuario = null) {
-  for (const tabla of new Set(errores.map(e => e.tabla))) await seguridad.calcularDV(tabla)
+  for (const tabla of new Set(errores.map(e => e.tabla))) await calcularDV(tabla)
   await bitacora.registrar('Rectificar integridad BD', DNIUsuario)
   return verificar(DNIUsuario)
 }

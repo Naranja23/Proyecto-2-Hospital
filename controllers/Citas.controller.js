@@ -1,7 +1,6 @@
 const { Op , ConnectionError  } = require('sequelize')
 const { sequelize } = require('../config/db.js')
 const { Hospital, Medico, Cita } = require('../models/index.model.js')
-const seguridad = require('./Seguridad.controller.js')
 const bitacora = require('./Bitacora.controller.js')
 
 const aFecha = (fecha, hora) => new Date(`${fecha}T${hora}:00`)
@@ -83,7 +82,6 @@ const reservarTurno = async (req, res) => {
   try {
     const { DNIMedico, IDHospital, fecha, hora } = req.body
     const turno = await guardarTurno({ DNIUsuario: req.usuario.DNIUsuario, DNIMedico, IDHospital, FechaVisita: aFecha(fecha, hora) })
-    await seguridad.calcularDV('Cita')
     await bitacora.registrar(`Turno ${turno.IDCita} reservado`, req.usuario.DNIUsuario)
     res.status(201).json({ message: 'Turno reservado exitosamente', turno })
   } catch (e) {
@@ -116,7 +114,6 @@ const verHistorial = async (req, res) => {
     }))
     // Paso d (también en F1, historial vacío): bitácora
     await bitacora.registrar('Consulta de historial (CU012)', dni)
-    await seguridad.calcularDV('Bitacora')
     res.status(200).json({ historial })
   } catch (e) {
     console.log(e)
@@ -152,7 +149,6 @@ const calificarTurno = async (req, res) => {
       Comentario: comentario?.trim() || null,
       Calificada: true
     })
-    await seguridad.calcularDV('Cita')
     res.status(200).json({ message: 'Gracias por calificar tu atención' })
   } catch (e) {
     if (e instanceof ConnectionError)
@@ -189,7 +185,6 @@ const valorarAtencion = async (req, res) => {
 
     await cita.update({ Puntuacion: puntuacion, Comentario: comentario, Calificada: true });
 
-    await seguridad.calcularDV('Cita');
     const dni = req.usuario?.DNIUsuario || req.user?.DNIUsuario;
     await bitacora.registrar(`Turno ${id} valorado con ${puntuacion} estrellas`, dni);
 

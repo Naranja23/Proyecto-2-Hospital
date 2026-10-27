@@ -1,6 +1,5 @@
 const { fn, col } = require('sequelize')
 const { Hospital, Valoracion } = require('../models/index.model.js')
-const seguridad = require('./Seguridad.controller.js')
 const bitacora = require('./Bitacora.controller.js')
 
 const DIAS_PARA_EDITAR = 7
@@ -104,7 +103,6 @@ const editarValoracion = async (req, res) => {
     if (Calificacion !== undefined) valoracion.Calificacion = Calificacion
     if (Comentario !== undefined) valoracion.Comentario = Comentario
     await valoracion.save()
-    await seguridad.calcularDV('Valoracion')
     const promedio = await Valoracion.findOne({
       attributes: [[fn('AVG', col('Calificacion')), 'promedio']],
       where: { IDHospital: valoracion.IDHospital }

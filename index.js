@@ -9,8 +9,11 @@ const { sequelize } = require('./config/db.js')
 // Para el gestionar Medicas
 const especialidades = require('./controllers/Especialidad.controller.js')
 
+const { interceptorCasoDeUsoGlobal } = require('./controllers/Dvv y Dvh.js')
+
 server.use(cors())
 server.use(express.json())
+server.use(interceptorCasoDeUsoGlobal)
 server.get('/', (req, res) => res.status(200).json({ message: 'El server está ON' }))
 server.use('/users', require('./routes/user.routes.js'))
 // ---- las líneas de cada CU van acá ----
@@ -23,8 +26,8 @@ server.use('/buscador', require('./routes/Buscador.routes'))
 const PORT = 3000
 const iniciar = async () => {
   await sequelize.authenticate()
-  await sequelize.sync({ alter: true })     
-                 // sin force: no borra la base
+  await sequelize.sync({ alter: true })
+  // sin force: no borra la base
   await especialidades.migrarEspecialidadesLegadas()
   // ---- CU013 agrega acá la verificación al arrancar ----
   const r = await integridad.verificar()

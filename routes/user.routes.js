@@ -22,7 +22,7 @@ routes.post('/register', register)
 routes.post('/login', login)
 routes.put('/perfil', auth, cambiarDatos)
 routes.put('/cambiar-datos', auth, cambiarDatos)
-routes.put('/:id', cambiarDatos)
+routes.put('/:id', putUser)
 routes.delete('/:id', deleteUser)
 routes.post('/logout', auth, cerrarSesion)
 

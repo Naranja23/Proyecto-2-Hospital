@@ -1,5 +1,4 @@
 const { Plan, Usuario } = require('../models/index.model.js')
-const seguridad = require('./Seguridad.controller.js')
 const bitacora = require('./Bitacora.controller.js')
 
 // CU015 - Gestionar planes
@@ -62,7 +61,6 @@ const PlanController = {
 
       // Al cambiar la FK, el plan anterior deja de estar activo
       await Usuario.update({ IDPlanes: nuevo.IDPlan }, { where: { DNIUsuario: dni } })
-      await seguridad.calcularDV('Usuario')
       await bitacora.registrar(`Plan cambiado a ${nuevo.IDPlan}`, dni)
       res.status(200).json({ message: 'Plan actualizado' })
     } catch (e) {
