@@ -1,5 +1,4 @@
 // CONTROLADOR DEL CU007: SACAR UN HOSPITAL.
-const { sequelize } = require('../config/db.js');
 const { Hospital } = require('../models/Hospital.Model');
 const { Medico } = require('../models/Medico.Model');
 const { Turno } = require('../models/Turno.Model');
@@ -13,7 +12,6 @@ const obtener = async (req, res) => {
 
     try {
 
-        // findByPk busca un registro por su clave primaria (IDHospital).
         const hospital = await Hospital.findByPk(id);
 
         // F1: el hospital no existe.
@@ -42,9 +40,6 @@ const eliminar = async (req, res) => {
 
     const { id } = req.params;
 
-    // La transacción se abre recién cuando pasaron las validaciones.
-    let t;
-
     try {
 
         const hospital = await Hospital.findByPk(id);
@@ -57,7 +52,6 @@ const eliminar = async (req, res) => {
         }
 
         // PASO 5 DEL EP: validar que no tenga dependencias.
-        // count() devuelve la cantidad de registros que cumplen la condición.
         const cantidadMedicos = await Medico.count({ where: { IDHospital: id } });
         const cantidadTurnos = await Turno.count({ where: { IDHospital: id } });
 
@@ -71,21 +65,15 @@ const eliminar = async (req, res) => {
         // Guardamos el nombre antes de borrar, para usarlo en la bitácora.
         const nombreHospital = hospital.NombreH;
 
-        // Transacción: el borrado y la bitácora se guardan juntos o no se guarda nada.
-        t = await sequelize.transaction();
-
         // PASO 6 DEL EP: eliminación definitiva.
-        await hospital.destroy({ transaction: t });
+        await hospital.destroy();
 
-        // PASO 7 DEL EP: registrar en la bitácora (dentro de la misma transacción).
+        // PASO 7 DEL EP: registrar en la bitácora.
         await registrarBitacora(req, {
             modulo: 'Hospitales',
             accion: 'Baja de hospital',
             detalle: 'Se eliminó el hospital ' + nombreHospital
-        }, t);
-
-        // Si todo salió bien, se confirman los cambios.
-        await t.commit();
+        });
 
         // PASO 8 DEL EP: mensaje de éxito.
         return res.status(200).json({
@@ -93,9 +81,6 @@ const eliminar = async (req, res) => {
         });
 
     } catch (error) {
-
-        // F3: error técnico durante la eliminación. Se revierte todo.
-        if (t) await t.rollback();
 
         console.error(error);
         return res.status(500).json({
