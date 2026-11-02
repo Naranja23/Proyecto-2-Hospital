@@ -128,7 +128,12 @@ const CASOS_DE_USO_MONITOREADOS = [
   { metodo: 'PUT',    ruta: '/turnos/calificar',                       tabla: 'Cita',       nombreCU: 'CU010 - Calificar Consulta' },
   // CU021 - Valorar Paciente
   { metodo: 'POST',   ruta: '/turnos/:id/valorar',                     tabla: 'Cita',       nombreCU: 'CU021 - Valorar Paciente' },
-
+  // CU005 - Alta de hospital
+  { metodo: 'POST', ruta: '/hospitales', tabla: 'Hospital', nombreCU: 'CU005 - Alta de hospital' },
+  // CU006 - Actualizar Cartilla
+  { metodo: 'PUT', ruta: '/cartilla/:prepagaId', tabla: 'Cartilla', nombreCU: 'CU006 - Actualizar Cartilla' },
+  // CU007 - Sacar un hospital
+  { metodo: 'DELETE', ruta: '/hospitales/:id', tabla: 'Hospital', nombreCU: 'CU007 - Sacar Hospital' },
   // CU001 - Registrar Usuario
   { metodo: 'POST',   ruta: '/users/register',                         tabla: 'Usuario',    nombreCU: 'CU001 - Registrar Usuario' },
   { metodo: 'POST',   ruta: '/users',                                  tabla: 'Usuario',    nombreCU: 'Crear Usuario' },
