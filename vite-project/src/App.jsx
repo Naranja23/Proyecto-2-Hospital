@@ -10,6 +10,7 @@ import Home from './Componentes/Home'
 import Perfil from './Componentes/Perfil'
 import Integridad from './Componentes/Integridad'
 import Buscador from './Componentes/Buscador'
+import SacarTurno from './Componentes/SacarTurno'
 import './css/App.css'
 import axios from 'axios'
 //Import para el frontend de Gestiones Medicas
@@ -99,7 +100,10 @@ function App() {
               path="/buscador"
               element={usuarioLogueado ? <Buscador onSesionExpirada={limpiarSesionLocal} /> : <Navigate to="/login" replace />}
             />
-
+            <Route
+              path="/sacar-turno"
+              element={usuarioLogueado ? <SacarTurno onSesionExpirada={limpiarSesionLocal} /> : <Navigate to="/login" replace />}
+            />
             <Route
               path="/turnos"
               element={usuarioLogueado ? <Historial onSesionExpirada={limpiarSesionLocal} /> : <Navigate to="/login" replace />}

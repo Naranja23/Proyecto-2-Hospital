@@ -5,7 +5,8 @@ const bitacora = require('./Bitacora.controller.js')
 
 const aFecha = (fecha, hora) => new Date(`${fecha}T${hora}:00`)
 const medicosDe = (especialidad) => Medico.findAll({ where: { EspecialidadM: especialidad }, include: [Hospital] })
-const resumen = (m) => ({ DNIMedico: m.DNIMedico, NomApeM: m.NomApeM, IDHospital: m.IDHospital })
+const resumen = (m) => ({ DNIMedico: m.IDMedico, NomApeM: m.NomApeM, IDHospital: m.IDHospital })
+
 
 // VerificarDatos() del diagrama
 function verificarDatos({ fecha, hora, especialidad }) {
@@ -22,10 +23,10 @@ async function buscarSucursales(especialidad, inicio) {
   const medicos = await medicosDe(especialidad)
   if (!medicos.length) return []
   const ocupadas = await Cita.findAll({
-    where: { FechaVisita: inicio, Estado: 'Reservado', DNIMedico: medicos.map(m => m.DNIMedico) } })
+    where: { FechaVisita: inicio, Estado: 'Reservado', DNIMedico: medicos.map(m => m.IDMedico) } })
   const ocupados = new Set(ocupadas.map(c => c.DNIMedico))
   const porHospital = new Map()
-  for (const m of medicos.filter(m => !ocupados.has(m.DNIMedico))) {
+  for (const m of medicos.filter(m => !ocupados.has(m.IDMedico))) {
     const h = porHospital.get(m.IDHospital) || { hospital: m.Hospital.get({ plain: true }), medicos: [] }
     h.medicos.push(resumen(m)); porHospital.set(m.IDHospital, h)
   }
@@ -38,14 +39,14 @@ async function buscarAlternativas(especialidad, inicio, max = 5) {
   if (!medicos.length) return []
   const hasta = new Date(inicio.getTime() + 7 * 24 * 3600 * 1000)
   const citas = await Cita.findAll({ where: { Estado: 'Reservado',
-    DNIMedico: medicos.map(m => m.DNIMedico), FechaVisita: { [Op.between]: [inicio, hasta] } } })
+    DNIMedico: medicos.map(m => m.IDMedico), FechaVisita: { [Op.between]: [inicio, hasta] } } })
   const ocupado = new Set(citas.map(c => `${c.DNIMedico}|${new Date(c.FechaVisita).getTime()}`))
   const res = []
   for (let d = 0; d < 7 && res.length < max; d++)
     for (let h = 9; h <= 17 && res.length < max; h++) {
       const slot = new Date(inicio); slot.setDate(slot.getDate() + d); slot.setHours(h, 0, 0, 0)
       if (slot.getTime() === inicio.getTime() || slot < new Date()) continue
-      const libres = medicos.filter(m => !ocupado.has(`${m.DNIMedico}|${slot.getTime()}`))
+      const libres = medicos.filter(m => !ocupado.has(`${m.IDMedico}|${slot.getTime()}`))
       if (libres.length) res.push({ fecha: slot, medicos: libres.map(resumen) })
     }
   return res

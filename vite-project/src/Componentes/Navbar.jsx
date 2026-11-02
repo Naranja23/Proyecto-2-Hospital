@@ -65,6 +65,13 @@ export default function Navbar({ usuarioLogueado, onCerrarSesion, cerrandoSesion
                 >
                   Gestionar planes
                 </button>
+                 <button
+                  type="button"
+                  className={`navbar-item navbar-login ${path === '/sacar-turno' ? 'activo' : ''}`}
+                  onClick={() => navigate('/sacar-turno')}
+                >
+                  Sacar turno
+                </button>
                 <button
                   type="button"
                   className={`navbar-item navbar-login ${(path === '/turnos') ? 'activo' : ''}`}
