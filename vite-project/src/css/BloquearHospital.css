@@ -1,0 +1,32 @@
+.bloquear-contenedor {
+    max-width: 400px;
+    margin: 40px auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+}
+
+.bloquear-motivo textarea {
+    width: 100%;
+    height: 80px;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+}
+
+.bloquear-boton {
+    background: #c0392b;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.bloquear-cancelar {
+    margin-left: 8px;
+    padding: 8px 16px;
+    cursor: pointer;
+}
+
+.bloquear-error { color: #c0392b; }
+.bloquear-exito { color: #27ae60; }
