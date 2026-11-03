@@ -35,14 +35,22 @@ export default function Navbar({ usuarioLogueado, onCerrarSesion, cerrandoSesion
               <>
               //Gestiones Medicas
                 {esAdmin() && (
-                  <button
-                    type="button"
-                    className={`navbar-item navbar-login ${path === '/admin/especialidades' ? 'activo' : ''
-                      }`}
-                    onClick={() => navigate('/admin/especialidades')}
-                  >
-                    Especialidades
-                  </button>
+                  <>
+                    <button
+                      type="button"
+                      className={`navbar-item navbar-login ${path === '/admin/panel' ? 'activo' : ''}`}
+                      onClick={() => navigate('/admin/panel')}
+                    >
+                      Panel
+                    </button>
+                    <button
+                      type="button"
+                      className={`navbar-item navbar-login ${path === '/admin/especialidades' ? 'activo' : ''}`}
+                      onClick={() => navigate('/admin/especialidades')}
+                    >
+                      Especialidades
+                    </button>
+                  </>
                 )}
                 <button
                   type="button"

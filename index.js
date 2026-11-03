@@ -8,6 +8,7 @@ require('./models/index.model.js')
 const { sequelize } = require('./config/db.js')
 // Para el gestionar Medicas
 const especialidades = require('./controllers/Especialidad.controller.js')
+const panel = require('./controllers/panel.controller.js')
 
 const { interceptorCasoDeUsoGlobal } = require('./controllers/Dvv y Dvh.js')
 
@@ -23,6 +24,8 @@ server.use('/planes', require('./routes/Plan.routes.js'))
 server.use('/valoraciones', require('./routes/Valoracion.routes.js'))
 server.use('/especialidades', require('./routes/Especialidad.routes.js'))
 server.use('/buscador', require('./routes/Buscador.routes'))
+server.use('/panel', require('./routes/panel.routes.js'))
+
 const PORT = 3000
 const iniciar = async () => {
   await sequelize.authenticate()

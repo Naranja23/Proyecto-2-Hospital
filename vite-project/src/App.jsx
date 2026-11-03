@@ -16,6 +16,7 @@ import axios from 'axios'
 //Import para el frontend de Gestiones Medicas
 import Especialidades from './Componentes/Especialidades'
 import SoloAdmin from './Componentes/SoloAdmin'
+import Panel from './Componentes/Panel'
 
 const API = 'http://localhost:3000'
 
@@ -141,6 +142,13 @@ function App() {
                 <SoloAdmin>
                   <Especialidades onSesionExpirada={limpiarSesionLocal} />
                 </SoloAdmin>
+              ) : <Navigate to="/login" replace />}
+            />
+          
+            <Route
+              path="/admin/panel"
+              element={usuarioLogueado ? (
+                <SoloAdmin><Panel onSesionExpirada={limpiarSesionLocal} /></SoloAdmin>
               ) : <Navigate to="/login" replace />}
             />
             <Route

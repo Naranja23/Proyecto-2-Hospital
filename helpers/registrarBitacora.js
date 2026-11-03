@@ -7,13 +7,15 @@ module.exports = async function registrarBitacora(req, { proceso, explicacion },
   // 1. Obtenemos el nombre del usuario de forma simple
   let nombreUsuario = 'Anónimo';
   
-  if (req.user) {
-    if (typeof req.user.nombre === 'string') { // lo q hace es q le dice q si es string directamente lo guarde en la variable
+   if (req.user) {
+    if (typeof req.user.nombre === 'string') {
       nombreUsuario = req.user.nombre;
     } else if (typeof req.user.usuario === 'string') {
       nombreUsuario = req.user.usuario;
+    } else if (req.user.DNIUsuario) {
+      nombreUsuario = String(req.user.DNIUsuario);
     } else if (req.user.id) {
-      nombreUsuario = String(req.user.id); // transforma el id a string directo 
+      nombreUsuario = String(req.user.id);
     }
   }
   // type of: determina que tipo es depende a lo q se ingrese 

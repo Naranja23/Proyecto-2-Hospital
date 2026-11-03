@@ -155,7 +155,8 @@ const CASOS_DE_USO_MONITOREADOS = [
   { metodo: 'PUT',    ruta: '/valoraciones/:id',                       tabla: 'Valoracion', nombreCU: 'CU020 - Editar Valoración' },
 
   // CU023 - Desbloquear Hospital
-  { metodo: 'PATCH',  ruta: '/seguridad/hospitales/:id/desbloquear',   tabla: 'Hospital',   nombreCU: 'CU023 - Desbloquear Hospital' }
+  { metodo: 'PATCH',  ruta: '/seguridad/hospitales/:id/desbloquear',   tabla: 'Hospital',   nombreCU: 'CU023 - Desbloquear Hospital' },
+  { metodo: 'GET', ruta: '/panel', tabla: 'Bitacora', nombreCU: 'CU009 - Gestionar Panel administrativo' },
 ]
 
 // Verifica si la ruta real solicitada coincide con el patrón del caso de uso
