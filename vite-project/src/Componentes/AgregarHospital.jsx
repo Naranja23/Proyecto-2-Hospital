@@ -1,115 +1,148 @@
-// PANTALLA CU005: formulario React para cargar un hospital nuevo.
-
+//cu005 
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import axios from "axios"
+import axios from 'axios';
 import '../css/Hospitales.css';
 
-const FORM_VACIO = { nombre: '', direccion: '', ciudad: '', telefono: '' };
+function AgregarHospital() {
+    const [nombre, setNombre] = useState('');
+    const [direccion, setDireccion] = useState('');
+    const [ciudad, setCiudad] = useState('');
+    const [telefono, setTelefono] = useState('');
 
-// F1 (CU005): validación en pantalla; el back vuelve a validar lo mismo
-function validar(f) {
-  const e = {};
-  if (f.nombre.trim().length < 3) e.nombre = 'Ingresá el nombre del hospital (mínimo 3 caracteres).';
-  if (!f.direccion.trim()) e.direccion = 'Ingresá la dirección.';
-  if (!f.ciudad.trim()) e.ciudad = 'Ingresá la ciudad.';
-  if (f.telefono.trim() && !/^[0-9+()\-\s]{6,20}$/.test(f.telefono.trim()))
-    e.telefono = 'El teléfono solo puede tener números, espacios, +, - y paréntesis.';
-  return e;
-}
+    const [errores, setErrores] = useState({});
+    const [mensaje, setMensaje] = useState('');
+    const [tipoMensaje, setTipoMensaje] = useState('');
+    const [extension, setExtension] = useState('');
+    const [enviando, setEnviando] = useState(false);
 
-function Campo({ id, etiqueta, valor, onChange, error, ...resto }) {
-  return (
-    <div className="hosp-campo">
-      <label htmlFor={id}>{etiqueta}</label>
-      <input
-        id={id}
-        value={valor}
-        onChange={onChange}
-        aria-invalid={Boolean(error)}
-        aria-describedby={error ? `${id}-error` : undefined}
-        {...resto}
-      />
-      {error && (
-        <p id={`${id}-error`} className="hosp-campo__error">
-          {error}
-        </p>
-      )}
-    </div>
-  );
-}
+    const enviar = async (e) => {
+        e.preventDefault();
 
-export default function AgregarHospital() {
-  const [form, setForm] = useState(FORM_VACIO);
-  const [errores, setErrores] = useState({});
-  const [aviso, setAviso] = useState(null); // { tipo: 'ok' | 'error', texto, extension }
-  const [enviando, setEnviando] = useState(false);
+        setMensaje('');
+        setErrores({});
 
-  const cambiar = (campo) => (e) => setForm((f) => ({ ...f, [campo]: e.target.value }));
+        let nuevosErrores = {};
 
-  const enviar = async (e) => {
-    e.preventDefault();
-    setAviso(null);
+        if (nombre.trim().length < 3) {
+            nuevosErrores.nombre = 'Ingresá el nombre del hospital (mínimo 3 caracteres).';
+        }
 
-    const errs = validar(form);
-    setErrores(errs);
-    if (Object.keys(errs).length) {
-      setAviso({ tipo: 'error', texto: 'Hay datos incorrectos o incompletos. Corregilos y volvé a intentar.' });
-      return;
-    }
+        if (!direccion.trim()) {
+            nuevosErrores.direccion = 'Ingresá la dirección.';
+        }
 
-    setEnviando(true);
-    try {
-      const { data } = await axios.post('/hospitales', form);
-      setForm(FORM_VACIO);
-      setErrores({});
-      setAviso({ tipo: 'ok', texto: data.mensaje, extension: data.extension });
-    } catch (err) {
-      // F1 desde el back, F2 (duplicado) y F3 (error al guardar) llegan acá con su mensaje
-      if (err.errores) setErrores(err.errores);
-      setAviso({ tipo: 'error', texto: err.message });
-    } finally {
-      setEnviando(false);
-    }
-  };
+        if (!ciudad.trim()) {
+            nuevosErrores.ciudad = 'Ingresá la ciudad.';
+        }
 
-  return (
-    <section className="hosp-page">
-      <header className="hosp-encabezado">
-        <div>
-          <h1>Añadir hospital</h1>
-          <p className="hosp-subtitulo">El hospital se incorpora a la cartilla médica apenas se guarda.</p>
-        </div>
-      </header>
+        if (telefono.trim() && !/^[0-9+()\-\\s]{6,20}$/.test(telefono.trim())) {
+            nuevosErrores.telefono = 'El teléfono solo puede tener números, espacios, +, - y paréntesis.';
+        }
 
-      {aviso && (
-        <div className={`hosp-aviso hosp-aviso--${aviso.tipo}`} role={aviso.tipo === 'error' ? 'alert' : 'status'}>
-          <span>{aviso.texto}</span>
-          <span className="hosp-aviso__acciones">
-            {/* Paso 7 (CU024): cuando exista su pantalla propia, cambiá el destino de este Link */}
-            {aviso.tipo === 'ok' && aviso.extension === 'CU024' && (
-              <Link to="/admin/cartilla" className="hosp-btn hosp-btn--link">
-                Asignar a obras sociales
-              </Link>
+        if (Object.keys(nuevosErrores).length > 0) {
+            setErrores(nuevosErrores);
+            setMensaje('Hay datos incorrectos o incompletos. Corregilos y volvé a intentar.');
+            setTipoMensaje('error');
+            return;
+        }
+
+        setEnviando(true);
+
+        try {
+            const res = await axios.post('/hospitales', {
+                nombre,
+                direccion,
+                ciudad,
+                telefono
+            });
+
+            setMensaje(res.data.mensaje);
+            setTipoMensaje('ok');
+            setExtension(res.data.extension);
+
+            setNombre('');
+            setDireccion('');
+            setCiudad('');
+            setTelefono('');
+            setErrores({});
+
+        } catch (error) {
+            setMensaje(error.response?.data?.mensaje || 'Error al guardar el hospital.');
+            setTipoMensaje('error');
+
+            if (error.response?.data?.errores) {
+                setErrores(error.response.data.errores);
+            }
+
+        } finally {
+            setEnviando(false);
+        }
+    };
+
+    return (
+        <section className="hosp-page">
+            <h1>Añadir hospital</h1>
+            <p className="hosp-subtitulo">
+                El hospital se incorpora a la cartilla médica apenas se guarda.
+            </p>
+
+            {mensaje && (
+                <div className={`hosp-aviso hosp-aviso--${tipoMensaje}`}>
+                    <span>{mensaje}</span>
+
+                    {tipoMensaje === 'ok' && extension === 'CU024' && (
+                        <Link to="/admin/cartilla" className="hosp-btn hosp-btn--link">
+                            Asignar a obras sociales
+                        </Link>
+                    )}
+
+                    <button type="button" onClick={() => setMensaje('')}>
+                        Cerrar
+                    </button>
+                </div>
             )}
-            <button type="button" className="hosp-btn hosp-btn--link" onClick={() => setAviso(null)}>
-              Cerrar
-            </button>
-          </span>
-        </div>
-      )}
 
-      <form className="hosp-form" onSubmit={enviar} noValidate>
-        <Campo id="hosp-nombre" etiqueta="Nombre" valor={form.nombre} onChange={cambiar('nombre')} error={errores.nombre} />
-        <Campo id="hosp-direccion" etiqueta="Dirección" valor={form.direccion} onChange={cambiar('direccion')} error={errores.direccion} />
-        <Campo id="hosp-ciudad" etiqueta="Ciudad" valor={form.ciudad} onChange={cambiar('ciudad')} error={errores.ciudad} />
-        <Campo id="hosp-telefono" etiqueta="Teléfono (opcional)" valor={form.telefono} onChange={cambiar('telefono')} error={errores.telefono} type="tel" />
-        <div className="hosp-form__pie">
-          <button type="submit" className="hosp-btn hosp-btn--primario" disabled={enviando}>
-            {enviando ? 'Guardando…' : 'Guardar hospital'}
-          </button>
-        </div>
-      </form>
-    </section>
-  );
+            <form className="hosp-form" onSubmit={enviar} noValidate>
+
+                <label>Nombre</label>
+                <input
+                    value={nombre}
+                    onChange={e => setNombre(e.target.value)}
+                />
+                {errores.nombre && <p>{errores.nombre}</p>}
+
+                <label>Dirección</label>
+                <input
+                    value={direccion}
+                    onChange={e => setDireccion(e.target.value)}
+                />
+                {errores.direccion && <p>{errores.direccion}</p>}
+
+                <label>Ciudad</label>
+                <input
+                    value={ciudad}
+                    onChange={e => setCiudad(e.target.value)}
+                />
+                {errores.ciudad && <p>{errores.ciudad}</p>}
+
+                <label>Teléfono (opcional)</label>
+                <input
+                    type="tel"
+                    value={telefono}
+                    onChange={e => setTelefono(e.target.value)}
+                />
+                {errores.telefono && <p>{errores.telefono}</p>}
+
+                <div className="hosp-form__pie">
+                    <button type="submit" disabled={enviando}>
+                        {enviando ? 'Guardando...' : 'Guardar hospital'}
+                    </button>
+                </div>
+
+            </form>
+        </section>
+    );
 }
+
+export default AgregarHospital;
