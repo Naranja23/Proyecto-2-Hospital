@@ -140,8 +140,8 @@ const calificarTurno = async (req, res) => {
   try {
     const cita = await Cita.findOne({ where: { IDCita, DNIUsuario: dni } })
     if (!cita) return res.status(404).json({ message: 'No se encontró la consulta' })
-    if (cita.Estado !== 'Finalizada')
-      return res.status(409).json({ message: 'Solo se pueden calificar consultas finalizadas' })
+    if (cita.Estado !== 'Finalizada' && cita.Estado !== 'Atendido')
+      return res.status(409).json({ message: 'Solo se pueden calificar consultas finalizadas o atendidas' })
     if (cita.Calificada)
       return res.status(409).json({ message: 'Esta consulta ya fue calificada' })
 

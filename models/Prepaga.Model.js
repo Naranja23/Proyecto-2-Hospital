@@ -30,7 +30,7 @@ const Prepaga = sequelize.define('Prepaga', {
         allowNull: false
     },
     DVH: {
-        type: DataTypes.STRING,
+        type: DataTypes.INTEGER,
         allowNull: true
     }
 },

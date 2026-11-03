@@ -45,7 +45,7 @@ const Bitacora = sequelize.define('Bitacora', {
         allowNull: true
     },
     DVH: {
-        type: DataTypes.STRING,
+        type: DataTypes.INTEGER,
         allowNull: true
     }
 }, {

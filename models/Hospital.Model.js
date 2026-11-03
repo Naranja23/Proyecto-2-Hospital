@@ -32,7 +32,7 @@ const Hospital = sequelize.define('Hospital', {
         allowNull: true
     },
     DVH: {
-        type: DataTypes.STRING,
+        type: DataTypes.INTEGER,
         allowNull: true
     }
 },

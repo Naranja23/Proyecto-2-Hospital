@@ -3,6 +3,7 @@ const { Op } = require('sequelize')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const { crearSesion } = require('./Sesion.controller.js')
+const registrarBitacora = require('../helpers/registrarBitacora')
 
 // Obtener todos los usuarios (por defecto solo activos; ?incluirInactivos=true para todos)
 const getUsers = async (req, res) => {
@@ -164,6 +165,8 @@ const register = async (req, res) => {
                 IDPlanes: nuevoUsuario.IDPlanes
             }
         })
+        // Registrar en bitácora la creación del usuario por administrador
+        await registrarBitacora(req, { proceso: 'Crear Usuario', explicacion: `Usuario ${nuevoUsuario.DNIUsuario} creado` })
     } catch (error) {
         res.status(500).json({ message: "Error al registrar usuario", error: error.message })
     }
@@ -225,6 +228,8 @@ const putUser = async (req, res) => {
                 IDPlanes: user.IDPlanes
             }
         })
+        // Registrar en bitácora la actualización del usuario por administrador
+        await registrarBitacora(req, { proceso: 'Actualizar Usuario', explicacion: `Usuario ${user.DNIUsuario} actualizado` })
     } catch (error) {
         res.status(500).json({ message: "Error al actualizar usuario", error: error.message })
     }
@@ -262,6 +267,8 @@ const deleteUser = async (req, res) => {
                 EstadoU: user.EstadoU
             }
         })
+        // Registrar en bitácora el bloqueo/eliminación del usuario por administrador
+        await registrarBitacora(req, { proceso: 'Bloquear/Eliminar Usuario', explicacion: `Usuario ${user.DNIUsuario} marcado como inactivo` })
     } catch (error) {
         res.status(500).json({ message: "Error al eliminar usuario", error: error.message })
     }

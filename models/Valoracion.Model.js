@@ -23,7 +23,7 @@ const Valoracion = sequelize.define('Valoracion', {
     defaultValue: DataTypes.NOW
   },
   DVH: {
-    type: DataTypes.STRING,
+    type: DataTypes.INTEGER,
     allowNull: true
   }
 }, {

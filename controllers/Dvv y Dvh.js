@@ -1,10 +1,8 @@
-const crypto = require('crypto')
 const { sequelize } = require('../config/db.js')
 const { DVV } = require('../models/index.model.js')
 
-const hash = (txt) => crypto.createHash('sha256').update(txt).digest('hex')
+// Cálculo numérico de DVH y DVV (sin hashes criptográficos)
 
-// Helper para encontrar el modelo por nombre de modelo o por tableName
 function obtenerModelo(nombreTablaOModelo) {
   if (!nombreTablaOModelo) return null
   if (sequelize.models[nombreTablaOModelo]) return sequelize.models[nombreTablaOModelo]
@@ -17,7 +15,6 @@ function obtenerModelo(nombreTablaOModelo) {
   return null
 }
 
-// Retorna todas las tablas/modelos que tienen la columna DVH
 function obtenerTablasConDV() {
   return Object.keys(sequelize.models).filter((n) => {
     const M = sequelize.models[n]
@@ -25,30 +22,46 @@ function obtenerTablasConDV() {
   })
 }
 
-// DVH: hash de todos los campos de la fila (ordenados alfabéticamente), menos el propio DVH
+// DVH: Dígito Verificador Horizontal numérico calculado a partir de todos los campos de la tupla (menos DVH)
 function calcularDVH(fila, nombreTabla = null) {
   const plain = fila && typeof fila.get === 'function' ? fila.get({ plain: true }) : { ...fila }
   const M = nombreTabla ? obtenerModelo(nombreTabla) : null
 
   const claves = M && M.rawAttributes
     ? Object.keys(M.rawAttributes).filter((col) => col !== 'DVH')
-    : Object.keys(plain).filter((col) => col !== 'DVH' && (plain[col] === null || typeof plain[col] !== 'object' || plain[col] instanceof Date))
+    : Object.keys(plain).filter((col) => col !== 'DVH')
 
-  const texto = claves
-    .sort()
-    .map((k) => {
-      const valor = plain[k] === undefined ? null : plain[k]
-      return `${k}=${JSON.stringify(valor)}`
-    })
-    .join('|')
+  let suma = 0
+  claves.sort().forEach((col, colIdx) => {
+    const val = plain[col]
+    if (val !== null && val !== undefined) {
+      let str = ''
+      if (val instanceof Date) {
+        str = String(val.getTime())
+      } else if (typeof val === 'string' && (val.includes('T') || val.includes('-')) && !isNaN(Date.parse(val))) {
+        str = String(new Date(val).getTime())
+      } else if (typeof val === 'object') {
+        str = JSON.stringify(val)
+      } else {
+        str = String(val)
+      }
 
-  return hash(texto)
+      for (let i = 0; i < str.length; i++) {
+        suma = (suma + str.charCodeAt(i) * (i + 1) * (colIdx + 1)) % 1000000007
+      }
+    }
+  })
+
+  return suma
 }
 
-// DVV: hash de los DVH de toda la tabla ordenados por clave primaria
-const calcularDVV = (dvhs) => hash(dvhs.join(''))
+// DVV: Dígito Verificador Vertical numérico = sumatoria de todos los DVH de la tabla
+const calcularDVV = (dvhs) => {
+  if (!Array.isArray(dvhs) || dvhs.length === 0) return 0
+  const suma = dvhs.reduce((acc, v) => acc + (Number(v) || 0), 0)
+  return suma % 2147483647
+}
 
-// Trae todas las filas de una tabla ordenadas por clave primaria
 function leerTabla(tabla, options = {}) {
   const M = obtenerModelo(tabla)
   if (!M) throw new Error(`Modelo no encontrado para la tabla: ${tabla}`)
@@ -159,7 +172,6 @@ const CASOS_DE_USO_MONITOREADOS = [
   { metodo: 'GET', ruta: '/panel', tabla: 'Bitacora', nombreCU: 'CU009 - Gestionar Panel administrativo' },
 ]
 
-// Verifica si la ruta real solicitada coincide con el patrón del caso de uso
 function coincideRuta(rutaPatron, rutaReal) {
   const regexPattern = '^' + rutaPatron.replace(/:[^\s/]+/g, '[^/]+') + '(?:\\?.*)?$'
   return new RegExp(regexPattern).test(rutaReal)
@@ -169,7 +181,6 @@ function interceptorCasoDeUsoGlobal(req, res, next) {
   const rutaCompleta = (req.baseUrl || '') + (req.path || '')
   const metodo = req.method
 
-  // Buscar si la petición actual corresponde a un caso de uso monitoreado
   const casoEncontrado = CASOS_DE_USO_MONITOREADOS.find((cu) =>
     cu.metodo === metodo && (coincideRuta(cu.ruta, rutaCompleta) || coincideRuta(cu.ruta, req.originalUrl))
   )
@@ -178,14 +189,11 @@ function interceptorCasoDeUsoGlobal(req, res, next) {
     return next()
   }
 
-  // Escuchar cuando el caso de uso termina de enviar su respuesta al cliente
   res.on('finish', async () => {
     if (res.statusCode >= 200 && res.statusCode < 400) {
       try {
-        // 1° Calcula DVH y 2° Calcula DVV de la tabla del caso de uso
         await ejecutarCasoDeUsoGlobal(casoEncontrado.tabla)
 
-        // Si se generó registro en Bitacora durante el caso de uso, también se sincroniza
         if (casoEncontrado.tabla !== 'Bitacora' && sequelize.models.Bitacora) {
           await ejecutarCasoDeUsoGlobal('Bitacora')
         }
@@ -199,7 +207,6 @@ function interceptorCasoDeUsoGlobal(req, res, next) {
 }
 
 module.exports = {
-  hash,
   obtenerModelo,
   obtenerTablasConDV,
   calcularDVH,

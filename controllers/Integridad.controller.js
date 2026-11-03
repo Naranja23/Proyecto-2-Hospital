@@ -4,7 +4,7 @@ const bitacora = require('./Bitacora.controller.js')
 
 // solo se verifican las tablas que tienen columna DVH
 const tablasConDV = () =>
-  Object.keys(sequelize.models).filter(n => sequelize.models[n].rawAttributes.DVH)
+  Object.keys(sequelize.models).filter(n => sequelize.models[n].rawAttributes?.DVH && n !== 'DVV')
 
 async function verificar(DNIUsuario = null) {
   await sequelize.authenticate()                                   // ConectarBaseDatos()
@@ -13,14 +13,18 @@ async function verificar(DNIUsuario = null) {
     const filas = await leerTabla(tabla)
     const dvhs = []
     for (const f of filas) {                                       // loop tuplas
-      if (f.DVH !== calcularDVH(f.get({ plain: true }), tabla))
+      const dvhEsperado = calcularDVH(f.get({ plain: true }), tabla)
+      const dvhActual = f.DVH != null ? Number(f.DVH) : null
+      if (dvhActual !== dvhEsperado) {
         errores.push({ tabla, tipo: 'DVH', fila: f.get(f.constructor.primaryKeyAttribute) })
-      dvhs.push(f.DVH ?? '')
+      }
+      dvhs.push(dvhActual ?? 0)
     }
     const { DVV } = sequelize.models
     const reg = await DVV.findOne({ where: { Tabla: tabla } })
-    const guardado = reg?.CalculoDVV
-    if ((guardado ?? calcularDVV([])) !== calcularDVV(dvhs)) errores.push({ tabla, tipo: 'DVV' })
+    const guardado = reg?.CalculoDVV != null ? Number(reg.CalculoDVV) : null
+    const dvvEsperado = calcularDVV(dvhs)
+    if (guardado !== dvvEsperado) errores.push({ tabla, tipo: 'DVV' })
   }
   const resultado = { ok: errores.length === 0, errores }
   await bitacora.registrar(`Verificar integridad BD: ${resultado.ok ? 'OK' : errores.length + ' error(es)'}`, DNIUsuario)

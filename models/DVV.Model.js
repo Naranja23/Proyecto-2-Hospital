@@ -14,7 +14,7 @@ const DVV = sequelize.define('DVV', {
         unique: true
     },
     CalculoDVV: {
-        type: DataTypes.STRING,
+        type: DataTypes.INTEGER,
         allowNull: false
     },
     FechaActualizacion: {

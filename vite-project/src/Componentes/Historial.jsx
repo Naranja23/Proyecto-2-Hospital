@@ -127,7 +127,7 @@ function Historial({ onSesionExpirada }) {
                                         <span className="estrellas-fijas" title={c.Comentario || ""}>
                                             {estrellas(c.Calificacion || 0)}
                                         </span>
-                                    ) : c.Estado === "Finalizada" ? (
+                                    ) : (c.Estado === "Finalizada" || c.Estado === "Atendido") ? (
                                         <button type="button" className="btn-calificar" onClick={() => abrir(c)}>
                                             Calificar
                                         </button>

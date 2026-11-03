@@ -18,7 +18,7 @@ const Permisos = sequelize.define('Permisos', {
         allowNull: false
     },
     DVH: {
-        type: DataTypes.STRING,
+        type: DataTypes.INTEGER,
         allowNull: true
     }
 },

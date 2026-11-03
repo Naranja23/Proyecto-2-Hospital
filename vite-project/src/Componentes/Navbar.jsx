@@ -9,7 +9,7 @@ export default function Navbar({ usuarioLogueado, onCerrarSesion, cerrandoSesion
   const path = location.pathname;
 
   return (
-    <header className="navbar-header">
+    <header className="navbar-header">2
       <nav className="navbar" aria-label="Navegación principal">
         <div className="navbar-container">
           <a
@@ -26,7 +26,7 @@ export default function Navbar({ usuarioLogueado, onCerrarSesion, cerrandoSesion
               alt="Logo Hospital"
               className="logo-icon"
               width="36"
-              height="36"
+              height="36"z·
             />
           </a>
 
@@ -87,6 +87,21 @@ export default function Navbar({ usuarioLogueado, onCerrarSesion, cerrandoSesion
                 >
                   Mis turnos / Reservas
                 </button>
+                {esAdmin() && (
+                  <button
+                    type="button"
+                    className={`navbar-item navbar-login ${path === '/admin/command' ? 'activo' : ''}`}
+                    onClick={() => {
+                      if (esAdmin()) {
+                        navigate('/admin/command');
+                      } else {
+                        alert('Acceso denegado');
+                      }
+                    }}
+                  >
+                    Consola Admin
+                  </button>
+                )}
                 <button
                   type="button"
                   className={`navbar-item navbar-login ${path === '/gt' ? 'activo' : ''}`}
@@ -94,13 +109,15 @@ export default function Navbar({ usuarioLogueado, onCerrarSesion, cerrandoSesion
                 >
                   Valoraciones
                 </button>
-                <button
-                  type="button"
-                  className={`navbar-item navbar-login ${path === '/integridad' ? 'activo' : ''}`}
-                  onClick={() => navigate('/integridad')}
-                >
-                  Integridad BD
-                </button>
+                {esAdmin() && (
+                  <button
+                    type="button"
+                    className={`navbar-item navbar-login ${path === '/integridad' ? 'activo' : ''}`}
+                    onClick={() => navigate('/integridad')}
+                  >
+                    Integridad BD
+                  </button>
+                )}
                 <button
                   type="button"
                   className={`navbar-item navbar-usuario ${path === '/perfil' ? 'activo' : ''}`}
