@@ -30,7 +30,7 @@ const Medico = sequelize.define('Medico', {
         defaultValue: 'Activo'
     },
     DVH: {
-        type: DataTypes.STRING,
+        type: DataTypes.INTEGER,
         allowNull: true
     }
 },

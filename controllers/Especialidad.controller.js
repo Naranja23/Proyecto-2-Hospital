@@ -65,10 +65,11 @@ async function crear(req, res) {
   }
 
   try {
+    const likeOp = sequelize.getDialect() === 'postgres' ? Op.iLike : Op.like
     const especialidad = await sequelize.transaction(async (transaction) => {
       const existente = await Especialidad.findOne({
         where: {
-          NombreEspecialidad: { [Op.iLike]: nombre.trim() }
+          NombreEspecialidad: { [likeOp]: nombre.trim() }
         },
         transaction
       })
@@ -123,6 +124,7 @@ async function actualizar(req, res) {
   }
 
   try {
+    const likeOp = sequelize.getDialect() === 'postgres' ? Op.iLike : Op.like
     const especialidad = await sequelize.transaction(async (transaction) => {
       const registro = await Especialidad.findByPk(id, {
         transaction,
@@ -138,7 +140,7 @@ async function actualizar(req, res) {
       const duplicada = await Especialidad.findOne({
         where: {
           IDEspecialidad: { [Op.ne]: id },
-          NombreEspecialidad: { [Op.iLike]: nombre.trim() }
+          NombreEspecialidad: { [likeOp]: nombre.trim() }
         },
         transaction
       })

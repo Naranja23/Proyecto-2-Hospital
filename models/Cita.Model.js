@@ -30,7 +30,7 @@ const Cita = sequelize.define('Cita', {
         allowNull: true
     },
     DVH: { 
-        type: DataTypes.STRING,
+        type: DataTypes.INTEGER,
         allowNull: true
     },
 

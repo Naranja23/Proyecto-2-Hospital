@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import '../css/Navbar.css';
-import { esAdmin } from '../auth'
+import { esAdmin } from '../auth';
 
 export default function Navbar({ usuarioLogueado, onCerrarSesion, cerrandoSesion }) {
   const navigate = useNavigate();
@@ -33,18 +33,41 @@ export default function Navbar({ usuarioLogueado, onCerrarSesion, cerrandoSesion
           <div className="navbar-links">
             {usuarioLogueado ? (
               <>
+<<<<<<< HEAD
               {/* Gestión médica y Backups*/}
+=======
+                {/* Opciones de Administrador */}
+>>>>>>> ad1382b59c4d5cbfb47e4f1d8db54e7303066cb6
                 {esAdmin() && (
                   <>
                     <button
                       type="button"
+<<<<<<< HEAD
                       className={`navbar-item navbar-login ${
                         path === '/admin/especialidades' ? 'activo' : ''
                       }`}
+=======
+                      className={`navbar-item navbar-login ${path === '/admin/panel' ? 'activo' : ''}`}
+                      onClick={() => navigate('/admin/panel')}
+                    >
+                      Panel
+                    </button>
+                    <button
+                      type="button"
+                      className={`navbar-item navbar-login ${path === '/admin/usuarios' || path === '/admin/command' ? 'activo' : ''}`}
+                      onClick={() => navigate('/admin/usuarios')}
+                    >
+                      Usuarios
+                    </button>
+                    <button
+                      type="button"
+                      className={`navbar-item navbar-login ${path === '/admin/especialidades' ? 'activo' : ''}`}
+>>>>>>> ad1382b59c4d5cbfb47e4f1d8db54e7303066cb6
                       onClick={() => navigate('/admin/especialidades')}
                     >
                       Especialidades
                     </button>
+<<<<<<< HEAD
 
                     <button
                       type="button"
@@ -54,6 +77,35 @@ export default function Navbar({ usuarioLogueado, onCerrarSesion, cerrandoSesion
                       onClick={() => navigate('/admin/backups')}
                     >
                       Backups
+=======
+                    <button
+                      type="button"
+                      className={`navbar-item navbar-login ${path === '/admin/cartilla' || path === '/cartilla' ? 'activo' : ''}`}
+                      onClick={() => navigate('/admin/cartilla')}
+                    >
+                      Cartilla
+                    </button>
+                    <button
+                      type="button"
+                      className={`navbar-item navbar-login ${path === '/admin/agregar-hospital' || path === '/agregar-hospital' ? 'activo' : ''}`}
+                      onClick={() => navigate('/admin/agregar-hospital')}
+                    >
+                      Añadir hospital
+                    </button>
+                    <button
+                      type="button"
+                      className={`navbar-item navbar-login ${path === '/admin/sacar-hospital' || path === '/sacar-hospital' ? 'activo' : ''}`}
+                      onClick={() => navigate('/admin/sacar-hospital')}
+                    >
+                      Sacar hospital
+                    </button>
+                    <button
+                      type="button"
+                      className={`navbar-item navbar-login ${path === '/admin/respaldo' || path === '/respaldo' ? 'activo' : ''}`}
+                      onClick={() => navigate('/admin/respaldo')}
+                    >
+                      Respaldos
+>>>>>>> ad1382b59c4d5cbfb47e4f1d8db54e7303066cb6
                     </button>
                   </>
                 )}
@@ -80,25 +132,35 @@ export default function Navbar({ usuarioLogueado, onCerrarSesion, cerrandoSesion
                 </button>
                 <button
                   type="button"
-                  className={`navbar-item navbar-login ${(path === '/turnos') ? 'activo' : ''}`}
+                  className={`navbar-item navbar-login ${path === '/sacar-turno' ? 'activo' : ''}`}
+                  onClick={() => navigate('/sacar-turno')}
+                >
+                  Sacar turno
+                </button>
+                <button
+                  type="button"
+                  className={`navbar-item navbar-login ${path === '/turnos' ? 'activo' : ''}`}
                   onClick={() => navigate('/turnos')}
                 >
                   Mis turnos / Reservas
                 </button>
+
                 <button
                   type="button"
-                  className={`navbar-item navbar-login ${path === '/gt' ? 'activo' : ''}`}
+                  className={`navbar-item navbar-login ${path === '/valoraciones' ? 'activo' : ''}`}
                   onClick={() => navigate('/valoraciones')}
                 >
                   Valoraciones
                 </button>
-                <button
-                  type="button"
-                  className={`navbar-item navbar-login ${path === '/integridad' ? 'activo' : ''}`}
-                  onClick={() => navigate('/integridad')}
-                >
-                  Integridad BD
-                </button>
+                {esAdmin() && (
+                  <button
+                    type="button"
+                    className={`navbar-item navbar-login ${path === '/integridad' ? 'activo' : ''}`}
+                    onClick={() => navigate('/integridad')}
+                  >
+                    Integridad BD
+                  </button>
+                )}
                 <button
                   type="button"
                   className={`navbar-item navbar-usuario ${path === '/perfil' ? 'activo' : ''}`}

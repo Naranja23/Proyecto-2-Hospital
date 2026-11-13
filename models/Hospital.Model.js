@@ -26,8 +26,13 @@ const Hospital = sequelize.define('Hospital', {
         allowNull: false,
         defaultValue: 'Activo'
     },
-    DVH: {
+    // CU008: motivo por el cual el hospital fue bloqueado.
+    MotivoBloqueo: {
         type: DataTypes.STRING,
+        allowNull: true
+    },
+    DVH: {
+        type: DataTypes.INTEGER,
         allowNull: true
     }
 },

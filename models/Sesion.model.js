@@ -20,7 +20,7 @@ const Sesion = sequelize.define('Sesion', {
         allowNull: true 
     },
     DVH: { 
-        type: DataTypes.STRING 
+        type: DataTypes.INTEGER 
     }
 }, { tableName: 'Sesion', timestamps: false })
 

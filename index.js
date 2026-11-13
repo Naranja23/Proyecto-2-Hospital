@@ -8,12 +8,16 @@ require('./models/index.model.js')
 const { sequelize } = require('./config/db.js')
 // Para el gestionar Medicas
 const especialidades = require('./controllers/Especialidad.controller.js')
+const panel = require('./controllers/panel.controller.js')
 
 const { interceptorCasoDeUsoGlobal } = require('./controllers/Dvv y Dvh.js')
+const { middlewareModoMonousuario } = require('./controllers/Respaldo.controller.js')
 
 server.use(cors())
 server.use(express.json())
+server.use(middlewareModoMonousuario)
 server.use(interceptorCasoDeUsoGlobal)
+
 server.get('/', (req, res) => res.status(200).json({ message: 'El server está ON' }))
 server.use('/users', require('./routes/user.routes.js'))
 // ---- las líneas de cada CU van acá ----
@@ -24,6 +28,13 @@ server.use('/valoraciones', require('./routes/Valoracion.routes.js'))
 server.use('/especialidades', require('./routes/Especialidad.routes.js'))
 server.use('/backups', require('./routes/Backups.routes.js'))
 server.use('/buscador', require('./routes/Buscador.routes'))
+server.use('/panel', require('./routes/panel.routes.js'))
+server.use('/hospitales', require('./routes/Hospital.routes.js'))
+server.use('/bloquear-hospital', require('./routes/bloquearHospital.routes.js'))
+server.use('/sacar-hospital', require('./routes/sacarHospital.routes.js'))
+server.use('/cartilla', require('./routes/Cartilla.routes.js'))
+server.use('/respaldos', require('./routes/Respaldo.routes.js'))
+
 const PORT = 3000
 const iniciar = async () => {
   await sequelize.authenticate()

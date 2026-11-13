@@ -10,11 +10,12 @@ function auth(req, res, next) {
     return res.status(401).json({ ok: false, mensaje: 'Tenés que iniciar sesión.' });
   }
 
-  const token = cabecera.split(' ')[1]; 
-  // JavaScript busca el espacio y divide el texto en dos partes:
-//[0] -> "Bearer"
-
-//[1] -> "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." (el token real)
+  let token = cabecera;
+  if (cabecera.startsWith('Bearer ')) {
+    token = cabecera.slice(7).trim();
+  } else if (cabecera.includes(' ')) {
+    token = cabecera.split(' ')[1];
+  }
   
   if (!token) {
     return res.status(401).json({ ok: false, mensaje: 'Token no encontrado.' });
@@ -34,7 +35,6 @@ function auth(req, res, next) {
 function soloAdmin(req, res, next) {
   let rolUsuario = '';
 
-  // Validamos de forma segura para que no rompa si req.user.rol no existe
   if (req.user && req.user.rol) {
     if (typeof req.user.rol === 'string') {
       rolUsuario = req.user.rol;
@@ -44,11 +44,15 @@ function soloAdmin(req, res, next) {
   }
 
   if (rolUsuario !== ROL_ADMIN) {
-    return res.status(403).json({ ok: false, mensaje: 'Acceso denegado.' });
+    const tieneAdmin = Array.isArray(req.user?.roles) && req.user.roles.some((r) =>
+      (typeof r === 'string' ? r : r?.DescripcionR) === ROL_ADMIN
+    );
+    if (!tieneAdmin) {
+      return res.status(403).json({ ok: false, mensaje: 'Acceso denegado.' });
+    }
   }
 
   return next();
 }
 
 module.exports = { auth, soloAdmin, verificarSesion: auth };
-

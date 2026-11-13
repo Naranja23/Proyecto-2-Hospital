@@ -4,6 +4,29 @@
 
 BEGIN;
 
+-- 0. ROLES BASE DEL SISTEMA
+INSERT INTO "Rol" ("IDRol", "DescripcionR", "ActivoR")
+VALUES
+    (1, 'Administrador', true),
+    (2, 'Medico',        true),
+    (3, 'Paciente',      true)
+ON CONFLICT ("IDRol") DO NOTHING;
+
+-- Ajustar la secuencia de Rol si existe
+SELECT setval(pg_get_serial_sequence('"Rol"', 'IDRol'), COALESCE((SELECT MAX("IDRol") FROM "Rol"), 1));
+
+-- 0.1 PERMISOS BASE Y ACCESO AL PANEL ADMINISTRATIVO
+INSERT INTO "Permisos" ("IDPermisos", "DescripcionP", "ActivoP")
+VALUES (1, 'accesoPanel', true)
+ON CONFLICT ("IDPermisos") DO NOTHING;
+
+SELECT setval(pg_get_serial_sequence('"Permisos"', 'IDPermisos'), COALESCE((SELECT MAX("IDPermisos") FROM "Permisos"), 1));
+
+INSERT INTO "RolPermisos" ("IDRol", "IDPermisos", "createdAt", "updatedAt")
+VALUES (1, 1, NOW(), NOW())
+ON CONFLICT DO NOTHING;
+
+
 -- 1. HOSPITALES ADICIONALES (IDs 11 a 15)
 INSERT INTO "Hospital" ("IDHospital", "NombreH", "DireccionH", "SitioWeb", "EstadoH")
 VALUES 

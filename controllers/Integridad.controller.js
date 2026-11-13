@@ -4,7 +4,7 @@ const bitacora = require('./Bitacora.controller.js')
 
 // solo se verifican las tablas que tienen columna DVH
 const tablasConDV = () =>
-  Object.keys(sequelize.models).filter(n => sequelize.models[n].rawAttributes.DVH)
+  Object.keys(sequelize.models).filter(n => sequelize.models[n].rawAttributes?.DVH && n !== 'DVV')
 
 async function verificar(DNIUsuario = null) {
   await sequelize.authenticate()                                   // ConectarBaseDatos()
@@ -13,25 +13,42 @@ async function verificar(DNIUsuario = null) {
     const filas = await leerTabla(tabla)
     const dvhs = []
     for (const f of filas) {                                       // loop tuplas
-      if (f.DVH !== calcularDVH(f.get({ plain: true }), tabla))
-        errores.push({ tabla, tipo: 'DVH', fila: f.get(f.constructor.primaryKeyAttribute) })
-      dvhs.push(f.DVH ?? '')
+      const dvhEsperado = calcularDVH(f.get({ plain: true }), tabla)
+      const dvhActual = f.DVH != null ? Number(f.DVH) : null
+      if (dvhActual !== dvhEsperado) {
+        const pkVal = f.constructor.primaryKeyAttribute
+          ? f.get(f.constructor.primaryKeyAttribute)
+          : (f.constructor.primaryKeyAttributes
+              ? f.constructor.primaryKeyAttributes.map(k => f.get(k)).join('-')
+              : 'fila')
+        errores.push({ tabla, tipo: 'DVH', fila: pkVal })
+      }
+      dvhs.push(dvhActual ?? 0)
     }
     const { DVV } = sequelize.models
     const reg = await DVV.findOne({ where: { Tabla: tabla } })
-    const guardado = reg?.CalculoDVV
-    if ((guardado ?? calcularDVV([])) !== calcularDVV(dvhs)) errores.push({ tabla, tipo: 'DVV' })
+    const guardado = reg?.CalculoDVV != null ? Number(reg.CalculoDVV) : null
+    const dvvEsperado = calcularDVV(dvhs)
+    if (guardado !== dvvEsperado) errores.push({ tabla, tipo: 'DVV' })
   }
   const resultado = { ok: errores.length === 0, errores }
   await bitacora.registrar(`Verificar integridad BD: ${resultado.ok ? 'OK' : errores.length + ' error(es)'}`, DNIUsuario)
+  await calcularDV('Bitacora')
   return resultado
 }
 
 // Extensión del CU (Rectificar integridad). OJO: "acepta" los datos actuales como correctos;
 // lo ideal es restaurar desde un backup.
-async function rectificar(errores, DNIUsuario = null) {
-  for (const tabla of new Set(errores.map(e => e.tabla))) await calcularDV(tabla)
+async function rectificar(errores = [], DNIUsuario = null) {
+  const tablasARectificar = (errores && errores.length > 0)
+    ? [...new Set([...errores.map(e => e.tabla), 'Bitacora'])]
+    : tablasConDV()
+
+  for (const tabla of tablasARectificar) {
+    await calcularDV(tabla)
+  }
   await bitacora.registrar('Rectificar integridad BD', DNIUsuario)
+  await calcularDV('Bitacora')
   return verificar(DNIUsuario)
 }
 

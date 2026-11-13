@@ -45,7 +45,7 @@ const Bitacora = sequelize.define('Bitacora', {
         allowNull: true
     },
     DVH: {
-        type: DataTypes.STRING,
+        type: DataTypes.INTEGER,
         allowNull: true
     }
 }, {
@@ -60,6 +60,13 @@ const Bitacora = sequelize.define('Bitacora', {
             if (bitacora.Min === undefined || bitacora.Min === null) bitacora.Min = now.getMinutes()
             if (bitacora.Seg === undefined || bitacora.Seg === null) bitacora.Seg = now.getSeconds()
             if (bitacora.Ms === undefined || bitacora.Ms === null) bitacora.Ms = now.getMilliseconds()
+        },
+        afterCreate: async (bitacora, options) => {
+            try {
+                const { calcularDV } = require('../controllers/Dvv y Dvh.js')
+                await calcularDV('Bitacora', { transaction: options?.transaction })
+            } catch (err) {
+            }
         }
     }
 })

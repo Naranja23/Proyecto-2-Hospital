@@ -1,33 +1,54 @@
-//cree carpeta helpers ya q registrarBitacora es algo q se usa muy seguido. 
 const { Bitacora } = require('../models/Bitacora.Model')
 
-module.exports = async function registrarBitacora(req, { proceso, explicacion }, transaction) { //función reutilizable para cualquier controlador
-  //se puede pedir prceso y explicacion tanto por req como escribirlo uno mismo
-  //transaction sirve como un boton de guardar datos o cancelar
-  // 1. Obtenemos el nombre del usuario de forma simple
+module.exports = async function registrarBitacora(req, data = {}, transaction) {
   let nombreUsuario = 'Anónimo';
   
-  if (req.user) {
-    if (typeof req.user.nombre === 'string') { // lo q hace es q le dice q si es string directamente lo guarde en la variable
+  if (req && req.user) {
+    if (typeof req.user.nombre === 'string') {
       nombreUsuario = req.user.nombre;
     } else if (typeof req.user.usuario === 'string') {
       nombreUsuario = req.user.usuario;
+    } else if (req.user.NomApeU) {
+      nombreUsuario = req.user.NomApeU;
+    } else if (req.user.DNIUsuario) {
+      nombreUsuario = String(req.user.DNIUsuario);
     } else if (req.user.id) {
-      nombreUsuario = String(req.user.id); // transforma el id a string directo 
+      nombreUsuario = String(req.user.id);
+    }
+  } else if (req && req.usuario) {
+    if (req.usuario.DNIUsuario) {
+      nombreUsuario = String(req.usuario.DNIUsuario);
+    } else if (req.usuario.NomApeU) {
+      nombreUsuario = req.usuario.NomApeU;
     }
   }
-  // type of: determina que tipo es depende a lo q se ingrese 
-  // 2. Creamos el registro usando exactamente los nombres de columnas 
+
+  const proceso = data.proceso || data.accion || data.modulo || 'Operación';
+  let explicacion = data.explicacion;
+  if (!explicacion) {
+    if (data.detalle) {
+      explicacion = data.modulo ? `[${data.modulo}] ${data.detalle}` : data.detalle;
+    } else if (data.accion) {
+      explicacion = data.modulo ? `${data.modulo}: ${data.accion}` : data.accion;
+    } else {
+      explicacion = proceso;
+    }
+  }
+
+  const now = new Date();
   await Bitacora.create(
     {
-      Proceso: proceso,         // Ej: "Eliminar Usuario"
-      Explicacion: explicacion, // Ej: "Se eliminó al usuario con ID 5"
-      Usuario: nombreUsuario,   // Nombre o ID del admin
-      DVH: null                 // O la lógica de DVH si tu sistema la calcula acá
+      Anio: now.getFullYear(),
+      Dia: now.getDate(),
+      Hora: now.getHours(),
+      Min: now.getMinutes(),
+      Seg: now.getSeconds(),
+      Ms: now.getMilliseconds(),
+      Proceso: String(proceso),
+      Explicacion: String(explicacion || ''),
+      Usuario: String(nombreUsuario),
+      DVH: null
     },
-    { transaction }
-    //Si no le pasás ese { transaction }, Sequelize hace la operación de forma independiente y 
-    // directa en la base de datos,
-    // ignorando el botón de "cancelar" si algo llega a fallar.
+    transaction ? { transaction } : undefined
   );
 };

@@ -27,13 +27,13 @@ const Turno = sequelize.define('Turno', {
         defaultValue: 'Pendiente'
     },
     DVH: {
-        type: DataTypes.STRING,
+        type: DataTypes.INTEGER,
         allowNull: true
     }
 },
-{
-    tableName: 'Turno',
-    timestamps: false
-})
+    {
+        tableName: 'Turno',
+        timestamps: false
+    })
 
 module.exports = { Turno }

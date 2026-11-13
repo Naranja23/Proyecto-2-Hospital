@@ -10,13 +10,24 @@ import Home from './Componentes/Home'
 import Perfil from './Componentes/Perfil'
 import Integridad from './Componentes/Integridad'
 import Buscador from './Componentes/Buscador'
+import SacarTurno from './Componentes/SacarTurno'
 import './css/App.css'
 import axios from 'axios'
-//Import para el frontend de Gestiones Medicas
+// Import para el frontend de Gestiones Medicas
 import Especialidades from './Componentes/Especialidades'
 import SoloAdmin from './Componentes/SoloAdmin'
+<<<<<<< HEAD
 //Import de Backups
 import Backups from './Componentes/Backups'
+=======
+import Panel from './Componentes/panel'
+import GestionUsuarios from './Componentes/GestionUsuarios'
+import Cartilla from './Componentes/Cartilla'
+import AgregarHospital from './Componentes/AgregarHospital'
+import BloquearHospital from './Componentes/BloquearHospital'
+import SacarHospital from './Componentes/SacarHospital'
+import Respaldo from './Componentes/Respaldo'
+>>>>>>> ad1382b59c4d5cbfb47e4f1d8db54e7303066cb6
 
 const API = 'http://localhost:3000'
 
@@ -101,7 +112,10 @@ function App() {
               path="/buscador"
               element={usuarioLogueado ? <Buscador onSesionExpirada={limpiarSesionLocal} /> : <Navigate to="/login" replace />}
             />
-
+            <Route
+              path="/sacar-turno"
+              element={usuarioLogueado ? <SacarTurno onSesionExpirada={limpiarSesionLocal} /> : <Navigate to="/login" replace />}
+            />
             <Route
               path="/turnos"
               element={usuarioLogueado ? <Historial onSesionExpirada={limpiarSesionLocal} /> : <Navigate to="/login" replace />}
@@ -112,7 +126,11 @@ function App() {
             />
             <Route
               path="/integridad"
-              element={usuarioLogueado ? <Integridad onSesionExpirada={limpiarSesionLocal} /> : <Navigate to="/login" replace />}
+              element={usuarioLogueado ? (
+                <SoloAdmin>
+                  <Integridad onSesionExpirada={limpiarSesionLocal} />
+                </SoloAdmin>
+              ) : <Navigate to="/login" replace />}
             />
             <Route
               path="/valoraciones"
@@ -132,7 +150,11 @@ function App() {
                 />
               ) : <Navigate to="/login" replace />}
             />
+<<<<<<< HEAD
             {/* Gestión médica */}
+=======
+            {/* Gestiones Medicas */}
+>>>>>>> ad1382b59c4d5cbfb47e4f1d8db54e7303066cb6
             <Route
               path="/admin/especialidades"
               element={usuarioLogueado ? (
@@ -154,6 +176,107 @@ function App() {
                 )
               }
             />
+            <Route
+              path="/admin/panel"
+              element={usuarioLogueado ? (
+                <SoloAdmin><Panel onSesionExpirada={limpiarSesionLocal} /></SoloAdmin>
+              ) : <Navigate to="/login" replace />}
+            />
+            <Route
+              path="/admin/usuarios"
+              element={usuarioLogueado ? (
+                <SoloAdmin>
+                  <GestionUsuarios onSesionExpirada={limpiarSesionLocal} />
+                </SoloAdmin>
+              ) : <Navigate to="/login" replace />}
+            />
+            <Route
+              path="/admin/command"
+              element={<Navigate to="/admin/usuarios" replace />}
+            />
+            <Route
+              path="/admin/respaldo"
+              element={usuarioLogueado ? (
+                <SoloAdmin>
+                  <Respaldo onSesionExpirada={limpiarSesionLocal} />
+                </SoloAdmin>
+              ) : <Navigate to="/login" replace />}
+            />
+            <Route
+              path="/respaldo"
+              element={usuarioLogueado ? (
+                <SoloAdmin>
+                  <Respaldo onSesionExpirada={limpiarSesionLocal} />
+                </SoloAdmin>
+              ) : <Navigate to="/login" replace />}
+            />
+
+            {/* Hospitales y Cartilla */}
+            <Route
+              path="/admin/cartilla"
+              element={usuarioLogueado ? (
+                <SoloAdmin>
+                  <Cartilla />
+                </SoloAdmin>
+              ) : <Navigate to="/login" replace />}
+            />
+            <Route
+              path="/cartilla"
+              element={usuarioLogueado ? (
+                <SoloAdmin>
+                  <Cartilla />
+                </SoloAdmin>
+              ) : <Navigate to="/login" replace />}
+            />
+            <Route
+              path="/admin/agregar-hospital"
+              element={usuarioLogueado ? (
+                <SoloAdmin>
+                  <AgregarHospital />
+                </SoloAdmin>
+              ) : <Navigate to="/login" replace />}
+            />
+            <Route
+              path="/agregar-hospital"
+              element={usuarioLogueado ? (
+                <SoloAdmin>
+                  <AgregarHospital />
+                </SoloAdmin>
+              ) : <Navigate to="/login" replace />}
+            />
+            <Route
+              path="/admin/bloquear-hospital/:id"
+              element={usuarioLogueado ? (
+                <SoloAdmin>
+                  <BloquearHospital />
+                </SoloAdmin>
+              ) : <Navigate to="/login" replace />}
+            />
+            <Route
+              path="/bloquear-hospital/:id"
+              element={usuarioLogueado ? (
+                <SoloAdmin>
+                  <BloquearHospital />
+                </SoloAdmin>
+              ) : <Navigate to="/login" replace />}
+            />
+            <Route
+              path="/admin/sacar-hospital"
+              element={usuarioLogueado ? (
+                <SoloAdmin>
+                  <SacarHospital />
+                </SoloAdmin>
+              ) : <Navigate to="/login" replace />}
+            />
+            <Route
+              path="/sacar-hospital"
+              element={usuarioLogueado ? (
+                <SoloAdmin>
+                  <SacarHospital />
+                </SoloAdmin>
+              ) : <Navigate to="/login" replace />}
+            />
+
             <Route
               path="*"
               element={<Navigate to={usuarioLogueado ? "/home" : "/login"} replace />}
