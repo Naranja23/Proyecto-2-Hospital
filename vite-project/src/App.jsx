@@ -15,6 +15,8 @@ import axios from 'axios'
 //Import para el frontend de Gestiones Medicas
 import Especialidades from './Componentes/Especialidades'
 import SoloAdmin from './Componentes/SoloAdmin'
+//Import de Backups
+import Backups from './Componentes/Backups'
 
 const API = 'http://localhost:3000'
 
@@ -130,7 +132,7 @@ function App() {
                 />
               ) : <Navigate to="/login" replace />}
             />
-            //Gestiones Medicas
+            {/* Gestión médica */}
             <Route
               path="/admin/especialidades"
               element={usuarioLogueado ? (
@@ -138,6 +140,19 @@ function App() {
                   <Especialidades onSesionExpirada={limpiarSesionLocal} />
                 </SoloAdmin>
               ) : <Navigate to="/login" replace />}
+            />
+            {/* Backups Automaticos */}
+            <Route
+              path="/admin/backups"
+              element={
+                usuarioLogueado ? (
+                  <SoloAdmin>
+                    <Backups onSesionExpirada={limpiarSesionLocal} />
+                  </SoloAdmin>
+                ) : (
+                  <Navigate to="/login" replace />
+                )
+              }
             />
             <Route
               path="*"

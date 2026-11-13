@@ -11,6 +11,7 @@ const { Bitacora } = require('./Bitacora.Model.js')
 const { DVV } = require('./DVV.Model.js')
 const { Valoracion } = require('./Valoracion.Model.js')
 const { Especialidad } = require('./Especialidad.Model.js')
+const { BackupProgramacion } = require('./BackupProgramacion.Model.js')
 
 
 Medico.belongsToMany(Rol, { through: 'MedicoRol', foreignKey: 'IDMedico', otherKey: 'IDRol' })
@@ -73,5 +74,6 @@ module.exports = {
     Bitacora,
     DVV,
     Valoracion,
-    Especialidad
+    Especialidad,
+    BackupProgramacion
 }

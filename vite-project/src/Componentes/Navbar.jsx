@@ -33,16 +33,29 @@ export default function Navbar({ usuarioLogueado, onCerrarSesion, cerrandoSesion
           <div className="navbar-links">
             {usuarioLogueado ? (
               <>
-              //Gestiones Medicas
+              {/* Gestión médica y Backups*/}
                 {esAdmin() && (
-                  <button
-                    type="button"
-                    className={`navbar-item navbar-login ${path === '/admin/especialidades' ? 'activo' : ''
+                  <>
+                    <button
+                      type="button"
+                      className={`navbar-item navbar-login ${
+                        path === '/admin/especialidades' ? 'activo' : ''
                       }`}
-                    onClick={() => navigate('/admin/especialidades')}
-                  >
-                    Especialidades
-                  </button>
+                      onClick={() => navigate('/admin/especialidades')}
+                    >
+                      Especialidades
+                    </button>
+
+                    <button
+                      type="button"
+                      className={`navbar-item navbar-login ${
+                        path === '/admin/backups' ? 'activo' : ''
+                      }`}
+                      onClick={() => navigate('/admin/backups')}
+                    >
+                      Backups
+                    </button>
+                  </>
                 )}
                 <button
                   type="button"

@@ -1,0 +1,148 @@
+.backup-page {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 42px 24px 72px;
+  color: #172033;
+}
+
+.backup-heading {
+  margin-bottom: 28px;
+}
+
+.backup-kicker {
+  color: #6454c7;
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+
+.backup-heading h1 {
+  margin: 8px 0;
+  font-size: clamp(2rem, 4vw, 2.7rem);
+}
+
+.backup-heading p,
+.backup-card > p {
+  color: #687386;
+}
+
+.backup-card {
+  padding: 28px;
+  border: 1px solid #e4e8f0;
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 12px 36px #2738580d;
+}
+
+.backup-card h2 {
+  margin: 0;
+  font-size: 1.3rem;
+}
+
+.backup-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+  margin-top: 26px;
+}
+
+.backup-fields label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-weight: 650;
+}
+
+.backup-fields input,
+.backup-fields select {
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid #ccd3df;
+  border-radius: 9px;
+  background: white;
+  font: inherit;
+}
+
+.backup-fields input:focus,
+.backup-fields select:focus {
+  outline: 3px solid #6957d21c;
+  border-color: #6957d2;
+}
+
+.backup-destination {
+  grid-column: 1 / -1;
+}
+
+.backup-fields small {
+  color: #758094;
+  font-weight: 400;
+}
+
+.backup-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.backup-actions button {
+  min-height: 44px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 9px;
+  color: white;
+  background: #5b4bc4;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.backup-actions button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.backup-actions .backup-secondary {
+  color: #403486;
+  background: #f0effa;
+}
+
+.backup-alert {
+  margin-top: 20px;
+  padding: 13px 15px;
+  border-radius: 9px;
+  overflow-wrap: anywhere;
+}
+
+.backup-alert--ok {
+  color: #166534;
+  background: #effaf2;
+}
+
+.backup-alert--error {
+  color: #a32727;
+  background: #fff1f0;
+}
+
+.backup-alert--info {
+  color: #34465d;
+  background: #f1f5f9;
+}
+
+@media (max-width: 640px) {
+  .backup-page {
+    padding: 28px 16px 48px;
+  }
+
+  .backup-card {
+    padding: 20px;
+  }
+
+  .backup-fields {
+    grid-template-columns: 1fr;
+  }
+
+  .backup-destination {
+    grid-column: auto;
+  }
+}

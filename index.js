@@ -22,6 +22,7 @@ server.use('/turnos', require('./routes/Cita.routes.js'))
 server.use('/planes', require('./routes/Plan.routes.js'))
 server.use('/valoraciones', require('./routes/Valoracion.routes.js'))
 server.use('/especialidades', require('./routes/Especialidad.routes.js'))
+server.use('/backups', require('./routes/Backups.routes.js'))
 server.use('/buscador', require('./routes/Buscador.routes'))
 const PORT = 3000
 const iniciar = async () => {
@@ -29,6 +30,8 @@ const iniciar = async () => {
   await sequelize.sync({ alter: true })
   // sin force: no borra la base
   await especialidades.migrarEspecialidadesLegadas()
+  // Para hacer el Backups CU18
+  require('./controllers/Backups.controller.js').iniciarScheduler()
   // ---- CU013 agrega acá la verificación al arrancar ----
   const r = await integridad.verificar()
   console.log('Integridad BD:', r.ok ? 'OK' : r.errores)
