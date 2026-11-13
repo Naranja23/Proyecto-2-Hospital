@@ -2,36 +2,36 @@
 // Una cartilla es la lista de hospitales que atienden para una obra social.
 
 const Cartilla = require('../models/Cartilla.Model');
-const Hospital = require('../models/Hospital.Model');
-const Prepaga = require('../models/Prepaga.Model');
+const { Hospital } = require('../models/Hospital.Model');
+const { Prepaga } = require('../models/Prepaga.Model');
 const registrarBitacora = require('../helpers/registrarBitacora');
-
 
 // PASO 1: devolver las obras sociales para llenar el selector del frontend.
 const listarObrasSociales = async (req, res) => {
-
     try {
-        // findAll devuelve todos los registros. Solo necesitamos id y nombre.
-        const obrasSociales = await Prepaga.findAll({
-            attributes: ['id', 'nombre'],
-            order: [['nombre', 'ASC']] // ASC ordena alfabéticamente.
+        const prepagas = await Prepaga.findAll({
+            attributes: ['IDPrepaga', 'NombreComercial'],
+            order: [['NombreComercial', 'ASC']]
         });
 
-        return res.status(200).json(obrasSociales);
+        // Devolvemos con aliases compatibles tanto con id/nombre como con IDPrepaga/NombreComercial
+        const resultado = prepagas.map((p) => ({
+            id: p.IDPrepaga,
+            IDPrepaga: p.IDPrepaga,
+            nombre: p.NombreComercial,
+            NombreComercial: p.NombreComercial
+        }));
 
+        return res.status(200).json(resultado);
     } catch (error) {
         console.error(error);
         return res.status(500).json({ mensaje: 'No se pudieron cargar las obras sociales.' });
     }
-
 };
-
 
 // PASO 2: mostrar todos los hospitales e indicar cuáles están en la cartilla.
 const obtener = async (req, res) => {
-
-    // El id de la obra social viene en la URL, por ejemplo /cartilla/3.
-    const prepagaId = req.params.prepagaId;
+    const prepagaId = Number(req.params.prepagaId);
 
     try {
         const obraSocial = await Prepaga.findByPk(prepagaId);
@@ -40,54 +40,48 @@ const obtener = async (req, res) => {
             return res.status(404).json({ mensaje: 'La obra social no existe.' });
         }
 
-        // Buscamos todos los hospitales y los registros que ya forman la cartilla.
-        const hospitales = await Hospital.findAll({ order: [['nombre', 'ASC']] });
+        const hospitales = await Hospital.findAll({ order: [['NombreH', 'ASC']] });
         const hospitalesEnCartilla = await Cartilla.findAll({
             where: { prepagaId: prepagaId }
         });
 
-        // Armamos una lista simple de los ID que ya están asociados.
-        const idsEnCartilla = [];
-        for (let i = 0; i < hospitalesEnCartilla.length; i++) {
-            idsEnCartilla.push(hospitalesEnCartilla[i].hospitalId);
-        }
+        const idsEnCartilla = hospitalesEnCartilla.map((c) => Number(c.hospitalId));
 
-        // A cada hospital le agregamos enCartilla: true o false.
-        // Esto le permite al frontend mostrar la casilla marcada o desmarcada.
-        const resultado = [];
-        for (let i = 0; i < hospitales.length; i++) {
-            const hospital = hospitales[i];
-            const estaEnCartilla = idsEnCartilla.includes(hospital.id);
+        const resultado = hospitales.map((hospital) => {
+            const estaEnCartilla = idsEnCartilla.includes(hospital.IDHospital);
 
-            resultado.push({
-                id: hospital.id,
-                nombre: hospital.nombre,
-                ciudad: hospital.ciudad,
+            return {
+                id: hospital.IDHospital,
+                IDHospital: hospital.IDHospital,
+                nombre: hospital.NombreH,
+                NombreH: hospital.NombreH,
+                ciudad: hospital.DireccionH,
+                direccion: hospital.DireccionH,
+                DireccionH: hospital.DireccionH,
                 enCartilla: estaEnCartilla
-            });
-        }
-
-        return res.status(200).json({
-            obraSocial: obraSocial,
-            hospitales: resultado
+            };
         });
 
+        return res.status(200).json({
+            obraSocial: {
+                id: obraSocial.IDPrepaga,
+                IDPrepaga: obraSocial.IDPrepaga,
+                nombre: obraSocial.NombreComercial,
+                NombreComercial: obraSocial.NombreComercial
+            },
+            hospitales: resultado
+        });
     } catch (error) {
         console.error(error);
         return res.status(500).json({ mensaje: 'No se pudo cargar la cartilla.' });
     }
-
 };
-
 
 // PASOS 3 A 6: guardar la lista final de hospitales seleccionados.
 const actualizar = async (req, res) => {
-
-    const prepagaId = req.params.prepagaId;
-    // El frontend envía algo parecido a { hospitalIds: [1, 2, 5] }.
+    const prepagaId = Number(req.params.prepagaId);
     const hospitalIds = req.body.hospitalIds;
 
-    // Verificamos que hospitalIds sea una lista antes de recorrerla.
     if (!Array.isArray(hospitalIds)) {
         return res.status(400).json({ mensaje: 'Tenés que enviar una lista de hospitales.' });
     }
@@ -99,59 +93,42 @@ const actualizar = async (req, res) => {
             return res.status(404).json({ mensaje: 'La obra social no existe.' });
         }
 
-        // Revisamos que cada hospital seleccionado exista realmente.
-        for (let i = 0; i < hospitalIds.length; i++) {
-            const hospital = await Hospital.findByPk(hospitalIds[i]);
+        const idsNumericos = hospitalIds.map((id) => Number(id));
+
+        // Revisamos que cada hospital seleccionado exista realmente
+        for (const hid of idsNumericos) {
+            const hospital = await Hospital.findByPk(hid);
             if (!hospital) {
                 return res.status(400).json({ mensaje: 'Uno de los hospitales seleccionados no existe.' });
             }
         }
 
-        // Leemos la cartilla actual para saber qué hay que agregar o quitar.
+        // Leemos la cartilla actual
         const cartillaActual = await Cartilla.findAll({
             where: { prepagaId: prepagaId }
         });
 
-        const idsActuales = [];
-        for (let i = 0; i < cartillaActual.length; i++) {
-            idsActuales.push(cartillaActual[i].hospitalId);
-        }
+        const idsActuales = cartillaActual.map((c) => Number(c.hospitalId));
 
-        // Creamos dos listas: hospitales nuevos y hospitales que se quitaron.
-        const agregar = [];
-        const quitar = [];
+        const agregar = idsNumericos.filter((id) => !idsActuales.includes(id));
+        const quitar = idsActuales.filter((id) => !idsNumericos.includes(id));
 
-        for (let i = 0; i < hospitalIds.length; i++) {
-            if (!idsActuales.includes(hospitalIds[i])) {
-                agregar.push(hospitalIds[i]);
-            }
-        }
-
-        for (let i = 0; i < idsActuales.length; i++) {
-            if (!hospitalIds.includes(idsActuales[i])) {
-                quitar.push(idsActuales[i]);
-            }
-        }
-
-        // Si no hay nada para cambiar, respondemos sin hacer escrituras.
         if (agregar.length === 0 && quitar.length === 0) {
             return res.status(200).json({ mensaje: 'La cartilla no tenía cambios.' });
         }
 
-        // Agregamos las relaciones nuevas, una por una.
-        for (let i = 0; i < agregar.length; i++) {
+        for (const hid of agregar) {
             await Cartilla.create({
                 prepagaId: prepagaId,
-                hospitalId: agregar[i]
+                hospitalId: hid
             });
         }
 
-        // Quitamos de la cartilla los hospitales que se desmarcaron.
-        for (let i = 0; i < quitar.length; i++) {
+        for (const hid of quitar) {
             await Cartilla.destroy({
                 where: {
                     prepagaId: prepagaId,
-                    hospitalId: quitar[i]
+                    hospitalId: hid
                 }
             });
         }
@@ -159,7 +136,9 @@ const actualizar = async (req, res) => {
         await registrarBitacora(req, {
             modulo: 'Cartilla',
             accion: 'Actualización de cartilla',
-            detalle: 'Se actualizó la cartilla de ' + obraSocial.nombre
+            proceso: 'Actualización de cartilla',
+            detalle: 'Se actualizó la cartilla de ' + obraSocial.NombreComercial,
+            explicacion: 'Se actualizó la cartilla de ' + obraSocial.NombreComercial
         });
 
         return res.status(200).json({
@@ -167,13 +146,10 @@ const actualizar = async (req, res) => {
             hospitalesAgregados: agregar.length,
             hospitalesQuitados: quitar.length
         });
-
     } catch (error) {
         console.error(error);
         return res.status(500).json({ mensaje: 'No se pudo actualizar la cartilla.' });
     }
-
 };
-
 
 module.exports = { listarObrasSociales, obtener, actualizar };

@@ -7,6 +7,8 @@ const MENSAJE_503 = 'No se puede completar la operación en este momento. Intent
 
 // CAMBIO 1: la función tienePermiso, la tuya
 async function tienePermiso(nombreRol) {
+  if (nombreRol === 'Administrador') return true
+
   const rol = await Rol.findOne({
     where: { DescripcionR: nombreRol, ActivoR: true },
     include: [{
@@ -66,13 +68,17 @@ async function armarPanel() {
 const obtenerPanel = async (req, res) => {
   try {
     const dni = req.usuario.DNIUsuario
+    const rol = req.usuario?.rol || req.user?.rol
+    const tieneAdmin = rol === 'Administrador' ||
+      (Array.isArray(req.usuario?.roles) && req.usuario.roles.some((r) =>
+        (typeof r === 'string' ? r : r?.DescripcionR) === 'Administrador'
+      ))
 
-    if (!(await tienePermiso(req.usuario.rol))) {
+    if (!tieneAdmin && !(await tienePermiso(rol))) {
       await registrarBitacora(req, {
         proceso: 'Acceso denegado al panel administrativo (CU009)',
         explicacion: `El usuario ${dni} intentó acceder al panel sin permiso`
       })
-      await calcularDV('Bitacora')
       return res.status(403).json({ message: 'No cuenta con los permisos necesarios para acceder al panel administrativo.' })
     }
 

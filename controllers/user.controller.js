@@ -302,7 +302,8 @@ const login = async (req, res) => {
             return res.status(403).json({ message: "Tu cuenta está inactiva" })
         }
 
-        const rolPrincipal = usuario.Rols?.[0]?.DescripcionR || 'Paciente'
+        const esAdmin = usuario.Rols?.some(r => r.DescripcionR === 'Administrador')
+        const rolPrincipal = esAdmin ? 'Administrador' : (usuario.Rols?.[0]?.DescripcionR || 'Paciente')
         const sesion = await crearSesion(usuario.DNIUsuario)
         const token = jwt.sign(
             { DNIUsuario: usuario.DNIUsuario, Email: usuario.Email, sid: sesion.IDSesion, rol: rolPrincipal },

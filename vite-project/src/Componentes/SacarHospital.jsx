@@ -1,9 +1,11 @@
 // PANTALLA CU007: permite seleccionar un hospital y eliminarlo definitivamente.
 
 import { useEffect, useState } from 'react';
-import axios from "axios"
+import axios from 'axios';
 import '../css/Hospitales.css';
 import '../css/SacarHospital.css';
+
+const API = 'http://localhost:3000';
 
 export default function SacarHospital() {
   const [hospitales, setHospitales] = useState([]);
@@ -12,14 +14,19 @@ export default function SacarHospital() {
   const [seleccionado, setSeleccionado] = useState(null); // hospital que se va a confirmar
   const [aviso, setAviso] = useState(null); // { tipo: 'ok' | 'error', texto }
 
+  const getHeaders = () => {
+    const token = localStorage.getItem('token');
+    return { headers: { Authorization: token ? `Bearer ${token}` : '' } };
+  };
+
   // Paso 1: el administrador accede al listado de hospitales
   const cargarHospitales = async () => {
     setCargando(true);
     try {
-      const { data } = await axios.get('/hospitales');
-      setHospitales(data.hospitales);
+      const { data } = await axios.get(`${API}/hospitales`, getHeaders());
+      setHospitales(Array.isArray(data) ? data : (data.hospitales || []));
     } catch (e) {
-      setAviso({ tipo: 'error', texto: e.message });
+      setAviso({ tipo: 'error', texto: e.response?.data?.mensaje || e.message });
     } finally {
       setCargando(false);
     }
@@ -33,12 +40,12 @@ export default function SacarHospital() {
   const elegirHospital = async (id) => {
     setAviso(null);
     try {
-      const { data } = await axios.get(`/hospitales/${id}`);
+      const { data } = await axios.get(`${API}/hospitales/${id}`, getHeaders());
       setSeleccionado(data.hospital);
     } catch (e) {
       // F1: el hospital ya no existe, no se pide confirmación
-      setAviso({ tipo: 'error', texto: e.message });
-      if (e.status === 404) cargarHospitales();
+      setAviso({ tipo: 'error', texto: e.response?.data?.mensaje || e.message });
+      if (e.response?.status === 404 || e.status === 404) cargarHospitales();
     }
   };
 
@@ -49,11 +56,11 @@ export default function SacarHospital() {
     setEliminando(true);
     setAviso(null);
     try {
-      const { data } = await axios.delete(`/hospitales/${seleccionado.IDHospital}`);
+      const { data } = await axios.delete(`${API}/hospitales/${seleccionado.IDHospital}`, getHeaders());
       setAviso({ tipo: 'ok', texto: data.mensaje });
     } catch (e) {
       // F2: tiene dependencias. F3: error del servidor. En ambos casos el hospital sigue existiendo
-      setAviso({ tipo: 'error', texto: e.message });
+      setAviso({ tipo: 'error', texto: e.response?.data?.mensaje || e.message });
     } finally {
       setEliminando(false);
       setSeleccionado(null);

@@ -16,7 +16,12 @@ async function verificar(DNIUsuario = null) {
       const dvhEsperado = calcularDVH(f.get({ plain: true }), tabla)
       const dvhActual = f.DVH != null ? Number(f.DVH) : null
       if (dvhActual !== dvhEsperado) {
-        errores.push({ tabla, tipo: 'DVH', fila: f.get(f.constructor.primaryKeyAttribute) })
+        const pkVal = f.constructor.primaryKeyAttribute
+          ? f.get(f.constructor.primaryKeyAttribute)
+          : (f.constructor.primaryKeyAttributes
+              ? f.constructor.primaryKeyAttributes.map(k => f.get(k)).join('-')
+              : 'fila')
+        errores.push({ tabla, tipo: 'DVH', fila: pkVal })
       }
       dvhs.push(dvhActual ?? 0)
     }
@@ -28,14 +33,22 @@ async function verificar(DNIUsuario = null) {
   }
   const resultado = { ok: errores.length === 0, errores }
   await bitacora.registrar(`Verificar integridad BD: ${resultado.ok ? 'OK' : errores.length + ' error(es)'}`, DNIUsuario)
+  await calcularDV('Bitacora')
   return resultado
 }
 
 // Extensión del CU (Rectificar integridad). OJO: "acepta" los datos actuales como correctos;
 // lo ideal es restaurar desde un backup.
-async function rectificar(errores, DNIUsuario = null) {
-  for (const tabla of new Set(errores.map(e => e.tabla))) await calcularDV(tabla)
+async function rectificar(errores = [], DNIUsuario = null) {
+  const tablasARectificar = (errores && errores.length > 0)
+    ? [...new Set([...errores.map(e => e.tabla), 'Bitacora'])]
+    : tablasConDV()
+
+  for (const tabla of tablasARectificar) {
+    await calcularDV(tabla)
+  }
   await bitacora.registrar('Rectificar integridad BD', DNIUsuario)
+  await calcularDV('Bitacora')
   return verificar(DNIUsuario)
 }
 

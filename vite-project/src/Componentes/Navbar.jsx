@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import '../css/Navbar.css';
-import { esAdmin } from '../auth'
+import { esAdmin } from '../auth';
 
 export default function Navbar({ usuarioLogueado, onCerrarSesion, cerrandoSesion }) {
   const navigate = useNavigate();
@@ -9,7 +9,7 @@ export default function Navbar({ usuarioLogueado, onCerrarSesion, cerrandoSesion
   const path = location.pathname;
 
   return (
-    <header className="navbar-header">2
+    <header className="navbar-header">
       <nav className="navbar" aria-label="Navegación principal">
         <div className="navbar-container">
           <a
@@ -26,14 +26,14 @@ export default function Navbar({ usuarioLogueado, onCerrarSesion, cerrandoSesion
               alt="Logo Hospital"
               className="logo-icon"
               width="36"
-              height="36"z·
+              height="36"
             />
           </a>
 
           <div className="navbar-links">
             {usuarioLogueado ? (
               <>
-              //Gestiones Medicas
+                {/* Opciones de Administrador */}
                 {esAdmin() && (
                   <>
                     <button
@@ -49,6 +49,34 @@ export default function Navbar({ usuarioLogueado, onCerrarSesion, cerrandoSesion
                       onClick={() => navigate('/admin/especialidades')}
                     >
                       Especialidades
+                    </button>
+                    <button
+                      type="button"
+                      className={`navbar-item navbar-login ${path === '/admin/cartilla' || path === '/cartilla' ? 'activo' : ''}`}
+                      onClick={() => navigate('/admin/cartilla')}
+                    >
+                      Cartilla
+                    </button>
+                    <button
+                      type="button"
+                      className={`navbar-item navbar-login ${path === '/admin/agregar-hospital' || path === '/agregar-hospital' ? 'activo' : ''}`}
+                      onClick={() => navigate('/admin/agregar-hospital')}
+                    >
+                      Añadir hospital
+                    </button>
+                    <button
+                      type="button"
+                      className={`navbar-item navbar-login ${path === '/admin/sacar-hospital' || path === '/sacar-hospital' ? 'activo' : ''}`}
+                      onClick={() => navigate('/admin/sacar-hospital')}
+                    >
+                      Sacar hospital
+                    </button>
+                    <button
+                      type="button"
+                      className={`navbar-item navbar-login ${path === '/admin/respaldo' || path === '/respaldo' ? 'activo' : ''}`}
+                      onClick={() => navigate('/admin/respaldo')}
+                    >
+                      Respaldos
                     </button>
                   </>
                 )}
@@ -73,7 +101,7 @@ export default function Navbar({ usuarioLogueado, onCerrarSesion, cerrandoSesion
                 >
                   Gestionar planes
                 </button>
-                 <button
+                <button
                   type="button"
                   className={`navbar-item navbar-login ${path === '/sacar-turno' ? 'activo' : ''}`}
                   onClick={() => navigate('/sacar-turno')}
@@ -82,7 +110,7 @@ export default function Navbar({ usuarioLogueado, onCerrarSesion, cerrandoSesion
                 </button>
                 <button
                   type="button"
-                  className={`navbar-item navbar-login ${(path === '/turnos') ? 'activo' : ''}`}
+                  className={`navbar-item navbar-login ${path === '/turnos' ? 'activo' : ''}`}
                   onClick={() => navigate('/turnos')}
                 >
                   Mis turnos / Reservas
@@ -91,20 +119,14 @@ export default function Navbar({ usuarioLogueado, onCerrarSesion, cerrandoSesion
                   <button
                     type="button"
                     className={`navbar-item navbar-login ${path === '/admin/command' ? 'activo' : ''}`}
-                    onClick={() => {
-                      if (esAdmin()) {
-                        navigate('/admin/command');
-                      } else {
-                        alert('Acceso denegado');
-                      }
-                    }}
+                    onClick={() => navigate('/admin/command')}
                   >
                     Consola Admin
                   </button>
                 )}
                 <button
                   type="button"
-                  className={`navbar-item navbar-login ${path === '/gt' ? 'activo' : ''}`}
+                  className={`navbar-item navbar-login ${path === '/valoraciones' ? 'activo' : ''}`}
                   onClick={() => navigate('/valoraciones')}
                 >
                   Valoraciones

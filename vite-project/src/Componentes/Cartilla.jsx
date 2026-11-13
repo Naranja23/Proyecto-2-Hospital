@@ -1,8 +1,9 @@
-
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import '../css/Hospitales.css';
 import '../css/Cartilla.css';
+
+const API = 'http://localhost:3000';
 
 export default function Cartilla() {
     const [obrasSociales, setObrasSociales] = useState([]);
@@ -14,9 +15,17 @@ export default function Cartilla() {
     const [guardando, setGuardando] = useState(false);
     const [aviso, setAviso] = useState(null);
 
+    const getHeaders = () => {
+        const token = localStorage.getItem('token');
+        return { headers: { Authorization: token ? `Bearer ${token}` : '' } };
+    };
+
     useEffect(() => {
-        axios.get('/cartilla/obras-sociales')
-            .then(res => setObrasSociales(res.data.obrasSociales))
+        axios.get(`${API}/cartilla/obras-sociales`, getHeaders())
+            .then(res => {
+                const data = Array.isArray(res.data) ? res.data : (res.data.obrasSociales || []);
+                setObrasSociales(data);
+            })
             .catch(err => setAviso({
                 tipo: 'error',
                 texto: err.response?.data?.mensaje || 'Error al cargar las obras sociales.'
@@ -35,14 +44,14 @@ export default function Cartilla() {
         setCargando(true);
 
         try {
-            const res = await axios.get(`/cartilla/${id}`);
-            const hospitalesCartilla = res.data.hospitales;
+            const res = await axios.get(`${API}/cartilla/${id}`, getHeaders());
+            const hospitalesCartilla = res.data.hospitales || [];
 
             setHospitales(hospitalesCartilla);
 
             const ids = hospitalesCartilla
                 .filter(h => h.enCartilla)
-                .map(h => h.id);
+                .map(h => h.id || h.IDHospital);
 
             setOriginal(ids);
             setSeleccion(ids);
@@ -50,28 +59,21 @@ export default function Cartilla() {
         } catch (err) {
             setAviso({
                 tipo: 'error',
-                texto: err.response?.data?.mensaje || 'Error al cargar la cartilla.'
+                texto: err.response?.data?.mensaje || 'Error al cargar los hospitales de la cartilla.'
             });
-
-            if (err.response?.status === 404) {
-                setObraId('');
-            }
-
         } finally {
             setCargando(false);
         }
     };
 
     const alternar = (id) => {
-        if (seleccion.includes(id)) {
-            setSeleccion(seleccion.filter(h => h !== id));
-        } else {
-            setSeleccion([...seleccion, id]);
-        }
+        setSeleccion(prev =>
+            prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
+        );
     };
 
     const cambios = hospitales.filter(h =>
-        original.includes(h.id) !== seleccion.includes(h.id)
+        seleccion.includes(h.id || h.IDHospital) !== original.includes(h.id || h.IDHospital)
     ).length;
 
     const guardar = async () => {
@@ -79,9 +81,9 @@ export default function Cartilla() {
         setAviso(null);
 
         try {
-            const res = await axios.put(`/cartilla/${obraId}`, {
+            const res = await axios.put(`${API}/cartilla/${obraId}`, {
                 hospitalIds: seleccion
-            });
+            }, getHeaders());
 
             setOriginal([...seleccion]);
 
@@ -131,8 +133,8 @@ export default function Cartilla() {
                     <option value="">Seleccioná una obra social</option>
 
                     {obrasSociales.map(o => (
-                        <option key={o.id} value={o.id}>
-                            {o.nombre}
+                        <option key={o.id || o.IDPrepaga} value={o.id || o.IDPrepaga}>
+                            {o.nombre || o.NombreComercial}
                         </option>
                     ))}
                 </select>
@@ -149,22 +151,25 @@ export default function Cartilla() {
             {!cargando && hospitales.length > 0 && (
                 <>
                     <ul className="cart-lista">
-                        {hospitales.map(h => (
-                            <li key={h.id}>
-                                <label className="cart-item">
-                                    <input
-                                        type="checkbox"
-                                        checked={seleccion.includes(h.id)}
-                                        onChange={() => alternar(h.id)}
-                                    />
+                        {hospitales.map(h => {
+                            const hid = h.id || h.IDHospital;
+                            return (
+                                <li key={hid}>
+                                    <label className="cart-item">
+                                        <input
+                                            type="checkbox"
+                                            checked={seleccion.includes(hid)}
+                                            onChange={() => alternar(hid)}
+                                        />
 
-                                    <span className="cart-item__texto">
-                                        <strong>{h.nombre}</strong>
-                                        <span className="cart-item__ciudad">{h.ciudad}</span>
-                                    </span>
-                                </label>
-                            </li>
-                        ))}
+                                        <span className="cart-item__texto">
+                                            <strong>{h.nombre || h.NombreH}</strong>
+                                            <span className="cart-item__ciudad">{h.ciudad || h.direccion || h.DireccionH}</span>
+                                        </span>
+                                    </label>
+                                </li>
+                            );
+                        })}
                     </ul>
 
                     <div className="cart-pie">

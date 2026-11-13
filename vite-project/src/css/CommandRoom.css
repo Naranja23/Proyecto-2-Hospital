@@ -13,18 +13,56 @@
   backdrop-filter: blur(14px);
 }
 
-.command-room h2 {
-  color: #64b5f6;
-  font-size: 1.4rem;
+.command-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 1.2rem;
-  letter-spacing: 0.04em;
   border-bottom: 1px solid rgba(100, 160, 255, 0.18);
   padding-bottom: 0.6rem;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+}
+
+.command-header h2 {
+  color: #64b5f6;
+  font-size: 1.4rem;
+  margin: 0;
+  letter-spacing: 0.04em;
+}
+
+.btn-backup {
+  background: linear-gradient(135deg, #0b6e77 0%, #0d9488 100%);
+  color: #ffffff;
+  border: 1px solid rgba(45, 212, 191, 0.4);
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  box-shadow: 0 4px 14px rgba(13, 148, 136, 0.35);
+  transition: all 0.2s ease;
+}
+
+.btn-backup:hover:not(:disabled) {
+  background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(13, 148, 136, 0.45);
+}
+
+.btn-backup:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
 }
 
 .command-room .output {
-  min-height: 220px;
-  max-height: 340px;
+  min-height: 240px;
+  max-height: 380px;
   overflow-y: auto;
   background: #0d1117;
   color: #39ff14;
@@ -77,11 +115,16 @@
   transition: background 0.25s, transform 0.1s;
 }
 
-.command-room .input-form button:hover {
+.command-room .input-form button:hover:not(:disabled) {
   background: hsl(210, 80%, 60%);
   transform: translateY(-1px);
 }
 
-.command-room .input-form button:active {
+.command-room .input-form button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.command-room .input-form button:active:not(:disabled) {
   transform: translateY(0);
 }

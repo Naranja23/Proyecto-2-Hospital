@@ -1,9 +1,11 @@
-//CU005 AGREGAR HOSPITAL
+// CU005 AGREGAR HOSPITAL
 const { Hospital } = require('../models/Hospital.Model');
 const registrarBitacora = require('../helpers/registrarBitacora');
 
 const crear = async (req, res) => {
-    const { nombreH, direccionH, sitioWeb } = req.body;
+    const nombreH = (req.body.nombreH || req.body.nombre || req.body.NombreH || '').toString();
+    const direccionH = (req.body.direccionH || req.body.direccion || req.body.DireccionH || '').toString();
+    const sitioWeb = req.body.sitioWeb || req.body.SitioWeb || req.body.telefono || null;
 
     if (!nombreH || !nombreH.trim() || !direccionH || !direccionH.trim()) {
         return res.status(400).json({
@@ -27,12 +29,15 @@ const crear = async (req, res) => {
         const hospitalNuevo = await Hospital.create({
             NombreH: nombreH.trim(),
             DireccionH: direccionH.trim(),
-            SitioWeb: sitioWeb ? sitioWeb.trim() : null,
+            SitioWeb: sitioWeb ? String(sitioWeb).trim() : null,
             EstadoH: 'Activo'
         });
 
         await registrarBitacora(req, {
+            modulo: 'Hospitales',
+            accion: 'Alta de hospital',
             proceso: 'Alta de hospital',
+            detalle: 'Se agregó el hospital ' + hospitalNuevo.NombreH,
             explicacion: 'Se agregó el hospital ' + hospitalNuevo.NombreH
         });
 

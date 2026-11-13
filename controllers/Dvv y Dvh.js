@@ -18,7 +18,7 @@ function obtenerModelo(nombreTablaOModelo) {
 function obtenerTablasConDV() {
   return Object.keys(sequelize.models).filter((n) => {
     const M = sequelize.models[n]
-    return M && M.rawAttributes && M.rawAttributes.DVH
+    return M && M.rawAttributes && M.rawAttributes.DVH && M.name !== 'DVV'
   })
 }
 
@@ -65,8 +65,13 @@ const calcularDVV = (dvhs) => {
 function leerTabla(tabla, options = {}) {
   const M = obtenerModelo(tabla)
   if (!M) throw new Error(`Modelo no encontrado para la tabla: ${tabla}`)
+
+  const pkAttr = M.primaryKeyAttribute ||
+    (M.primaryKeyAttributes && M.primaryKeyAttributes[0]) ||
+    Object.keys(M.rawAttributes)[0]
+
   return M.findAll({
-    order: [[M.primaryKeyAttribute, 'ASC']],
+    order: [[pkAttr, 'ASC']],
     hooks: false,
     ...options
   })
@@ -74,26 +79,47 @@ function leerTabla(tabla, options = {}) {
 
 // Recalcula DVH de cada fila y el DVV de la tabla
 async function calcularDV(tabla, options = {}) {
+  if (Array.isArray(tabla)) {
+    const resultados = []
+    for (const t of tabla) {
+      if (t) resultados.push(await calcularDV(t, options))
+    }
+    return { ok: true, resultados }
+  }
+
   const M = obtenerModelo(tabla)
-  if (!M || !M.rawAttributes?.DVH || M.name === 'DVV') return
+  if (!M || !M.rawAttributes?.DVH || M.name === 'DVV') return { ok: true }
   const nombreModelo = M.name
 
   const filas = await leerTabla(nombreModelo, options)
   const dvhs = []
 
+  const pkAttrs = M.primaryKeyAttributes && M.primaryKeyAttributes.length
+    ? M.primaryKeyAttributes
+    : (M.primaryKeyAttribute ? [M.primaryKeyAttribute] : [])
+
   for (const f of filas) {
     const plain = f.get({ plain: true })
     const dvh = calcularDVH(plain, nombreModelo)
-    if (f.DVH !== dvh) {
-      await M.update(
-        { DVH: dvh },
-        {
-          where: { [M.primaryKeyAttribute]: f.get(M.primaryKeyAttribute) },
-          hooks: false,
-          silent: true,
-          transaction: options.transaction
-        }
-      )
+    const dvhActual = f.DVH != null ? Number(f.DVH) : null
+
+    if (dvhActual !== dvh) {
+      const whereCondition = {}
+      for (const pk of pkAttrs) {
+        whereCondition[pk] = f.get(pk)
+      }
+
+      if (Object.keys(whereCondition).length > 0) {
+        await M.update(
+          { DVH: dvh },
+          {
+            where: whereCondition,
+            hooks: false,
+            silent: true,
+            transaction: options.transaction
+          }
+        )
+      }
       f.DVH = dvh
     }
     dvhs.push(dvh)
@@ -133,48 +159,103 @@ async function inicializarDVs() {
   }
 }
 
-// LISTA DE CASOS DE USO SELECCIONADOS PARA MONITOREO
+// LISTA COMPLETA DE CASOS DE USO MONITOREADOS PARA INTEGRIDAD GLOBAL (DVH / DVV)
 const CASOS_DE_USO_MONITOREADOS = [
-  // CU014 - Sacar / Reservar Turno
-  { metodo: 'POST',   ruta: '/turnos/reservar',                        tabla: 'Cita',       nombreCU: 'CU014 - Reservar Turno' },
-  // CU010 - Calificar Consulta
-  { metodo: 'PUT',    ruta: '/turnos/calificar',                       tabla: 'Cita',       nombreCU: 'CU010 - Calificar Consulta' },
-  // CU021 - Valorar Paciente
-  { metodo: 'POST',   ruta: '/turnos/:id/valorar',                     tabla: 'Cita',       nombreCU: 'CU021 - Valorar Paciente' },
-  // CU005 - Alta de hospital
-  { metodo: 'POST', ruta: '/hospitales', tabla: 'Hospital', nombreCU: 'CU005 - Alta de hospital' },
-  // CU006 - Actualizar Cartilla
-  { metodo: 'PUT', ruta: '/cartilla/:prepagaId', tabla: 'Cartilla', nombreCU: 'CU006 - Actualizar Cartilla' },
-  // CU007 - Sacar un hospital
-  { metodo: 'DELETE', ruta: '/hospitales/:id', tabla: 'Hospital', nombreCU: 'CU007 - Sacar Hospital' },
   // CU001 - Registrar Usuario
-  { metodo: 'POST',   ruta: '/users/register',                         tabla: 'Usuario',    nombreCU: 'CU001 - Registrar Usuario' },
-  { metodo: 'POST',   ruta: '/users',                                  tabla: 'Usuario',    nombreCU: 'Crear Usuario' },
-  // Cambiar datos del usuario
-  { metodo: 'PUT',    ruta: '/users/perfil',                           tabla: 'Usuario',    nombreCU: 'Cambiar Datos de Perfil' },
-  { metodo: 'PUT',    ruta: '/users/cambiar-datos',                    tabla: 'Usuario',    nombreCU: 'Cambiar Datos' },
-  { metodo: 'PUT',    ruta: '/users/:id',                              tabla: 'Usuario',    nombreCU: 'Actualizar Usuario' },
-  { metodo: 'DELETE', ruta: '/users/:id',                              tabla: 'Usuario',    nombreCU: 'Eliminar Usuario' },
+  { metodo: 'POST',   ruta: '/users/register',                         tabla: ['Usuario', 'Bitacora'], nombreCU: 'CU001 - Registrar Usuario' },
+  { metodo: 'POST',   ruta: '/users',                                  tabla: ['Usuario', 'Bitacora'], nombreCU: 'CU001 - Crear Usuario' },
 
-  // CU002 / CU016 - Sesiones
-  { metodo: 'POST',   ruta: '/users/login',                            tabla: 'Sesion',     nombreCU: 'CU002 - Iniciar Sesión' },
-  { metodo: 'POST',   ruta: '/users/logout',                           tabla: 'Sesion',     nombreCU: 'CU016 - Cerrar Sesión' },
+  // CU002 - Iniciar Sesión
+  { metodo: 'POST',   ruta: '/users/login',                            tabla: 'Sesion',                nombreCU: 'CU002 - Iniciar Sesión' },
 
-  // CU015 - Planes
-  { metodo: 'PUT',    ruta: '/planes/actual',                          tabla: 'Usuario',    nombreCU: 'CU015 - Cambiar Plan' },
-  { metodo: 'DELETE', ruta: '/planes/actual',                          tabla: 'Usuario',    nombreCU: 'CU015 - Eliminar Plan' },
+  // CU003 - Administrar Usuarios / Cambiar Datos de Perfil
+  { metodo: 'PUT',    ruta: '/users/perfil',                           tabla: ['Usuario', 'Bitacora'], nombreCU: 'CU003 - Cambiar Datos de Perfil' },
+  { metodo: 'PUT',    ruta: '/users/cambiar-datos',                    tabla: ['Usuario', 'Bitacora'], nombreCU: 'CU003 - Cambiar Datos' },
+  { metodo: 'PUT',    ruta: '/users/:id',                              tabla: ['Usuario', 'Bitacora'], nombreCU: 'CU003 - Actualizar Usuario' },
 
-  // CU020 - Valoraciones
-  { metodo: 'PUT',    ruta: '/valoraciones/:id',                       tabla: 'Valoracion', nombreCU: 'CU020 - Editar Valoración' },
+  // CU004 - Hacer respaldo
+  { metodo: 'POST',   ruta: '/respaldos',                              tabla: 'Bitacora',              nombreCU: 'CU004 - Hacer respaldo' },
+  { metodo: 'POST',   ruta: '/respaldos/generar',                      tabla: 'Bitacora',              nombreCU: 'CU004 - Hacer respaldo' },
+  { metodo: 'DELETE', ruta: '/respaldos/:nombre',                      tabla: 'Bitacora',              nombreCU: 'CU004 - Eliminar respaldo' },
+
+  // Baja / Bloquear Usuario
+  { metodo: 'DELETE', ruta: '/users/:id',                              tabla: ['Usuario', 'Bitacora'], nombreCU: 'CU001 - Eliminar Usuario' },
+
+  // CU005 - Alta de hospital
+  { metodo: 'POST',   ruta: '/hospitales',                             tabla: ['Hospital', 'Bitacora'], nombreCU: 'CU005 - Alta de hospital' },
+
+  // CU006 - Actualizar Cartilla
+  { metodo: 'PUT',    ruta: '/cartilla/:prepagaId',                    tabla: ['Cartilla', 'Bitacora'], nombreCU: 'CU006 - Actualizar Cartilla' },
+
+  // CU007 - Sacar un hospital
+  { metodo: 'DELETE', ruta: '/hospitales/:id',                         tabla: ['Hospital', 'Bitacora'], nombreCU: 'CU007 - Sacar Hospital' },
+  { metodo: 'DELETE', ruta: '/sacar-hospital/:id',                     tabla: ['Hospital', 'Bitacora'], nombreCU: 'CU007 - Sacar Hospital' },
+
+  // CU008 - Bloquear hospital
+  { metodo: 'PUT',    ruta: '/bloquear-hospital/:id/bloquear',         tabla: ['Hospital', 'Bitacora'], nombreCU: 'CU008 - Bloquear Hospital' },
+  { metodo: 'PUT',    ruta: '/hospitales/:id/bloquear',                tabla: ['Hospital', 'Bitacora'], nombreCU: 'CU008 - Bloquear Hospital' },
+  { metodo: 'PATCH',  ruta: '/hospitales/:id/bloquear',                tabla: ['Hospital', 'Bitacora'], nombreCU: 'CU008 - Bloquear Hospital' },
+
+  // CU009 - Gestionar Panel administrativo
+  { metodo: 'GET',    ruta: '/panel',                                  tabla: 'Bitacora',              nombreCU: 'CU009 - Gestionar Panel administrativo' },
+
+  // CU010 - Calificar Consulta / Atención
+  { metodo: 'PUT',    ruta: '/turnos/calificar',                       tabla: ['Cita', 'Bitacora'],    nombreCU: 'CU010 - Calificar Consulta' },
+
+  // CU012 - Ver Historial de Consultas
+  { metodo: 'GET',    ruta: '/turnos/historial',                       tabla: 'Bitacora',              nombreCU: 'CU012 - Ver Historial' },
+
+  // CU013 - Rectificar Integridad
+  { metodo: 'POST',   ruta: '/seguridad/integridad/rectificar',        tabla: 'Bitacora',              nombreCU: 'CU013 - Rectificar Integridad' },
+
+  // CU014 - Sacar / Reservar Turno
+  { metodo: 'POST',   ruta: '/turnos/buscar',                          tabla: 'Bitacora',              nombreCU: 'CU014 - Buscar Turno' },
+  { metodo: 'POST',   ruta: '/turnos/reservar',                        tabla: ['Cita', 'Bitacora'],    nombreCU: 'CU014 - Reservar Turno' },
+  { metodo: 'POST',   ruta: '/turnos',                                 tabla: ['Turno', 'Bitacora'],   nombreCU: 'CU014 - Crear Turno' },
+  { metodo: 'PUT',    ruta: '/turnos/:id',                             tabla: ['Turno', 'Bitacora'],   nombreCU: 'CU014 - Modificar Turno' },
+  { metodo: 'DELETE', ruta: '/turnos/:id',                             tabla: ['Turno', 'Bitacora'],   nombreCU: 'CU014 - Eliminar Turno' },
+
+  // CU015 - Gestionar Planes
+  { metodo: 'PUT',    ruta: '/planes/actual',                          tabla: ['Usuario', 'Bitacora'], nombreCU: 'CU015 - Cambiar Plan' },
+  { metodo: 'DELETE', ruta: '/planes/actual',                          tabla: ['Usuario', 'Bitacora'], nombreCU: 'CU015 - Eliminar Plan' },
+
+  // CU016 - Cerrar Sesión
+  { metodo: 'POST',   ruta: '/users/logout',                           tabla: ['Sesion', 'Bitacora'],  nombreCU: 'CU016 - Cerrar Sesión' },
+
+  // CU017 - Gestionar Especialidades Médicas
+  { metodo: 'POST',   ruta: '/especialidades',                         tabla: 'Bitacora',              nombreCU: 'CU017 - Crear Especialidad' },
+  { metodo: 'PUT',    ruta: '/especialidades/:id',                     tabla: 'Bitacora',              nombreCU: 'CU017 - Actualizar Especialidad' },
+  { metodo: 'DELETE', ruta: '/especialidades/:id',                     tabla: 'Bitacora',              nombreCU: 'CU017 - Eliminar Especialidad' },
+  { metodo: 'PUT',    ruta: '/especialidades/:id/medicos',             tabla: 'Bitacora',              nombreCU: 'CU017 - Asignar Médicos' },
+
+  // CU019 - Consultar Promedio de Valoraciones
+  { metodo: 'GET',    ruta: '/valoraciones/hospital/:idHospital/promedio', tabla: 'Bitacora',          nombreCU: 'CU019 - Promedio Valoraciones' },
+
+  // CU020 - Editar Valoración
+  { metodo: 'PUT',    ruta: '/valoraciones/:id',                       tabla: ['Valoracion', 'Bitacora'], nombreCU: 'CU020 - Editar Valoración' },
+  { metodo: 'PUT',    ruta: '/valoraciones/:idValoracion',             tabla: ['Valoracion', 'Bitacora'], nombreCU: 'CU020 - Editar Valoración' },
+
+  // CU021 - Valorar Paciente / Consulta
+  { metodo: 'POST',   ruta: '/turnos/:id/valorar',                     tabla: ['Cita', 'Bitacora'],    nombreCU: 'CU021 - Valorar Paciente' },
+  { metodo: 'PUT',    ruta: '/turnos/:id/valorar',                     tabla: ['Cita', 'Bitacora'],    nombreCU: 'CU021 - Valorar Paciente' },
+  { metodo: 'POST',   ruta: '/valoraciones',                           tabla: ['Valoracion', 'Bitacora'], nombreCU: 'CU021 - Crear Valoración' },
+
+  // CU022 - Recuperar Contraseña
+  { metodo: 'POST',   ruta: '/seguridad/recuperar-password',           tabla: 'Bitacora',              nombreCU: 'CU022 - Recuperar Contraseña' },
 
   // CU023 - Desbloquear Hospital
-  { metodo: 'PATCH',  ruta: '/seguridad/hospitales/:id/desbloquear',   tabla: 'Hospital',   nombreCU: 'CU023 - Desbloquear Hospital' },
-  { metodo: 'GET', ruta: '/panel', tabla: 'Bitacora', nombreCU: 'CU009 - Gestionar Panel administrativo' },
+  { metodo: 'PATCH',  ruta: '/seguridad/hospitales/:id/desbloquear',   tabla: ['Hospital', 'Bitacora'], nombreCU: 'CU023 - Desbloquear Hospital' },
+  { metodo: 'PUT',    ruta: '/seguridad/hospitales/:id/desbloquear',   tabla: ['Hospital', 'Bitacora'], nombreCU: 'CU023 - Desbloquear Hospital' },
+  { metodo: 'PATCH',  ruta: '/hospitales/:id/desbloquear',             tabla: ['Hospital', 'Bitacora'], nombreCU: 'CU023 - Desbloquear Hospital' },
+  { metodo: 'PUT',    ruta: '/hospitales/:id/desbloquear',             tabla: ['Hospital', 'Bitacora'], nombreCU: 'CU023 - Desbloquear Hospital' },
 ]
 
 function coincideRuta(rutaPatron, rutaReal) {
-  const regexPattern = '^' + rutaPatron.replace(/:[^\s/]+/g, '[^/]+') + '(?:\\?.*)?$'
-  return new RegExp(regexPattern).test(rutaReal)
+  if (!rutaPatron || !rutaReal) return false
+  const limpia = rutaReal.split('?')[0].replace(/\/+$/, '') || '/'
+  const patronLimpio = rutaPatron.replace(/\/+$/, '') || '/'
+  const regexPattern = '^' + patronLimpio.replace(/:[^\s/]+/g, '[^/]+') + '$'
+  return new RegExp(regexPattern).test(limpia)
 }
 
 function interceptorCasoDeUsoGlobal(req, res, next) {
@@ -192,9 +273,15 @@ function interceptorCasoDeUsoGlobal(req, res, next) {
   res.on('finish', async () => {
     if (res.statusCode >= 200 && res.statusCode < 400) {
       try {
-        await ejecutarCasoDeUsoGlobal(casoEncontrado.tabla)
+        const tablas = Array.isArray(casoEncontrado.tabla)
+          ? casoEncontrado.tabla
+          : [casoEncontrado.tabla]
 
-        if (casoEncontrado.tabla !== 'Bitacora' && sequelize.models.Bitacora) {
+        for (const t of tablas) {
+          if (t) await ejecutarCasoDeUsoGlobal(t)
+        }
+
+        if (!tablas.includes('Bitacora') && sequelize.models.Bitacora) {
           await ejecutarCasoDeUsoGlobal('Bitacora')
         }
       } catch (error) {

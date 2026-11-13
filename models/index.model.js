@@ -11,7 +11,8 @@ const { Bitacora } = require('./Bitacora.Model.js')
 const { DVV } = require('./DVV.Model.js')
 const { Valoracion } = require('./Valoracion.Model.js')
 const { Especialidad } = require('./Especialidad.Model.js')
-
+const { Turno } = require('./Turno.Model.js')
+const Cartilla = require('./Cartilla.Model.js')
 
 Medico.belongsToMany(Rol, { through: 'MedicoRol', foreignKey: 'IDMedico', otherKey: 'IDRol' })
 Rol.belongsToMany(Medico, { through: 'MedicoRol', foreignKey: 'IDRol', otherKey: 'IDMedico' })
@@ -60,6 +61,15 @@ Hospital.hasMany(Cita, { foreignKey: 'IDHospital' })
 Hospital.hasMany(Valoracion, { foreignKey: 'IDHospital' })
 Usuario.hasMany(Valoracion, { foreignKey: 'DNIUsuario' })
 
+Turno.belongsTo(Hospital, { foreignKey: 'IDHospital' })
+Turno.belongsTo(Medico, { foreignKey: 'IDMedico' })
+Hospital.hasMany(Turno, { foreignKey: 'IDHospital' })
+
+Cartilla.belongsTo(Hospital, { foreignKey: 'hospitalId' })
+Cartilla.belongsTo(Prepaga, { foreignKey: 'prepagaId' })
+Hospital.belongsToMany(Prepaga, { through: Cartilla, foreignKey: 'hospitalId', otherKey: 'prepagaId' })
+Prepaga.belongsToMany(Hospital, { through: Cartilla, foreignKey: 'prepagaId', otherKey: 'hospitalId' })
+
 module.exports = {
     Usuario,
     Medico,
@@ -73,5 +83,7 @@ module.exports = {
     Bitacora,
     DVV,
     Valoracion,
-    Especialidad
+    Especialidad,
+    Turno,
+    Cartilla
 }

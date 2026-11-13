@@ -1,8 +1,10 @@
-//cu005 
+// CU005 
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import '../css/Hospitales.css';
+
+const API = 'http://localhost:3000';
 
 function AgregarHospital() {
     const [nombre, setNombre] = useState('');
@@ -50,16 +52,22 @@ function AgregarHospital() {
         setEnviando(true);
 
         try {
-            const res = await axios.post('/hospitales', {
-                nombre,
-                direccion,
-                ciudad,
-                telefono
+            const token = localStorage.getItem('token');
+            const direccionCompleta = ciudad.trim() ? `${direccion.trim()}, ${ciudad.trim()}` : direccion.trim();
+            const res = await axios.post(`${API}/hospitales`, {
+                nombreH: nombre.trim(),
+                direccionH: direccionCompleta,
+                nombre: nombre.trim(),
+                direccion: direccionCompleta,
+                ciudad: ciudad.trim(),
+                sitioWeb: telefono.trim()
+            }, {
+                headers: { Authorization: token ? `Bearer ${token}` : '' }
             });
 
             setMensaje(res.data.mensaje);
             setTipoMensaje('ok');
-            setExtension(res.data.extension);
+            setExtension(res.data.extension || '');
 
             setNombre('');
             setDireccion('');
@@ -82,64 +90,85 @@ function AgregarHospital() {
 
     return (
         <section className="hosp-page">
-            <h1>Añadir hospital</h1>
-            <p className="hosp-subtitulo">
-                El hospital se incorpora a la cartilla médica apenas se guarda.
-            </p>
+            <header className="hosp-encabezado">
+                <div>
+                    <h1>Añadir hospital</h1>
+                    <p className="hosp-subtitulo">
+                        El hospital se incorpora a la cartilla médica apenas se guarda.
+                    </p>
+                </div>
+            </header>
 
             {mensaje && (
-                <div className={`hosp-aviso hosp-aviso--${tipoMensaje}`}>
+                <div className={`hosp-aviso hosp-aviso--${tipoMensaje}`} role="alert">
                     <span>{mensaje}</span>
-
-                    {tipoMensaje === 'ok' && extension === 'CU024' && (
-                        <Link to="/admin/cartilla" className="hosp-btn hosp-btn--link">
-                            Asignar a obras sociales
-                        </Link>
+                    {extension && (
+                        <p className="hosp-aviso__extension">
+                            {extension}
+                            <Link to="/cartilla"> Ir a la cartilla</Link>
+                        </p>
                     )}
-
-                    <button type="button" onClick={() => setMensaje('')}>
-                        Cerrar
-                    </button>
                 </div>
             )}
 
-            <form className="hosp-form" onSubmit={enviar} noValidate>
+            <form className="hosp-formulario" onSubmit={enviar} noValidate>
+                <div className="hosp-campo">
+                    <label htmlFor="nombre">Nombre del hospital *</label>
+                    <input
+                        id="nombre"
+                        type="text"
+                        value={nombre}
+                        onChange={(e) => setNombre(e.target.value)}
+                        placeholder="Ej: Hospital Italiano"
+                    />
+                    {errores.nombre && <p className="hosp-error">{errores.nombre}</p>}
+                </div>
 
-                <label>Nombre</label>
-                <input
-                    value={nombre}
-                    onChange={e => setNombre(e.target.value)}
-                />
-                {errores.nombre && <p>{errores.nombre}</p>}
+                <div className="hosp-campo">
+                    <label htmlFor="direccion">Dirección *</label>
+                    <input
+                        id="direccion"
+                        type="text"
+                        value={direccion}
+                        onChange={(e) => setDireccion(e.target.value)}
+                        placeholder="Ej: Gascón 450"
+                    />
+                    {errores.direccion && <p className="hosp-error">{errores.direccion}</p>}
+                </div>
 
-                <label>Dirección</label>
-                <input
-                    value={direccion}
-                    onChange={e => setDireccion(e.target.value)}
-                />
-                {errores.direccion && <p>{errores.direccion}</p>}
+                <div className="hosp-campo">
+                    <label htmlFor="ciudad">Ciudad *</label>
+                    <input
+                        id="ciudad"
+                        type="text"
+                        value={ciudad}
+                        onChange={(e) => setCiudad(e.target.value)}
+                        placeholder="Ej: Almagro, CABA"
+                    />
+                    {errores.ciudad && <p className="hosp-error">{errores.ciudad}</p>}
+                </div>
 
-                <label>Ciudad</label>
-                <input
-                    value={ciudad}
-                    onChange={e => setCiudad(e.target.value)}
-                />
-                {errores.ciudad && <p>{errores.ciudad}</p>}
+                <div className="hosp-campo">
+                    <label htmlFor="telefono">Teléfono</label>
+                    <input
+                        id="telefono"
+                        type="text"
+                        value={telefono}
+                        onChange={(e) => setTelefono(e.target.value)}
+                        placeholder="Ej: 011 4959-0200"
+                    />
+                    {errores.telefono && <p className="hosp-error">{errores.telefono}</p>}
+                </div>
 
-                <label>Teléfono (opcional)</label>
-                <input
-                    type="tel"
-                    value={telefono}
-                    onChange={e => setTelefono(e.target.value)}
-                />
-                {errores.telefono && <p>{errores.telefono}</p>}
-
-                <div className="hosp-form__pie">
-                    <button type="submit" disabled={enviando}>
+                <div className="hosp-acciones">
+                    <button
+                        type="submit"
+                        className="hosp-btn hosp-btn--primario"
+                        disabled={enviando}
+                    >
                         {enviando ? 'Guardando...' : 'Guardar hospital'}
                     </button>
                 </div>
-
             </form>
         </section>
     );

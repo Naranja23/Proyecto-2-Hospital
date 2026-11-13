@@ -1,4 +1,5 @@
 const { Op } = require('sequelize')
+const { sequelize } = require('../config/db.js')
 const { Hospital, Medico, Prepaga, Plan } = require('../models')
 
 // Llena los desplegables del frontend
@@ -47,9 +48,11 @@ async function buscar(req, res) {
     // Filtros que llegan por la URL (los no elegidos vienen vacíos)
     const { nombre, especialidad, prepaga, plan } = req.query
 
+    const likeOp = sequelize.getDialect() === 'postgres' ? Op.iLike : Op.like
+
     // Nota de condiciones sobre la tabla Hospital
     const condicion = { EstadoH: 'Activo' }
-    if (nombre) condicion.NombreH = { [Op.iLike]: `%${nombre}%` }
+    if (nombre) condicion.NombreH = { [likeOp]: `%${nombre}%` }
 
     // Nota de tablas a unir (solo las de los filtros elegidos)
     const tablarelacion = []
@@ -61,7 +64,7 @@ async function buscar(req, res) {
       tablarelacion.push({ model: Plan, where: { NombrePlan: plan }, attributes: [], required: true })
 
     // Acá recién se consulta la base
-    const hospitales = await Hospital.findAll({ where: condicion, include:  tablarelacion})
+    const hospitales = await Hospital.findAll({ where: condicion, include: tablarelacion })
     res.json(hospitales)
   } catch (err) {
     res.status(500).json({ ok: false, mensaje: err.message })

@@ -1,12 +1,14 @@
-
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
-import './BloquearHospital.css';
+import '../css/BloquearHospital.css';
+
+const API = 'http://localhost:3000';
 
 function BloquearHospital() {
     const { id } = useParams();
-    const headers = { Authorization: localStorage.getItem('token') };
+    const token = localStorage.getItem('token');
+    const headers = { Authorization: token ? `Bearer ${token}` : '' };
 
     const [hospital, setHospital] = useState(null);
     const [motivo, setMotivo] = useState('');
@@ -16,7 +18,7 @@ function BloquearHospital() {
     const [bloqueado, setBloqueado] = useState(false);
 
     useEffect(() => {
-        axios.get(`http://localhost:3000/bloquear-hospital/${id}`, { headers })
+        axios.get(`${API}/bloquear-hospital/${id}`, { headers })
             .then(res => setHospital(res.data.hospital))
             .catch(err => setError(err.response?.data?.mensaje || 'Error al cargar el hospital.'));
     }, [id]);
@@ -26,7 +28,7 @@ function BloquearHospital() {
 
         try {
             const res = await axios.put(
-                `http://localhost:3000/bloquear-hospital/${id}/bloquear`,
+                `${API}/bloquear-hospital/${id}/bloquear`,
                 { motivo },
                 { headers }
             );
@@ -44,11 +46,11 @@ function BloquearHospital() {
         <div className="bloquear-contenedor">
             <h2>Bloquear hospital</h2>
 
-            {error && <p className="bloquear-error">{error}</p>}
-            {mensaje && <p className="bloquear-exito">{mensaje}</p>}
+            {error && <p className="error">{error}</p>}
+            {mensaje && <p className="exito">{mensaje}</p>}
 
             {hospital && (
-                <div className="bloquear-datos">
+                <div className="datos-hospital">
                     <p><b>Nombre:</b> {hospital.NombreH}</p>
                     <p><b>Dirección:</b> {hospital.DireccionH}</p>
                     <p><b>Estado:</b> {bloqueado ? 'Bloqueado' : hospital.EstadoH}</p>
@@ -56,27 +58,31 @@ function BloquearHospital() {
             )}
 
             {hospital && !bloqueado && !pidiendoMotivo && (
-                <button onClick={() => setPidiendoMotivo(true)}>
-                    Bloquear
+                <button
+                    className="btn-bloquear"
+                    onClick={() => setPidiendoMotivo(true)}
+                >
+                    Bloquear este hospital
                 </button>
             )}
 
             {pidiendoMotivo && (
-                <div className="bloquear-motivo">
+                <div className="motivo-bloqueo">
+                    <label>Motivo del bloqueo:</label>
                     <textarea
-                        placeholder="Ingrese el motivo del bloqueo"
                         value={motivo}
                         onChange={e => setMotivo(e.target.value)}
+                        placeholder="Explicá por qué se bloquea el hospital..."
                     />
-
-                    <button onClick={confirmar}>Confirmar</button>
-                    <button onClick={() => setPidiendoMotivo(false)}>Cancelar</button>
+                    <button className="btn-confirmar" onClick={confirmar}>
+                        Confirmar bloqueo
+                    </button>
                 </div>
             )}
 
             {bloqueado && (
                 <Link to={`/desbloquear-hospital/${id}`}>
-                    Gestionar desbloqueo
+                    ¿Querés desbloquearlo?
                 </Link>
             )}
         </div>

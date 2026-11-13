@@ -9,6 +9,10 @@ const Cartilla = sequelize.define(
   {
     hospitalId: { type: DataTypes.INTEGER, primaryKey: true },
     prepagaId: { type: DataTypes.INTEGER, primaryKey: true },
+    DVH: {
+      type: DataTypes.INTEGER,
+      allowNull: true
+    }
   },
   { tableName: 'cartilla', timestamps: false }
 );

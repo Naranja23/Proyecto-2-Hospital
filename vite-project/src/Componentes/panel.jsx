@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { api } from '../api'
-import '../css/Panel.css'
+import '../css/panel.css'
 
 const SIN_INFO = 'Sin información disponible'
 
