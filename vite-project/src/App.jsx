@@ -17,7 +17,7 @@ import axios from 'axios'
 import Especialidades from './Componentes/Especialidades'
 import SoloAdmin from './Componentes/SoloAdmin'
 import Panel from './Componentes/panel'
-import CommandRoom from './Componentes/CommandRoom'
+import GestionUsuarios from './Componentes/GestionUsuarios'
 import Cartilla from './Componentes/Cartilla'
 import AgregarHospital from './Componentes/AgregarHospital'
 import BloquearHospital from './Componentes/BloquearHospital'
@@ -161,12 +161,16 @@ function App() {
               ) : <Navigate to="/login" replace />}
             />
             <Route
-              path="/admin/command"
+              path="/admin/usuarios"
               element={usuarioLogueado ? (
                 <SoloAdmin>
-                  <CommandRoom />
+                  <GestionUsuarios onSesionExpirada={limpiarSesionLocal} />
                 </SoloAdmin>
               ) : <Navigate to="/login" replace />}
+            />
+            <Route
+              path="/admin/command"
+              element={<Navigate to="/admin/usuarios" replace />}
             />
             <Route
               path="/admin/respaldo"

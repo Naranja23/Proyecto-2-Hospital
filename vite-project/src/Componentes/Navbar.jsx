@@ -45,6 +45,13 @@ export default function Navbar({ usuarioLogueado, onCerrarSesion, cerrandoSesion
                     </button>
                     <button
                       type="button"
+                      className={`navbar-item navbar-login ${path === '/admin/usuarios' || path === '/admin/command' ? 'activo' : ''}`}
+                      onClick={() => navigate('/admin/usuarios')}
+                    >
+                      Usuarios
+                    </button>
+                    <button
+                      type="button"
                       className={`navbar-item navbar-login ${path === '/admin/especialidades' ? 'activo' : ''}`}
                       onClick={() => navigate('/admin/especialidades')}
                     >
@@ -115,15 +122,7 @@ export default function Navbar({ usuarioLogueado, onCerrarSesion, cerrandoSesion
                 >
                   Mis turnos / Reservas
                 </button>
-                {esAdmin() && (
-                  <button
-                    type="button"
-                    className={`navbar-item navbar-login ${path === '/admin/command' ? 'activo' : ''}`}
-                    onClick={() => navigate('/admin/command')}
-                  >
-                    Consola Admin
-                  </button>
-                )}
+
                 <button
                   type="button"
                   className={`navbar-item navbar-login ${path === '/valoraciones' ? 'activo' : ''}`}

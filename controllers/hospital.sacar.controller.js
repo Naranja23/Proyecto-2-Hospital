@@ -49,7 +49,7 @@ const eliminar = async (req, res) => {
             });
         }
 
-        const cantidadMedicos = await Medico.({ where: { IDHospital: id } });
+        const cantidadMedicos = await Medico.count({ where: { IDHospital: id } });
         const cantidadTurnos = await Turno.count({ where: { IDHospital: id } });
 
         if (cantidadMedicos > 0 || cantidadTurnos > 0) {

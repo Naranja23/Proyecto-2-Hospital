@@ -5,6 +5,8 @@ const {
     createUser,
     register,
     putUser,
+    bloquearUser,
+    reactivarUser,
     cambiarDatos,
     deleteUser,
     login
@@ -14,16 +16,22 @@ const routes = Router()
 const { auth, soloAdmin } = require('../middlewares/auth.middleware.js')
 const { cerrarSesion } = require('../controllers/Sesion.controller.js')
 
-
-routes.get('/', auth, getUsers)
+// CU001 - Gestionar usuarios (Solo Administrador con sesión activa)
+routes.get('/', auth, soloAdmin, getUsers)
 routes.get('/:id', auth, getUserByID)
-routes.post('/', auth, soloAdmin, createUser)   // solo admin crea usuarios
-routes.post('/register', register)              // registro público sin auth
+routes.post('/', auth, soloAdmin, createUser)
+routes.put('/:id/bloquear', auth, soloAdmin, bloquearUser)
+routes.patch('/:id/bloquear', auth, soloAdmin, bloquearUser)
+routes.put('/:id/reactivar', auth, soloAdmin, reactivarUser)
+routes.patch('/:id/reactivar', auth, soloAdmin, reactivarUser)
+routes.put('/:id', auth, soloAdmin, putUser)
+routes.delete('/:id', auth, soloAdmin, deleteUser)
+
+// Endpoints públicos o de perfil propio
+routes.post('/register', register)
 routes.post('/login', login)
-routes.put('/perfil', auth, cambiarDatos)       // el propio usuario edita su perfil
+routes.put('/perfil', auth, cambiarDatos)
 routes.put('/cambiar-datos', auth, cambiarDatos)
-routes.put('/:id', auth, soloAdmin, putUser)    // solo admin modifica otros usuarios
-routes.delete('/:id', auth, soloAdmin, deleteUser) // solo admin bloquea usuarios
 routes.post('/logout', auth, cerrarSesion)
 
 module.exports = routes

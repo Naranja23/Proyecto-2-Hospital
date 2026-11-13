@@ -172,11 +172,11 @@ export default function Respaldo({ onSesionExpirada }) {
         <div>
           {modoMonousuario ? (
             <span className="resp-badge-mono" title="La base de datos restringe accesos externos mientras se realiza el respaldo">
-              ⚠ MODO MONOUSUARIO ACTIVO
+              MODO MONOUSUARIO ACTIVO
             </span>
           ) : (
             <span className="resp-badge-multi" title="La base de datos se encuentra operativa para todos los usuarios">
-              ● MODO MULTIUSUARIO (NORMAL)
+              MODO MULTIUSUARIO ACTIVO
             </span>
           )}
         </div>
@@ -185,15 +185,15 @@ export default function Respaldo({ onSesionExpirada }) {
       {/* Alertas */}
       {mensajeExito && (
         <div className="resp-alerta exito" role="status">
-          <span>✓ {mensajeExito}</span>
-          <button type="button" className="resp-btn-secondary" onClick={() => setMensajeExito('')}>✕</button>
+          <span>{mensajeExito}</span>
+          <button type="button" className="resp-btn-secondary" onClick={() => setMensajeExito('')}>×</button>
         </div>
       )}
 
       {mensajeError && (
         <div className="resp-alerta error" role="alert">
-          <span>⚠ {mensajeError}</span>
-          <button type="button" className="resp-btn-secondary" onClick={() => setMensajeError('')}>✕</button>
+          <span>{mensajeError}</span>
+          <button type="button" className="resp-btn-secondary" onClick={() => setMensajeError('')}>×</button>
         </div>
       )}
 
@@ -204,12 +204,12 @@ export default function Respaldo({ onSesionExpirada }) {
             <span className="resp-spinner" /> Ejecutando caso de uso de respaldo...
           </div>
           <ul className="resp-progreso-pasos">
-            <li>{pasoActual >= 2 ? '✓' : '○'} Paso 4: Verificando espacio disponible y permisos de almacenamiento...</li>
-            <li>{pasoActual >= 3 ? '✓' : '○'} Paso 5: Cambiando la base de datos a modo monousuario...</li>
-            <li>{pasoActual >= 4 ? '✓' : '○'} Paso 6: Generando volcado de seguridad ({tipo.toUpperCase()})...</li>
-            <li>{pasoActual >= 4 ? '✓' : '○'} Paso 7: Almacenando archivo(s) en {particiones} partición(es)...</li>
-            <li>{pasoActual >= 5 ? '✓' : '○'} Paso 9: Restaurando base de datos a modo multiusuario...</li>
-            <li>{pasoActual >= 6 ? '✓' : '○'} Paso 10: Registrando acción en bitácora con DVH y DVV...</li>
+            <li>{pasoActual >= 2 ? '[Completado]' : '[En progreso]'} Paso 4: Verificando espacio disponible y permisos de almacenamiento...</li>
+            <li>{pasoActual >= 3 ? '[Completado]' : '[En progreso]'} Paso 5: Cambiando la base de datos a modo monousuario...</li>
+            <li>{pasoActual >= 4 ? '[Completado]' : '[En progreso]'} Paso 6: Generando volcado de seguridad ({tipo.toUpperCase()})...</li>
+            <li>{pasoActual >= 4 ? '[Completado]' : '[En progreso]'} Paso 7: Almacenando archivo(s) en {particiones} partición(es)...</li>
+            <li>{pasoActual >= 5 ? '[Completado]' : '[En progreso]'} Paso 9: Restaurando base de datos a modo multiusuario...</li>
+            <li>{pasoActual >= 6 ? '[Completado]' : '[En progreso]'} Paso 10: Registrando acción en bitácora con DVH y DVV...</li>
           </ul>
         </div>
       )}
@@ -313,7 +313,7 @@ export default function Respaldo({ onSesionExpirada }) {
                   <span className="resp-spinner" /> Generando respaldo...
                 </>
               ) : (
-                <>💾 Iniciar copia de seguridad</>
+                <>Iniciar copia de seguridad</>
               )}
             </button>
           </form>
@@ -329,7 +329,7 @@ export default function Respaldo({ onSesionExpirada }) {
               onClick={cargarHistorial}
               disabled={cargandoHistorial || generando}
             >
-              ↻ Actualizar
+              Actualizar
             </button>
           </div>
           <p className="resp-card-desc">Copias de seguridad almacenadas físicamente en el servidor.</p>
@@ -376,7 +376,7 @@ export default function Respaldo({ onSesionExpirada }) {
                               onClick={() => descargarArchivo(nom)}
                               title={`Descargar ${nom}`}
                             >
-                              ⬇ {item.particiones > 1 ? nom.split('.').slice(-2).join('.') : 'SQL'}
+                              Descargar {item.particiones > 1 ? nom.split('.').slice(-2).join('.') : 'SQL'}
                             </button>
                           ))}
                           <button
@@ -385,7 +385,7 @@ export default function Respaldo({ onSesionExpirada }) {
                             onClick={() => eliminarArchivo(item.id || item.archivos?.[0])}
                             title="Eliminar este respaldo"
                           >
-                            🗑
+                            Eliminar
                           </button>
                         </div>
                       </td>

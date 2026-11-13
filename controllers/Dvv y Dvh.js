@@ -161,24 +161,14 @@ async function inicializarDVs() {
 
 // LISTA COMPLETA DE CASOS DE USO MONITOREADOS PARA INTEGRIDAD GLOBAL (DVH / DVV)
 const CASOS_DE_USO_MONITOREADOS = [
-  // CU001 - Registrar Usuario
+  // CU001 - Gestionar usuarios
   { metodo: 'POST',   ruta: '/users/register',                         tabla: ['Usuario', 'Bitacora'], nombreCU: 'CU001 - Registrar Usuario' },
   { metodo: 'POST',   ruta: '/users',                                  tabla: ['Usuario', 'Bitacora'], nombreCU: 'CU001 - Crear Usuario' },
-
-  // CU002 - Iniciar Sesión
-  { metodo: 'POST',   ruta: '/users/login',                            tabla: 'Sesion',                nombreCU: 'CU002 - Iniciar Sesión' },
-
-  // CU003 - Administrar Usuarios / Cambiar Datos de Perfil
-  { metodo: 'PUT',    ruta: '/users/perfil',                           tabla: ['Usuario', 'Bitacora'], nombreCU: 'CU003 - Cambiar Datos de Perfil' },
-  { metodo: 'PUT',    ruta: '/users/cambiar-datos',                    tabla: ['Usuario', 'Bitacora'], nombreCU: 'CU003 - Cambiar Datos' },
-  { metodo: 'PUT',    ruta: '/users/:id',                              tabla: ['Usuario', 'Bitacora'], nombreCU: 'CU003 - Actualizar Usuario' },
-
-  // CU004 - Hacer respaldo
-  { metodo: 'POST',   ruta: '/respaldos',                              tabla: 'Bitacora',              nombreCU: 'CU004 - Hacer respaldo' },
-  { metodo: 'POST',   ruta: '/respaldos/generar',                      tabla: 'Bitacora',              nombreCU: 'CU004 - Hacer respaldo' },
-  { metodo: 'DELETE', ruta: '/respaldos/:nombre',                      tabla: 'Bitacora',              nombreCU: 'CU004 - Eliminar respaldo' },
-
-  // Baja / Bloquear Usuario
+  { metodo: 'PUT',    ruta: '/users/:id',                              tabla: ['Usuario', 'Bitacora'], nombreCU: 'CU001 - Modificar Usuario' },
+  { metodo: 'PUT',    ruta: '/users/:id/bloquear',                     tabla: ['Usuario', 'Bitacora'], nombreCU: 'CU001 - Bloquear Usuario' },
+  { metodo: 'PATCH',  ruta: '/users/:id/bloquear',                     tabla: ['Usuario', 'Bitacora'], nombreCU: 'CU001 - Bloquear Usuario' },
+  { metodo: 'PUT',    ruta: '/users/:id/reactivar',                    tabla: ['Usuario', 'Bitacora'], nombreCU: 'CU001 - Reactivar Usuario' },
+  { metodo: 'PATCH',  ruta: '/users/:id/reactivar',                    tabla: ['Usuario', 'Bitacora'], nombreCU: 'CU001 - Reactivar Usuario' },
   { metodo: 'DELETE', ruta: '/users/:id',                              tabla: ['Usuario', 'Bitacora'], nombreCU: 'CU001 - Eliminar Usuario' },
 
   // CU005 - Alta de hospital
