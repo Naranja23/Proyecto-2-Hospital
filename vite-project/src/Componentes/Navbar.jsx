@@ -94,6 +94,13 @@ export default function Navbar({ usuarioLogueado, onCerrarSesion, cerrandoSesion
                     </button>
                     <button
                       type="button"
+                      className={`navbar-item navbar-login ${path.startsWith('/admin/bloquear-hospital') || path.startsWith('/bloquear-hospital') ? 'activo' : ''}`}
+                      onClick={() => navigate('/admin/bloquear-hospital')}
+                    >
+                      Bloquear hospital
+                    </button>
+                    <button
+                      type="button"
                       className={`navbar-item navbar-login ${path === '/admin/sacar-hospital' || path === '/sacar-hospital' ? 'activo' : ''}`}
                       onClick={() => navigate('/admin/sacar-hospital')}
                     >

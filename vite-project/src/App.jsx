@@ -245,6 +245,22 @@ function App() {
               ) : <Navigate to="/login" replace />}
             />
             <Route
+              path="/admin/bloquear-hospital"
+              element={usuarioLogueado ? (
+                <SoloAdmin>
+                  <BloquearHospital />
+                </SoloAdmin>
+              ) : <Navigate to="/login" replace />}
+            />
+            <Route
+              path="/bloquear-hospital"
+              element={usuarioLogueado ? (
+                <SoloAdmin>
+                  <BloquearHospital />
+                </SoloAdmin>
+              ) : <Navigate to="/login" replace />}
+            />
+            <Route
               path="/admin/bloquear-hospital/:id"
               element={usuarioLogueado ? (
                 <SoloAdmin>
